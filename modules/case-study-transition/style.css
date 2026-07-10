@@ -1,0 +1,79 @@
+/**
+ * Basalio: Case Study Transition, front-end + editor styles.
+ *
+ * The transition is entirely CSS. This file loads only on pages that contain
+ * the block (both the grid page and the case-study page have it, so both ends
+ * opt into cross-document transitions).
+ */
+
+/* Enable cross-document view transitions, but ONLY when motion is welcome.
+   Under prefers-reduced-motion the opt-in is absent, so the browser performs a
+   plain navigation (WCAG 2.3 / vestibular safety). Browsers without support
+   ignore this at-rule entirely, the silent fallback. */
+@media ( prefers-reduced-motion: no-preference ) {
+	@view-transition {
+		navigation: auto;
+	}
+
+	/* Cap every transition animation well under the 400ms vestibular limit. */
+	::view-transition-group( * ),
+	::view-transition-old( * ),
+	::view-transition-new( * ) {
+		animation-duration: 300ms;
+		animation-timing-function: cubic-bezier( 0.2, 0.7, 0.2, 1 );
+	}
+}
+
+.basalio-cst {
+	display: block;
+	margin: 0;
+	line-height: 0; /* remove inline-image gap */
+}
+
+.basalio-cst--source {
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.basalio-cst__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var( --basalio-radius, 6px );
+}
+
+/* Keyboard focus for the linked source tile (WCAG 2.4.7). */
+.basalio-cst--source:focus-visible {
+	outline: 3px solid var( --basalio-focus-color, #4f46e5 );
+	outline-offset: 3px;
+}
+
+/* The destination H1 is focused programmatically after navigation (2.4.3). It
+   was not focused by the user, so suppress the outline for that one target to
+   avoid a heading gaining a focus ring on every click-through. Screen readers
+   still announce it. Scoped to the class our JS adds, so it never affects other
+   headings. Keyboard focus on genuinely interactive elements is untouched. */
+.basalio-cst-focus-target:focus {
+	outline: none;
+}
+
+/* --- Editor-only affordances ----------------------------------------- */
+.basalio-cst.basalio-editor {
+	position: relative;
+}
+
+.basalio-cst .basalio-cst__role-badge {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 2;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background: rgba( 0, 0, 0, 0.72 );
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	line-height: 1.4;
+	text-transform: uppercase;
+}

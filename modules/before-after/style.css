@@ -1,0 +1,145 @@
+/**
+ * Basalio: Before / After, front-end + editor styles.
+ *
+ * The reveal position is a single custom property (--basalio-ba-pos, a %),
+ * which drives the before image's clip, the divider, and the handle together.
+ * No transitions: it's direct manipulation, so there's nothing to disable under
+ * reduced motion.
+ */
+
+.basalio-before-after {
+	--basalio-ba-pos: 50%;
+	--basalio-ba-line: #ffffff;
+	--basalio-ba-ink: #17171a;
+	--basalio-ba-focus: #3049ff;
+	--basalio-ba-radius: 2px;
+}
+
+.basalio-before-after__frame {
+	position: relative;
+	overflow: hidden;
+	border-radius: var( --basalio-ba-radius );
+	touch-action: none; /* let the slider own touch drags */
+	user-select: none;
+	-webkit-user-select: none;
+	line-height: 0;
+}
+
+.basalio-before-after__img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* The "after" image sits in flow and defines the frame's size. */
+.basalio-before-after__img--after {
+	position: relative;
+	z-index: 0;
+}
+
+/* The "before" image overlays it at the same size, revealed from the left up to
+   the divider position via clip-path. */
+.basalio-before-after__img--before {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 1;
+	clip-path: inset( 0 calc( 100% - var( --basalio-ba-pos ) ) 0 0 );
+}
+
+.basalio-before-after__divider {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: var( --basalio-ba-pos );
+	width: 2px;
+	transform: translateX( -1px );
+	background: var( --basalio-ba-line );
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.15 );
+	z-index: 2;
+	pointer-events: none;
+}
+
+.basalio-before-after__handle {
+	position: absolute;
+	top: 50%;
+	left: var( --basalio-ba-pos );
+	width: 40px;
+	height: 40px;
+	transform: translate( -50%, -50% );
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var( --basalio-ba-line );
+	box-shadow: 0 1px 6px rgba( 0, 0, 0, 0.32 );
+	cursor: ew-resize;
+	touch-action: none;
+}
+
+.basalio-before-after__handle:focus-visible {
+	outline: 3px solid var( --basalio-ba-focus );
+	outline-offset: 3px;
+}
+
+/* Two chevrons ( < > ) drawn with borders. */
+.basalio-before-after__handle-icon {
+	position: relative;
+	width: 22px;
+	height: 12px;
+}
+
+.basalio-before-after__handle-icon::before,
+.basalio-before-after__handle-icon::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	width: 7px;
+	height: 7px;
+}
+
+.basalio-before-after__handle-icon::before {
+	left: 1px;
+	border-left: 2px solid var( --basalio-ba-ink );
+	border-bottom: 2px solid var( --basalio-ba-ink );
+	transform: translateY( -50% ) rotate( 45deg );
+}
+
+.basalio-before-after__handle-icon::after {
+	right: 1px;
+	border-top: 2px solid var( --basalio-ba-ink );
+	border-right: 2px solid var( --basalio-ba-ink );
+	transform: translateY( -50% ) rotate( 45deg );
+}
+
+.basalio-before-after__label {
+	position: absolute;
+	top: 12px;
+	z-index: 2;
+	padding: 4px 9px;
+	font-family: 'IBM Plex Mono', ui-monospace, monospace;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	line-height: 1.2;
+	color: #fff;
+	background: rgba( 0, 0, 0, 0.62 );
+	border-radius: var( --basalio-ba-radius );
+	pointer-events: none;
+}
+
+.basalio-before-after__label--before {
+	left: 12px;
+}
+
+.basalio-before-after__label--after {
+	right: 12px;
+}
+
+/* Editor: the handle is non-functional in the canvas; keep it visible. */
+.basalio-editor .basalio-before-after__handle {
+	cursor: default;
+}

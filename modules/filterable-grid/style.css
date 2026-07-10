@@ -1,0 +1,133 @@
+/**
+ * Basalio: Filterable Grid, front-end + editor styles.
+ *
+ * Also styles the child grid items (they only ever appear inside this block, so
+ * their styles live here). Colors/shape are exposed as custom properties with
+ * on-brand fallbacks so a theme can restyle without editing this file.
+ *
+ * Filtering itself toggles the `hidden` attribute on items, instant, no motion,
+ * and it removes hidden items from the tab order + accessibility tree.
+ */
+
+.basalio-filterable-grid {
+	--basalio-fg-ink: #17171a;
+	--basalio-fg-paper: #f6f4ef;
+	--basalio-fg-stone: #83796c;
+	--basalio-fg-line: #dbd6cb;
+	--basalio-fg-focus: #3049ff;
+	--basalio-fg-radius: 2px;
+	--basalio-fg-cols: 3;
+}
+
+/* --- Filter controls --- */
+.basalio-filterable-grid__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 18px;
+}
+
+.basalio-filterable-grid__filter {
+	font: inherit;
+	font-size: 13px;
+	line-height: 1;
+	padding: 9px 16px;
+	border: 1px solid var( --basalio-fg-line );
+	background: transparent;
+	color: var( --basalio-fg-ink );
+	border-radius: var( --basalio-fg-radius );
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.basalio-filterable-grid__filter:hover {
+	border-color: var( --basalio-fg-ink );
+}
+
+.basalio-filterable-grid__filter.is-active {
+	background: var( --basalio-fg-ink );
+	color: var( --basalio-fg-paper );
+	border-color: var( --basalio-fg-ink );
+}
+
+.basalio-filterable-grid__filter:focus-visible {
+	outline: 2px solid var( --basalio-fg-focus );
+	outline-offset: 2px;
+}
+
+/* --- Result count (announced to screen readers on change) --- */
+.basalio-filterable-grid__status {
+	margin: 0 0 18px;
+	font-size: 13px;
+	color: var( --basalio-fg-stone );
+}
+
+/* --- Grid --- */
+.basalio-filterable-grid__grid {
+	display: grid;
+	grid-template-columns: repeat( var( --basalio-fg-cols, 3 ), 1fr );
+	gap: 20px;
+}
+
+/* --- Items --- */
+.basalio-grid-item {
+	margin: 0;
+}
+
+.basalio-grid-item__frame {
+	display: block;
+	overflow: hidden;
+	border-radius: var( --basalio-fg-radius, 2px );
+	background: #eee;
+}
+
+.basalio-grid-item__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+}
+
+.basalio-grid-item__caption {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 10px;
+}
+
+.basalio-grid-item__title {
+	font-weight: 600;
+	font-size: 15px;
+	color: var( --basalio-fg-ink, #17171a );
+}
+
+.basalio-grid-item__category {
+	font-size: 12px;
+	color: var( --basalio-fg-stone, #83796c );
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+@media ( max-width: 781px ) {
+	.basalio-filterable-grid__grid {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+@media ( max-width: 480px ) {
+	.basalio-filterable-grid__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Editor: the note above the grid. */
+.basalio-fg-editor-note {
+	font-size: 12px;
+	color: var( --basalio-fg-stone, #83796c );
+	margin: 0 0 14px;
+	padding: 8px 12px;
+	border: 1px solid var( --basalio-fg-line, #dbd6cb );
+	border-radius: var( --basalio-fg-radius, 2px );
+	background: rgba( 0, 0, 0, 0.02 );
+}

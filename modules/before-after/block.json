@@ -1,0 +1,34 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "basalio/before-after",
+	"version": "0.2.1",
+	"title": "Basalio: Before / After",
+	"category": "media",
+	"icon": "image-flip-horizontal",
+	"description": "An interactive before/after comparison slider. Drag the divider or use the arrow keys. A real ARIA slider, keyboard-operable and touch-friendly.",
+	"keywords": [ "before", "after", "compare", "slider", "reveal" ],
+	"textdomain": "basalio",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": true
+		}
+	},
+	"attributes": {
+		"beforeImageId": { "type": "number" },
+		"beforeImageUrl": { "type": "string", "default": "" },
+		"beforeImageAlt": { "type": "string", "default": "" },
+		"afterImageId": { "type": "number" },
+		"afterImageUrl": { "type": "string", "default": "" },
+		"afterImageAlt": { "type": "string", "default": "" },
+		"beforeLabel": { "type": "string", "default": "Before" },
+		"afterLabel": { "type": "string", "default": "After" },
+		"startPosition": { "type": "number", "default": 50 }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

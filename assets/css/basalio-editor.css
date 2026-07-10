@@ -1,0 +1,188 @@
+/**
+ * Basalio, block editor chrome (admin editor only).
+ *
+ * Styles the shared BasalioEd.Panel / Field / Tip helpers so every Basalio
+ * block reads clearly and looks intentional in the editor. Scoped to
+ * .basalio-ed-* so it never touches the front end or other plugins.
+ */
+
+.basalio-ed-panel {
+	--bed-ink: #17171a;
+	--bed-paper: #f6f4ef;
+	--bed-stone: #6b6357;
+	--bed-line: #e5e1d8;
+	--bed-cobalt: #3049ff;
+	--bed-cobalt-dim: #ebeeff;
+
+	border: 1px solid var( --bed-line );
+	border-radius: 10px;
+	background: #fff;
+	overflow: hidden;
+	box-shadow: 0 1px 2px rgba( 23, 23, 26, 0.04 );
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* --- Header: mark + name + badge --- */
+.basalio-ed-head {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 11px 16px;
+	background: var( --bed-paper );
+	border-bottom: 1px solid var( --bed-line );
+}
+
+.basalio-ed-mark {
+	position: relative;
+	flex: none;
+	width: 14px;
+	height: 14px;
+	border: 2px solid var( --bed-ink );
+	border-radius: 2px;
+}
+
+.basalio-ed-mark::after {
+	content: "";
+	position: absolute;
+	left: 2px;
+	right: 2px;
+	bottom: -5px;
+	height: 2px;
+	background: var( --bed-ink );
+}
+
+.basalio-ed-name {
+	font-weight: 600;
+	font-size: 13px;
+	letter-spacing: 0.01em;
+	color: var( --bed-ink );
+}
+
+.basalio-ed-badge {
+	margin-left: auto;
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var( --bed-cobalt );
+	background: var( --bed-cobalt-dim );
+	padding: 3px 9px;
+	border-radius: 999px;
+}
+
+/* --- Description --- */
+.basalio-ed-desc {
+	margin: 0;
+	padding: 11px 16px 0;
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: var( --bed-stone );
+}
+
+/* --- Body + fields --- */
+.basalio-ed-body {
+	padding: 14px 16px 16px;
+}
+
+.basalio-ed-field {
+	margin-bottom: 14px;
+}
+
+.basalio-ed-field:last-child {
+	margin-bottom: 0;
+}
+
+.basalio-ed-label {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: #83796c;
+	margin-bottom: 5px;
+}
+
+.basalio-ed-hint {
+	display: block;
+	font-size: 11.5px;
+	line-height: 1.45;
+	color: #9a9184;
+	margin-top: 5px;
+}
+
+/* Editable text fields inside the canvas (title, category, etc.) */
+.basalio-ed-field .basalio-ed-input,
+.basalio-ed-panel .basalio-ed-input {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid var( --bed-line );
+	border-radius: 6px;
+	background: #fff;
+	font-size: 13px;
+	color: var( --bed-ink );
+	box-shadow: none;
+}
+
+.basalio-ed-field .basalio-ed-input:focus,
+.basalio-ed-panel .basalio-ed-input:focus {
+	outline: 2px solid var( --bed-cobalt );
+	outline-offset: 0;
+	border-color: transparent;
+}
+
+/* --- Tip line --- */
+.basalio-ed-tip {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin: 12px 0 0;
+	padding: 9px 11px;
+	font-size: 12px;
+	line-height: 1.5;
+	color: var( --bed-stone );
+	background: var( --bed-paper );
+	border: 1px dashed #d9d2c5;
+	border-radius: 7px;
+}
+
+.basalio-ed-tip-mark {
+	flex: none;
+	width: 15px;
+	height: 15px;
+	margin-top: 1px;
+	border-radius: 50%;
+	background: var( --bed-cobalt );
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	font-style: italic;
+	line-height: 15px;
+	text-align: center;
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+/* --- Preview media inside the panel --- */
+.basalio-ed-preview {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 6px;
+	border: 1px solid var( --bed-line );
+}
+
+.basalio-ed-media-row {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.basalio-ed-media-row > * {
+	flex: 1 1 140px;
+}
+
+/* Tighten the core MediaPlaceholder so it sits nicely in the panel body. */
+.basalio-ed-body .components-placeholder {
+	border-radius: 8px;
+	min-height: 0;
+	padding: 1.4em;
+}

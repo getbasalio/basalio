@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "basalio/magnetic-button",
+	"version": "0.2.1",
+	"title": "Basalio: Magnetic Button",
+	"category": "design",
+	"icon": "button",
+	"description": "A call-to-action button that subtly pulls toward the pointer. Pointer-only and off on touch; fully keyboard-operable with a clear focus state; static under reduced motion.",
+	"keywords": [ "button", "cta", "magnetic", "hover", "link" ],
+	"textdomain": "basalio",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": false,
+		"spacing": {
+			"margin": true
+		},
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"attributes": {
+		"text": {
+			"type": "string",
+			"default": ""
+		},
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+		"strength": {
+			"type": "number",
+			"default": 18
+		},
+		"opensInNewTab": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

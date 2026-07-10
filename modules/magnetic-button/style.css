@@ -1,0 +1,64 @@
+/**
+ * Basalio: Magnetic Button, front-end + editor styles.
+ *
+ * The transform is driven by two custom properties (--basalio-mag-x / -y) that
+ * the shared core sets on pointer move. With no JS (or on touch, or under
+ * reduced motion) those stay 0, so the button is simply static and fully usable.
+ *
+ * Colors/shape are exposed as custom properties so a theme can restyle the
+ * button without touching this file.
+ */
+
+.basalio-magnetic-button {
+	--basalio-mag-x: 0px;
+	--basalio-mag-y: 0px;
+
+	/* Theming hooks. */
+	--basalio-btn-bg: #17171a;
+	--basalio-btn-color: #f6f4ef;
+	--basalio-btn-radius: 2px;
+	--basalio-btn-focus: #3049ff;
+	--basalio-btn-ease: cubic-bezier( 0.16, 1, 0.3, 1 );
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 13px 24px;
+	background: var( --basalio-btn-bg );
+	color: var( --basalio-btn-color );
+	border: 1px solid var( --basalio-btn-bg );
+	border-radius: var( --basalio-btn-radius );
+	font-weight: 500;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transform: translate( var( --basalio-mag-x ), var( --basalio-mag-y ) );
+	transition: transform 0.25s var( --basalio-btn-ease );
+	will-change: transform;
+}
+
+.basalio-magnetic-button__label {
+	display: inline-block;
+}
+
+/* Keyboard-focus equivalent (WCAG 2.4.7): magnetism is pointer-only, so keyboard
+   users get a strong, obvious focus ring instead. */
+.basalio-magnetic-button:focus-visible {
+	outline: 2px solid var( --basalio-btn-focus );
+	outline-offset: 3px;
+}
+
+/* Reduced motion: never translate, no easing, a plain static button. */
+@media ( prefers-reduced-motion: reduce ) {
+	.basalio-magnetic-button {
+		transform: none;
+		transition: none;
+	}
+}
+
+/* Editor: keep it static in the canvas. */
+.basalio-editor.basalio-magnetic-button,
+.basalio-editor .basalio-magnetic-button {
+	transform: none;
+}

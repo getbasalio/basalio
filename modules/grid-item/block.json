@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "basalio/grid-item",
+	"version": "0.2.1",
+	"title": "Basalio: Grid Item",
+	"category": "media",
+	"icon": "format-image",
+	"description": "A single portfolio item inside a Basalio Filterable Grid. Its Category feeds the grid's filter buttons.",
+	"textdomain": "basalio",
+	"parent": [ "basalio/filterable-grid" ],
+	"supports": {
+		"html": false,
+		"reusable": false
+	},
+	"attributes": {
+		"imageId": {
+			"type": "number"
+		},
+		"imageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"category": {
+			"type": "string",
+			"default": ""
+		},
+		"url": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

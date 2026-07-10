@@ -1,0 +1,49 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "basalio/grid-reveal",
+	"version": "0.2.1",
+	"title": "Basalio: Grid Reveal",
+	"category": "media",
+	"icon": "images-alt2",
+	"description": "Hover- and focus-triggered caption reveal for portfolio grid items. Keyboard-accessible, reduced-motion aware, and tap-to-reveal on touch.",
+	"keywords": [ "portfolio", "grid", "hover", "reveal", "caption" ],
+	"textdomain": "basalio",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": true
+		}
+	},
+	"attributes": {
+		"imageId": {
+			"type": "number"
+		},
+		"imageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"tag": {
+			"type": "string",
+			"default": ""
+		},
+		"revealStyle": {
+			"type": "string",
+			"enum": [ "crossfade", "opacity" ],
+			"default": "crossfade"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

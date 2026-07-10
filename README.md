@@ -1,93 +1,95 @@
-# Basalio — Marketing Website
+# Basalio
 
-The pre-launch marketing site for **Basalio**, a narrow, opinionated interaction
-toolkit (native Gutenberg blocks) for WordPress portfolio and case-study sites.
+The bedrock your work stands on. Basalio is a small, opinionated set of native
+Gutenberg blocks that add tasteful, accessible interactions to WordPress
+portfolio and case-study sites. It is not a page builder, and not a general
+animation engine.
 
-Static HTML/CSS/JS — no build step, no framework. Pre-launch, so every call to
-action is **"join the beta,"** not "buy."
+Every interaction respects `prefers-reduced-motion`, works with a keyboard, and
+loads its script only on pages that actually use a Basalio block. Never
+site-wide.
 
-> **Note:** this is the *marketing website*, not the Basalio plugin. The plugin
-> is a separate project and is licensed **GPLv2-or-later** (a WordPress
-> requirement). This website is open source under the **MIT License** — see
-> [LICENSE](LICENSE).
+## Blocks
 
-## Pages
+Six blocks ship today, plus one child block used inside the Filterable Grid:
 
-| File | Purpose |
-|---|---|
-| `index.html` | Home. Hero with the live demo grid, positioning, the three beta "Exhibits" (with working demos), performance bar, pricing summary, beta waitlist. |
-| `pricing.html` | Pricing: three tiers, full comparison table, licensing/updates FAQ. |
-| `roadmap.html` | Roadmap: the six post-beta modules as Exhibits 04–09, clearly marked *not yet built*. |
-| `og-image.html` | Source for the 1200×630 social-share image. |
-| `og-image.png` | Rendered OG image (referenced by `og:image` on the sub-pages). |
-| `context/basalio-product-spec.md` | Product spec — positioning, modules, pricing rationale, roadmap. Reference only. |
+- **Grid Reveal.** A portfolio tile that reveals its caption on hover, focus, or tap.
+- **Case Study Transition.** A shared-element view transition from a grid tile to its case-study page, with a plain-navigation fallback.
+- **Text Reveal.** A staged entrance for a headline, subhead, and optional button. CSS only, and the real text stays readable to screen readers.
+- **Magnetic Button.** A call-to-action that pulls toward the pointer. Pointer only, off on touch and under reduced motion.
+- **Before / After.** An interactive comparison slider built as a real ARIA slider, operable by drag, touch, and arrow keys.
+- **Filterable Grid** (with its **Grid Item** child). A portfolio grid visitors filter by discipline, using real buttons with `aria-pressed` and a live-region count.
 
-All pages share one sticky header: **Modules · Performance · Roadmap · Pricing ·
-Join the beta**. Home uses in-page anchors; sub-pages link back to `index.html#…`.
+`WCAG-QA.md` documents the accessibility behavior of each block, with how it was verified.
 
-## Run locally
-
-No build. Either open `index.html` directly, or serve the folder so relative
-links and the OG image resolve cleanly:
-
-```bash
-# Python 3
-python3 -m http.server 8080
-# then visit http://localhost:8080/
-```
-
-## Deploy
-
-It's a static site — drop the folder on any static host (Netlify, Vercel,
-Cloudflare Pages, GitHub Pages, etc.). No server runtime required.
-
-- Entry point is `index.html`.
-- The only external dependency is **Google Fonts** (`fonts.googleapis.com` /
-  `fonts.gstatic.com`) — the site needs internet for correct type. Everything
-  else is self-contained (all artwork is inline SVG; no local image files).
-- For clean URLs (`/pricing`, `/roadmap`) configure your host's rewrites, or
-  rename the files and update the four nav/logo/footer links.
-
-## Design system
-
-Defined once as CSS custom properties in each file's `:root`:
+## Folder structure
 
 ```
---paper      #F6F4EF   page background
---paper-dim  #EEEBE3   alt panels / muted tiles
---ink        #17171A   text, dark sections, primary buttons
---stone      #83796C   secondary text, labels
---line       #DBD6CB   1px borders / dividers
---cobalt     #3049FF   the single accent (italic <em>, focus rings)
---cobalt-dim #EBEEFF   waitlist / CTA background
---radius     2px       global corner radius
+basalio/
+├── basalio.php                  Plugin header, version constant, activation, basalio_enqueue_core()
+├── includes/
+│   └── class-basalio.php        Loader: registers shared assets, auto-discovers every module
+├── assets/
+│   ├── js/
+│   │   ├── basalio-core.js       One shared front-end script. A behavior registry that runs
+│   │   │                         each module's behavior. Enqueued only when a block is present.
+│   │   └── basalio-editor.js     Shared editor helpers (the branded block panel, field, and tip)
+│   └── css/
+│       └── basalio-editor.css   Styling for the editor chrome
+├── modules/
+│   ├── grid-reveal/             Each module folder holds: block.json, index.js, index.asset.php,
+│   ├── case-study-transition/   render.php, and style.css.
+│   ├── text-reveal/
+│   ├── magnetic-button/
+│   ├── before-after/
+│   ├── filterable-grid/
+│   └── grid-item/               Child of filterable-grid (no standalone insert)
+├── uninstall.php                Removes the plugin's version option on delete
+├── README.md
+└── WCAG-QA.md
 ```
 
-**Type:** Fraunces (display/headings; italic = the cobalt accent phrase),
-IBM Plex Sans (body), IBM Plex Mono (eyebrows, labels, buttons).
+## How it fits together
 
-**Brand:** *Basalio* evokes **basalt — bedrock, the solid base your work stands
-on.** Hero line: "Give your work *solid ground* to stand on." Modules are framed
-as numbered **"Exhibits."** Restraint: one signature interactive moment (the
-hero), quiet elsewhere; all demo motion is user-triggered and respects
-`prefers-reduced-motion`.
+**Dynamic render.** Every block renders through its own `render.php` (server side)
+rather than a static `save()`. Markup and escaping live in one place, images get
+real responsive `srcset` and `alt`, and later markup fixes never invalidate
+already-saved blocks.
 
-## Notes
+**No build step.** Editor scripts are written directly against WordPress's bundled
+`wp.*` globals, with a hand-authored `index.asset.php` for each. There is no npm,
+webpack, or JSX. The plugin depends on nothing outside WordPress core.
 
-- **Swap in real work:** the demo tiles use inline-SVG placeholders that read as
-  design work. Replacing them with real portfolio images is the highest-impact
-  upgrade; keep them embedded if the page must stay self-contained.
-- **Copy stays pre-launch** until the paid product ships — keep CTAs as
-  "join the beta" / "request access."
+**One shared front-end script.** `basalio-core.js` is registered once and enqueued
+from a block's `render.php`, so it loads only on pages that use a block. Each
+module registers an isolated behavior, so adding a module never touches an
+existing one.
+
+**One shared editor UI.** `basalio-editor.js` and `basalio-editor.css` give every
+block the same clear chrome: a header with the block name, a plain description of
+what it does, and labeled fields with inline hints. New blocks inherit it for free.
+
+## Adding a module
+
+The loader globs `modules/*/block.json`, so a new block is additive. You never
+edit an existing module.
+
+1. Create `modules/<your-block>/` with its own `block.json`, `index.js`,
+   `index.asset.php`, `render.php`, and `style.css`. Copy the shape of an existing
+   module.
+2. Give it a unique name in `block.json`, for example `basalio/your-block`.
+3. Call `basalio_enqueue_core()` from its `render.php` if it needs the shared script.
+4. If it needs front-end JavaScript, append a new `Basalio.register(...)` behavior
+   to `basalio-core.js`. Do not edit the behaviors above it.
+5. Keep styles under your block's own class prefix so stylesheets never collide.
+
+## Requirements
+
+WordPress 6.3 or newer, PHP 7.4 or newer.
 
 ## License
 
-Released under the **MIT License** — see [LICENSE](LICENSE). You're free to use,
-modify, and distribute the code, provided the copyright notice is retained.
-
-Two things the MIT license does **not** cover:
-
-- The **"Basalio" and "ChrowmDesigns" names and logos** — trademarks, all rights
-  reserved. MIT lets people reuse the code, not the brand identity.
-- The **Google Fonts** typefaces (Fraunces, IBM Plex Sans, IBM Plex Mono), which
-  are provided under the SIL Open Font License 1.1 and loaded from the CDN.
+GPL-2.0-or-later. WordPress core is GPL, so a plugin that builds on its PHP is a
+derivative work and inherits GPL. This also keeps the plugin eligible for the
+WordPress.org directory and compatible with commercial licensing tools like
+Freemius or EDD.
