@@ -1,0 +1,543 @@
+# Copyright (C) 2026
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Basalio 0.4.0\n"
+"Report-Msgid-Bugs-To: https://example.com/basalio\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: basalio\n"
+
+#: modules/magnetic-button/index.js:73
+msgid "A call-to-action button that gently pulls toward the visitor’s cursor."
+msgstr ""
+
+#: modules/text-reveal/index.js:105
+msgid "A choreographed entrance for a headline, subhead, and optional button. They fade in when the page loads."
+msgstr ""
+
+#: modules/filterable-grid/index.js:70
+msgid "A portfolio grid visitors can filter by discipline. Filter buttons are generated from each item’s Category."
+msgstr ""
+
+#: modules/grid-reveal/index.js:133
+msgid "A portfolio tile that reveals its caption when a visitor hovers, focuses, or taps it."
+msgstr ""
+
+#: modules/case-study-transition/index.js:136
+msgid "A smooth shared-element transition from a grid tile to its case-study page."
+msgstr ""
+
+#: modules/text-reveal/index.js:77
+msgid "A supporting sentence"
+msgstr ""
+
+#: modules/custom-cursor/index.js:51
+msgid "Accent color (hex)"
+msgstr ""
+
+#: modules/custom-cursor/index.js:58
+msgid "Accent shape"
+msgstr ""
+
+#: modules/custom-cursor/index.js:43
+msgid "Accent size (px)"
+msgstr ""
+
+#: modules/before-after/index.js:92
+#: modules/case-study-transition/index.js:104
+#: modules/grid-reveal/index.js:98
+msgid "Accessibility"
+msgstr ""
+
+#: modules/filterable-grid/index.js:60
+msgid "Add items below and give every item a Category. The filter buttons on the live page are built automatically from those categories."
+msgstr ""
+
+#: modules/custom-cursor/index.js:37
+msgid "Add the content this cursor should apply to…"
+msgstr ""
+
+#: modules/text-reveal/index.js:42
+msgid "Advanced"
+msgstr ""
+
+#: modules/text-reveal/index.js:53
+msgid "Affects document structure/SEO, not the size."
+msgstr ""
+
+#: modules/before-after/render.php:79
+#: modules/before-after/index.js:73
+msgid "After"
+msgstr ""
+
+#: modules/before-after/index.js:59
+msgid "After image"
+msgstr ""
+
+#: modules/before-after/index.js:99
+msgid "After image alt text"
+msgstr ""
+
+#: modules/before-after/index.js:70
+msgid "After label"
+msgstr ""
+
+#: modules/filterable-grid/render.php:35
+#: modules/filterable-grid/index.js:58
+msgid "All"
+msgstr ""
+
+#: modules/before-after/index.js:113
+msgid "An interactive slider that reveals a “before” image over an “after” image."
+msgstr ""
+
+#: basalio.php:71
+msgid "Basalio requires PHP 7.4 or higher. Please upgrade PHP and try again."
+msgstr ""
+
+#: modules/grid-item/index.js:69
+msgid "Becomes a filter button on the grid. Reuse the same wording across items to group them."
+msgstr ""
+
+#: modules/before-after/render.php:78
+#: modules/before-after/index.js:66
+msgid "Before"
+msgstr ""
+
+#: modules/before-after/index.js:112
+msgid "Before / After"
+msgstr ""
+
+#: modules/before-after/index.js:58
+msgid "Before image"
+msgstr ""
+
+#: modules/before-after/index.js:94
+msgid "Before image alt text"
+msgstr ""
+
+#: modules/before-after/index.js:63
+msgid "Before label"
+msgstr ""
+
+#: modules/text-reveal/index.js:56
+msgid "Button link (URL)"
+msgstr ""
+
+#: modules/magnetic-button/index.js:36
+msgid "Button text"
+msgstr ""
+
+#: modules/text-reveal/index.js:82
+msgid "Button text (optional)"
+msgstr ""
+
+#: modules/grid-reveal/index.js:65
+msgid "Caption title"
+msgstr ""
+
+#: modules/case-study-transition/index.js:135
+msgid "Case Study Transition"
+msgstr ""
+
+#: modules/case-study-transition/index.js:54
+msgid "Case-study hero (the transition end)"
+msgstr ""
+
+#: modules/grid-item/index.js:65
+msgid "Category"
+msgstr ""
+
+#: modules/grid-reveal/index.js:73
+msgid "Category / tag"
+msgstr ""
+
+#: modules/case-study-transition/index.js:67
+msgid "Choose the case-study hero image (the transition end)."
+msgstr ""
+
+#: modules/case-study-transition/index.js:68
+msgid "Choose the grid tile image (the transition start)."
+msgstr ""
+
+#: modules/pinned-scroll/index.js:50
+msgid "Choose the image that stays in view while the story scrolls."
+msgstr ""
+
+#: modules/filterable-grid/index.js:47
+msgid "Columns"
+msgstr ""
+
+#: modules/grid-reveal/index.js:84
+msgid "Crossfade (fade and slide up)"
+msgstr ""
+
+#: modules/custom-cursor/index.js:75
+msgid "Custom Cursor"
+msgstr ""
+
+#: modules/grid-reveal/index.js:103
+msgid "Describes the image for screen readers."
+msgstr ""
+
+#: modules/custom-cursor/index.js:62
+msgid "Dot (solid)"
+msgstr ""
+
+#: modules/text-reveal/index.js:93
+msgid "Each word fades in one after another."
+msgstr ""
+
+#: modules/scroll-sequence/index.js:73
+msgid "Edit frames"
+msgstr ""
+
+#: modules/filterable-grid/render.php:71
+msgid "Filter by discipline"
+msgstr ""
+
+#: modules/filterable-grid/index.js:69
+msgid "Filterable Grid"
+msgstr ""
+
+#: modules/scroll-sequence/render.php:83
+msgid "Frame %1$d of %2$d"
+msgstr ""
+
+#: modules/scroll-sequence/index.js:47
+msgid "Frame sequence"
+msgstr ""
+
+#: modules/grid-item/index.js:118
+msgid "Grid Item"
+msgstr ""
+
+#: modules/grid-reveal/index.js:132
+msgid "Grid Reveal"
+msgstr ""
+
+#: modules/case-study-transition/index.js:53
+msgid "Grid tile (the transition start)"
+msgstr ""
+
+#: modules/text-reveal/index.js:47
+msgid "H1 (use once per page, homepage hero)"
+msgstr ""
+
+#: modules/text-reveal/index.js:67
+msgid "Headline"
+msgstr ""
+
+#: modules/text-reveal/index.js:44
+msgid "Headline HTML level"
+msgstr ""
+
+#: modules/magnetic-button/index.js:62
+msgid "How far the button pulls toward the pointer."
+msgstr ""
+
+#: modules/scroll-sequence/index.js:83
+msgid "How much scrolling it takes to play the whole sequence."
+msgstr ""
+
+#: modules/case-study-transition/index.js:65
+msgid "Image"
+msgstr ""
+
+#: modules/case-study-transition/index.js:106
+#: modules/grid-item/index.js:89
+#: modules/grid-reveal/index.js:100
+#: modules/pinned-scroll/index.js:84
+msgid "Image alt text"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:74
+msgid "Image side"
+msgstr ""
+
+#: modules/grid-item/index.js:48
+msgid "Item image"
+msgstr ""
+
+#: modules/grid-item/index.js:71
+msgid "Items with the same Category are shown together when a visitor clicks that filter."
+msgstr ""
+
+#: modules/case-study-transition/index.js:94
+msgid "Leave blank to auto-match. Or set the SAME unique word on the tile and its hero to pair them."
+msgstr ""
+
+#: modules/pinned-scroll/index.js:77
+msgid "Left"
+msgstr ""
+
+#: modules/grid-item/index.js:80
+msgid "Link & accessibility"
+msgstr ""
+
+#: modules/grid-item/index.js:82
+#: modules/magnetic-button/index.js:43
+msgid "Link (URL)"
+msgstr ""
+
+#: modules/case-study-transition/index.js:81
+msgid "Links to (case study URL)"
+msgstr ""
+
+#: modules/magnetic-button/index.js:72
+msgid "Magnetic Button"
+msgstr ""
+
+#: modules/magnetic-button/index.js:57
+msgid "Magnetic strength"
+msgstr ""
+
+#: modules/scroll-sequence/render.php:89
+msgid "Next frame"
+msgstr ""
+
+#: modules/text-reveal/index.js:95
+msgid "On load, the lines fade in one after another. Screen readers get the full text immediately, and under reduced-motion it appears instantly."
+msgstr ""
+
+#: modules/case-study-transition/index.js:97
+msgid "On supporting browsers the tile morphs into the hero when clicked. Elsewhere it’s a normal link, and the back button always works."
+msgstr ""
+
+#: modules/grid-reveal/index.js:89
+msgid "On the live page the caption stays hidden until a visitor hovers, focuses, or taps this tile."
+msgstr ""
+
+#: modules/grid-item/index.js:119
+msgid "One item in the Filterable Grid. Its Category powers the grid’s filter buttons."
+msgstr ""
+
+#: modules/magnetic-button/index.js:51
+msgid "Open in new tab"
+msgstr ""
+
+#: modules/grid-item/index.js:86
+msgid "Optional. Where the item links to."
+msgstr ""
+
+#: modules/case-study-transition/index.js:91
+msgid "Pair ID (optional)"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:100
+msgid "Pinned Scroll"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:50
+#: modules/pinned-scroll/index.js:69
+msgid "Pinned image"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:101
+msgid "Pins an image beside a story that scrolls past it."
+msgstr ""
+
+#: modules/scroll-sequence/index.js:95
+msgid "Plays a set of frames tied to scroll, like a flipbook, with manual buttons as well."
+msgstr ""
+
+#: basalio.php:72
+msgid "Plugin activation error"
+msgstr ""
+
+#: modules/scroll-sequence/render.php:78
+msgid "Previous frame"
+msgstr ""
+
+#: modules/case-study-transition/index.js:57
+msgid "Put a “tile” on your grid page and a matching “hero” on the case-study page."
+msgstr ""
+
+#: modules/before-after/index.js:49
+#: modules/case-study-transition/index.js:122
+#: modules/grid-item/index.js:105
+#: modules/grid-reveal/index.js:119
+#: modules/pinned-scroll/index.js:62
+msgid "Replace image"
+msgstr ""
+
+#: modules/before-after/render.php:86
+msgid "Reveal %1$s over %2$s"
+msgstr ""
+
+#: modules/text-reveal/index.js:90
+msgid "Reveal headline word by word"
+msgstr ""
+
+#: modules/grid-reveal/index.js:81
+msgid "Reveal style"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:78
+msgid "Right"
+msgstr ""
+
+#: modules/custom-cursor/index.js:61
+msgid "Ring (hollow, sees through)"
+msgstr ""
+
+#: modules/scroll-sequence/index.js:94
+msgid "Scroll Sequence"
+msgstr ""
+
+#: modules/scroll-sequence/index.js:78
+msgid "Scroll length (screens)"
+msgstr ""
+
+#: modules/scroll-sequence/index.js:48
+msgid "Select the frames in order. They play as the visitor scrolls."
+msgstr ""
+
+#: modules/text-reveal/index.js:86
+msgid "Set the link under Advanced (sidebar)."
+msgstr ""
+
+#: modules/grid-reveal/render.php:85
+msgid "Show details: %s"
+msgstr ""
+
+#: modules/grid-reveal/render.php:89
+msgid "Show project details"
+msgstr ""
+
+#: modules/grid-reveal/index.js:69
+msgid "Shown large in the caption."
+msgstr ""
+
+#: modules/custom-cursor/index.js:76
+msgid "Shows a branded cursor accent that follows the pointer inside this area."
+msgstr ""
+
+#: modules/grid-reveal/index.js:85
+msgid "Simple (fade only)"
+msgstr ""
+
+#: modules/grid-reveal/index.js:77
+msgid "Small line shown above the title."
+msgstr ""
+
+#: modules/before-after/index.js:77
+msgid "Start position (%)"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:90
+msgid "Story"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:40
+msgid "Story heading…"
+msgstr ""
+
+#: modules/text-reveal/index.js:74
+msgid "Subhead (optional)"
+msgstr ""
+
+#: modules/pinned-scroll/index.js:40
+msgid "Tell the story here. The image stays pinned while this scrolls."
+msgstr ""
+
+#: modules/text-reveal/index.js:104
+msgid "Text Reveal"
+msgstr ""
+
+#: modules/custom-cursor/index.js:66
+msgid "The accent appears on the live page when a visitor moves the mouse inside this area. It is off on touch and under reduced motion, and never blocks a click."
+msgstr ""
+
+#: modules/case-study-transition/index.js:85
+msgid "The case-study page this tile opens."
+msgstr ""
+
+#: modules/pinned-scroll/index.js:88
+msgid "The image pins in place while the story scrolls past it. On phones, and for anyone using reduced motion, it becomes a normal stacked layout."
+msgstr ""
+
+#: modules/magnetic-button/index.js:64
+msgid "The pull is pointer-only. On touch screens and for anyone using reduced motion, it stays a normal, keyboard-friendly button."
+msgstr ""
+
+#: modules/scroll-sequence/index.js:85
+msgid "The sequence sticks to the screen and steps through frames as the visitor scrolls. The Previous and Next buttons let anyone step through it without scrolling."
+msgstr ""
+
+#: modules/case-study-transition/index.js:50
+msgid "This block is the…"
+msgstr ""
+
+#: modules/grid-reveal/index.js:53
+msgid "Tile image"
+msgstr ""
+
+#: modules/grid-item/index.js:58
+msgid "Title"
+msgstr ""
+
+#: modules/before-after/index.js:49
+msgid "Upload image"
+msgstr ""
+
+#: modules/grid-reveal/index.js:54
+msgid "Upload or choose the portfolio image for this tile."
+msgstr ""
+
+#: modules/grid-item/index.js:48
+msgid "Upload or choose this item’s image."
+msgstr ""
+
+#: modules/before-after/index.js:84
+msgid "Visitors drag the divider, or focus it and use the arrow keys, to compare the two images. Works with a mouse, touch, and keyboard."
+msgstr ""
+
+#: modules/magnetic-button/index.js:47
+msgid "Where the button goes."
+msgstr ""
+
+#: modules/text-reveal/index.js:59
+msgid "Where the button goes. Leave the button text empty to hide it."
+msgstr ""
+
+#: modules/before-after/index.js:82
+msgid "Where the divider sits when the page loads."
+msgstr ""
+
+#: modules/text-reveal/index.js:70
+msgid "Your main line"
+msgstr ""
+
+#: modules/grid-item/index.js:68
+msgid "e.g. Branding"
+msgstr ""
+
+#: modules/grid-reveal/index.js:76
+msgid "e.g. Branding · 2026"
+msgstr ""
+
+#: modules/grid-item/index.js:61
+#: modules/grid-reveal/index.js:68
+msgid "e.g. Faro Identity"
+msgstr ""
+
+#: modules/text-reveal/index.js:85
+msgid "e.g. Get in touch"
+msgstr ""
+
+#: modules/magnetic-button/index.js:39
+msgid "e.g. Join the beta"
+msgstr ""
+
+#: modules/scroll-sequence/index.js:64
+msgid "frames"
+msgstr ""
+
+#: modules/filterable-grid/index.js:55
+msgid "“Show all” button label"
+msgstr ""
+

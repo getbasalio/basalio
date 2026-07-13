@@ -16,7 +16,7 @@
 	--basalio-slide-distance: 12px;
 	--basalio-radius: 6px;
 	--basalio-caption-color: #fff;
-	--basalio-focus-color: #4f46e5;
+	--basalio-focus-color: #c6f135;
 	/* Default scrim: enforced for caption contrast (WCAG 1.4.3). */
 	--basalio-scrim: linear-gradient(
 		to top,
@@ -42,6 +42,16 @@
 	display: block;
 	width: 100%;
 	height: auto;
+}
+
+/* Fixed tile shape: the frame owns the ratio and the image fills it (cover). */
+.basalio-grid-reveal.has-ratio .basalio-grid-reveal__frame {
+	aspect-ratio: var( --basalio-gr-ratio );
+}
+
+.basalio-grid-reveal.has-ratio .basalio-grid-reveal__image {
+	height: 100%;
+	object-fit: cover;
 }
 
 /* Contrast scrim: sits above the image, below the caption. Its opacity tracks
@@ -100,12 +110,20 @@
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	border: 0;
-	background: transparent;
 	color: inherit;
 	cursor: pointer;
 	-webkit-appearance: none;
 	appearance: none;
+	/* This is a full-tile transparent overlay button. Themes (classic themes
+	   especially) style every <button> with their own background/border/shadow,
+	   which would paint a solid block over the image. Force it invisible with
+	   !important so no theme can cover the tile. */
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+.basalio-grid-reveal__toggle:hover {
+	background: transparent !important;
 }
 
 /* Visible keyboard focus indicator (WCAG 2.4.7). */

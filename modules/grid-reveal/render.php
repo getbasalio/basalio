@@ -39,6 +39,24 @@ if ( ! $basalio_image_id && '' === $basalio_image_url ) {
 	return '';
 }
 
+// Radius, aspect ratio (tile shape/size), and click behavior.
+$basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 2;
+$basalio_link     = isset( $attributes['linkUrl'] ) ? $attributes['linkUrl'] : '';
+$basalio_lightbox = ! empty( $attributes['lightbox'] );
+$basalio_full_url = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
+
+$basalio_ratios    = array(
+	'1:1'  => '1 / 1',
+	'4:3'  => '4 / 3',
+	'3:2'  => '3 / 2',
+	'16:9' => '16 / 9',
+	'4:5'  => '4 / 5',
+	'3:4'  => '3 / 4',
+	'2:3'  => '2 / 3',
+);
+$basalio_ratio_key = isset( $attributes['aspectRatio'] ) ? (string) $attributes['aspectRatio'] : 'auto';
+$basalio_ratio_css = isset( $basalio_ratios[ $basalio_ratio_key ] ) ? $basalio_ratios[ $basalio_ratio_key ] : '';
+
 // Build the image markup: prefer the attachment (responsive srcset + alt),
 // fall back to a bare URL if only that was stored.
 $basalio_img_html = '';
@@ -89,9 +107,29 @@ if ( ! empty( $basalio_name_parts ) ) {
 	$basalio_button_label = __( 'Show project details', 'basalio' );
 }
 
+$basalio_gr_classes = 'basalio-grid-reveal is-style-' . $basalio_style . ( '' !== $basalio_ratio_css ? ' has-ratio' : '' );
+$basalio_gr_style   = '--basalio-radius:' . $basalio_radius . 'px';
+if ( '' !== $basalio_ratio_css ) {
+	$basalio_gr_style .= ';--basalio-gr-ratio:' . $basalio_ratio_css;
+}
 $basalio_wrapper_attributes = get_block_wrapper_attributes(
-	array( 'class' => 'basalio-grid-reveal is-style-' . $basalio_style )
+	array(
+		'class' => $basalio_gr_classes,
+		'style' => $basalio_gr_style,
+	)
 );
+
+// The tile overlay control is a link, a lightbox trigger, or the plain
+// tap-to-reveal button, depending on how the block is configured.
+$basalio_ctrl_inner    = '<span class="basalio-grid-reveal__sr">' . esc_html( $basalio_button_label ) . '</span>';
+$basalio_aria_controls = $basalio_has_caption ? ' aria-controls="' . esc_attr( $basalio_caption_id ) . '"' : '';
+if ( $basalio_lightbox && $basalio_full_url ) {
+	$basalio_toggle = '<button type="button" class="basalio-grid-reveal__toggle" data-basalio-lightbox="' . esc_url( $basalio_full_url ) . '" data-basalio-lightbox-alt="' . esc_attr( $basalio_image_alt ) . '" aria-expanded="false"' . $basalio_aria_controls . '>' . $basalio_ctrl_inner . '</button>';
+} elseif ( '' !== $basalio_link ) {
+	$basalio_toggle = '<a class="basalio-grid-reveal__toggle" href="' . esc_url( $basalio_link ) . '"' . $basalio_aria_controls . '>' . $basalio_ctrl_inner . '</a>';
+} else {
+	$basalio_toggle = '<button type="button" class="basalio-grid-reveal__toggle" aria-expanded="false"' . $basalio_aria_controls . '>' . $basalio_ctrl_inner . '</button>';
+}
 ?>
 <figure <?php echo $basalio_wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-grid-reveal>
 	<div class="basalio-grid-reveal__frame">
@@ -109,13 +147,6 @@ $basalio_wrapper_attributes = get_block_wrapper_attributes(
 			</figcaption>
 		<?php endif; ?>
 
-		<button
-			type="button"
-			class="basalio-grid-reveal__toggle"
-			aria-expanded="false"
-			<?php if ( $basalio_has_caption ) : ?>aria-controls="<?php echo esc_attr( $basalio_caption_id ); ?>"<?php endif; ?>
-		>
-			<span class="basalio-grid-reveal__sr"><?php echo esc_html( $basalio_button_label ); ?></span>
-		</button>
+		<?php echo $basalio_toggle; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_url / esc_attr / esc_html above. ?>
 	</div>
 </figure>

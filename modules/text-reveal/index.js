@@ -92,6 +92,14 @@
 					onChange: function ( v ) { setA( { wordByWord: v } ); },
 					help: __( 'Each word fades in one after another.', 'basalio' )
 				} ),
+				( BE.DurationField
+					? BE.DurationField(
+						__( 'Reveal speed (ms)', 'basalio' ),
+						( a.duration == null ? 600 : a.duration ),
+						function ( v ) { setA( { duration: v } ); },
+						__( 'How long each line/word takes to fade in. Higher is slower and easier to notice.', 'basalio' )
+					)
+					: null ),
 				Tip( __( 'On load, the lines fade in one after another. Screen readers get the full text immediately, and under reduced-motion it appears instantly.', 'basalio' ) )
 			];
 

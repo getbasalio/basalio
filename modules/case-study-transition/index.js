@@ -23,6 +23,8 @@
 	var PanelBody     = cmp.PanelBody;
 	var SelectControl = cmp.SelectControl;
 	var TextControl   = cmp.TextControl;
+	var ToggleControl = cmp.ToggleControl;
+	var RangeControl  = cmp.RangeControl;
 	var ToolbarGroup  = cmp.ToolbarGroup;
 	var ToolbarButton = cmp.ToolbarButton;
 
@@ -93,6 +95,37 @@
 				onChange: function ( v ) { setA( { pairId: v } ); },
 				help: __( 'Leave blank to auto-match. Or set the SAME unique word on the tile and its hero to pair them.', 'basalio' )
 			} ) );
+
+			body.push( el( TextControl, {
+				key: 'radius',
+				type: 'number',
+				label: __( 'Corner radius (px)', 'basalio' ),
+				value: ( a.borderRadius == null ? 0 : a.borderRadius ),
+				min: 0,
+				onChange: function ( v ) { setA( { borderRadius: '' === v ? 0 : parseInt( v, 10 ) || 0 } ); },
+				help: __( 'Rounds the image corners. 0 is square.', 'basalio' )
+			} ) );
+
+			body.push( el( RangeControl, {
+				key: 'dur',
+				label: __( 'Transition speed (ms)', 'basalio' ),
+				value: ( a.transitionDuration == null ? 500 : a.transitionDuration ),
+				min: 100,
+				max: 3000,
+				step: 50,
+				onChange: function ( v ) { setA( { transitionDuration: v } ); },
+				help: __( 'How long the morph takes on supporting browsers. Higher is slower and easier to see.', 'basalio' )
+			} ) );
+
+			if ( role === 'source' ) {
+				body.push( el( ToggleControl, {
+					key: 'lb',
+					label: __( 'Open image in a lightbox instead', 'basalio' ),
+					checked: !! a.lightbox,
+					onChange: function ( v ) { setA( { lightbox: v } ); },
+					help: __( 'When on, clicking expands the image in an overlay rather than navigating to the case study.', 'basalio' )
+				} ) );
+			}
 
 			body.push( Tip( __( 'On supporting browsers the tile morphs into the hero when clicked. Elsewhere it’s a normal link, and the back button always works.', 'basalio' ) ) );
 

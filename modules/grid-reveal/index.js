@@ -86,8 +86,35 @@
 						],
 						onChange: function ( v ) { setA( { revealStyle: v } ); }
 					} ),
+					el( SelectControl, {
+						key: 'ratio',
+						label: __( 'Tile shape (aspect ratio)', 'basalio' ),
+						value: a.aspectRatio || 'auto',
+						options: [
+							{ label: __( 'Original image shape', 'basalio' ), value: 'auto' },
+							{ label: __( 'Square 1:1', 'basalio' ), value: '1:1' },
+							{ label: __( 'Landscape 4:3', 'basalio' ), value: '4:3' },
+							{ label: __( 'Landscape 3:2', 'basalio' ), value: '3:2' },
+							{ label: __( 'Wide 16:9', 'basalio' ), value: '16:9' },
+							{ label: __( 'Portrait 4:5', 'basalio' ), value: '4:5' },
+							{ label: __( 'Portrait 3:4', 'basalio' ), value: '3:4' },
+							{ label: __( 'Tall 2:3', 'basalio' ), value: '2:3' }
+						],
+						onChange: function ( v ) { setA( { aspectRatio: v } ); },
+						help: __( 'Sets the tile’s shape/size. Width still follows the column it sits in.', 'basalio' )
+					} )
+				].concat(
+					BE.ImageOptions ? BE.ImageOptions( {
+						radius: a.borderRadius == null ? 2 : a.borderRadius,
+						onRadius: function ( v ) { setA( { borderRadius: v } ); },
+						linkUrl: a.linkUrl,
+						onLink: function ( v ) { setA( { linkUrl: v } ); },
+						lightbox: a.lightbox,
+						onLightbox: function ( v ) { setA( { lightbox: v } ); }
+					} ) : []
+				).concat( [
 					Tip( __( 'On the live page the caption stays hidden until a visitor hovers, focuses, or taps this tile.', 'basalio' ) )
-				];
+				] );
 			}
 
 			var inspector = el(

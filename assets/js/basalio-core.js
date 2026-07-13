@@ -79,11 +79,16 @@
 			// Touch / coarse-pointer tap-to-reveal. Hover doesn't exist here,
 			// so a tap toggles the revealed state. (On fine pointers CSS :hover
 			// already handles reveal; this click just mirrors the state.)
-			toggle.addEventListener( 'click', function () {
-				var revealed = fig.classList.toggle( 'is-revealed' );
-				fig.removeAttribute( 'data-basalio-dismissed' );
-				setExpanded( revealed );
-			} );
+			// Skipped when the tile is a link or a lightbox trigger, so a tap
+			// navigates / expands instead of just toggling the caption.
+			var isNav = 'A' === toggle.tagName || toggle.hasAttribute( 'data-basalio-lightbox' );
+			if ( ! isNav ) {
+				toggle.addEventListener( 'click', function () {
+					var revealed = fig.classList.toggle( 'is-revealed' );
+					fig.removeAttribute( 'data-basalio-dismissed' );
+					setExpanded( revealed );
+				} );
+			}
 
 			// Keyboard focus reveals via CSS :focus-within; we only keep the
 			// ARIA state and clear any prior dismissal in sync.
@@ -290,6 +295,13 @@
 				return;
 			}
 
+			// Roving tabindex: exactly one filter is in the tab order at a time.
+			var setRoving = function ( activeBtn ) {
+				forEach( filters, function ( f ) {
+					f.setAttribute( 'tabindex', f === activeBtn ? '0' : '-1' );
+				} );
+			};
+
 			var apply = function ( slug, activeBtn ) {
 				var shown = 0;
 				forEach( items, function ( item ) {
@@ -306,6 +318,7 @@
 					f.classList.toggle( 'is-active', active );
 					f.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
 				} );
+				setRoving( activeBtn );
 
 				if ( status ) {
 					var noun = ( 1 === shown ) ? ' project.' : ' projects.';
@@ -316,6 +329,49 @@
 			forEach( filters, function ( f ) {
 				f.addEventListener( 'click', function () {
 					apply( f.getAttribute( 'data-basalio-filter' ), f );
+				} );
+			} );
+
+			// Arrow-key navigation across the filter toolbar (WAI-ARIA toolbar
+			// pattern): arrows move focus, Enter/Space (native button) filters.
+			var initialActive = null;
+			forEach( filters, function ( f ) {
+				if ( f.classList.contains( 'is-active' ) ) {
+					initialActive = f;
+				}
+			} );
+			setRoving( initialActive || filters[ 0 ] );
+
+			var focusAt = function ( idx ) {
+				var n = filters.length;
+				idx = ( idx + n ) % n;
+				setRoving( filters[ idx ] );
+				filters[ idx ].focus();
+			};
+
+			forEach( filters, function ( f ) {
+				f.addEventListener( 'keydown', function ( e ) {
+					var idx = Array.prototype.indexOf.call( filters, f );
+					switch ( e.key ) {
+						case 'ArrowRight':
+						case 'ArrowDown':
+							e.preventDefault();
+							focusAt( idx + 1 );
+							break;
+						case 'ArrowLeft':
+						case 'ArrowUp':
+							e.preventDefault();
+							focusAt( idx - 1 );
+							break;
+						case 'Home':
+							e.preventDefault();
+							focusAt( 0 );
+							break;
+						case 'End':
+							e.preventDefault();
+							focusAt( filters.length - 1 );
+							break;
+					}
 				} );
 			} );
 		} );
@@ -367,7 +423,12 @@
 				if ( handle.setPointerCapture ) {
 					try { handle.setPointerCapture( e.pointerId ); } catch ( err ) {}
 				}
+				// preventDefault() below stops text selection during the drag, but it
+				// also suppresses the browser's default focus, which would leave the
+				// slider unreachable by keyboard after a click/tap. Focus it ourselves
+				// so the arrow-key contract works once the user has grabbed the handle.
 				e.preventDefault();
+				handle.focus();
 			} );
 			handle.addEventListener( 'pointermove', function ( e ) {
 				if ( dragging ) {
@@ -426,6 +487,210 @@
 				if ( handled ) {
 					e.preventDefault();
 				}
+			} );
+		} );
+	} );
+
+	/* ---------------------------------------------------------------------
+	 * Module 9 (v2.0), Custom Cursor
+	 *
+	 * A decorative accent that trails the pointer inside an area. Fine pointers
+	 * with hover only, never on touch, never under reduced motion. The native
+	 * cursor is untouched and the accent is pointer-events:none, so it never
+	 * blocks a click.
+	 * ------------------------------------------------------------------- */
+	Basalio.register( 'custom-cursor', function ( root ) {
+		var fine = window.matchMedia &&
+			window.matchMedia( '(hover: hover) and (pointer: fine)' );
+		if ( ! fine || ! fine.matches ) {
+			return;
+		}
+		if ( window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+			return;
+		}
+
+		var areas = root.querySelectorAll(
+			'[data-basalio-custom-cursor]:not([data-basalio-ready])'
+		);
+		forEach( areas, function ( area ) {
+			area.setAttribute( 'data-basalio-ready', '' );
+			area.addEventListener( 'pointermove', function ( e ) {
+				var r = area.getBoundingClientRect();
+				area.style.setProperty( '--basalio-cursor-x', ( e.clientX - r.left ) + 'px' );
+				area.style.setProperty( '--basalio-cursor-y', ( e.clientY - r.top ) + 'px' );
+				area.classList.add( 'is-cursor-active' );
+			} );
+			area.addEventListener( 'pointerleave', function () {
+				area.classList.remove( 'is-cursor-active' );
+			} );
+		} );
+	} );
+
+	/* ---------------------------------------------------------------------
+	 * Module 5 (v2.0), Scroll Sequence
+	 *
+	 * Maps scroll progress through a tall wrapper to the active frame. The
+	 * Previous and Next buttons step frames manually, so the sequence is usable
+	 * without scrolling (WCAG 2.5.1). Under reduced motion the scroll driver is
+	 * skipped and only the buttons drive it.
+	 * ------------------------------------------------------------------- */
+	Basalio.register( 'scroll-sequence', function ( root ) {
+		var seqs = root.querySelectorAll(
+			'[data-basalio-scroll-sequence]:not([data-basalio-ready])'
+		);
+		var reduce = window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		forEach( seqs, function ( seq ) {
+			seq.setAttribute( 'data-basalio-ready', '' );
+			var frames = seq.querySelectorAll( '.basalio-scroll-sequence__frame' );
+			var status = seq.querySelector( '.basalio-scroll-sequence__status' );
+			var prev = seq.querySelector( '[data-basalio-seq-prev]' );
+			var next = seq.querySelector( '[data-basalio-seq-next]' );
+			var total = frames.length;
+			if ( ! total ) {
+				return;
+			}
+			var current = 0;
+
+			var show = function ( i ) {
+				i = Math.max( 0, Math.min( total - 1, i ) );
+				if ( i === current ) {
+					return;
+				}
+				frames[ current ].classList.remove( 'is-active' );
+				frames[ i ].classList.add( 'is-active' );
+				current = i;
+				if ( status ) {
+					var fmt = status.getAttribute( 'data-basalio-seq-format' ) || 'Frame {current} of {total}';
+					status.textContent = fmt
+						.replace( '{current}', i + 1 )
+						.replace( '{total}', total );
+				}
+			};
+
+			if ( prev ) {
+				prev.addEventListener( 'click', function () { show( current - 1 ); } );
+			}
+			if ( next ) {
+				next.addEventListener( 'click', function () { show( current + 1 ); } );
+			}
+
+			// Scroll-driven scrubbing (skipped under reduced motion).
+			if ( ! reduce ) {
+				var ticking = false;
+				var onScroll = function () {
+					if ( ticking ) {
+						return;
+					}
+					ticking = true;
+					window.requestAnimationFrame( function () {
+						ticking = false;
+						var r = seq.getBoundingClientRect();
+						var scrollable = seq.offsetHeight - window.innerHeight;
+						if ( scrollable <= 0 ) {
+							return;
+						}
+						var progress = Math.max( 0, Math.min( 1, -r.top / scrollable ) );
+						show( Math.round( progress * ( total - 1 ) ) );
+					} );
+				};
+				window.addEventListener( 'scroll', onScroll, { passive: true } );
+				onScroll();
+			}
+		} );
+	} );
+
+	/* ---------------------------------------------------------------------
+	 * Shared, Lightbox
+	 *
+	 * Any element carrying data-basalio-lightbox (its value is the full-size
+	 * image URL) opens that image in a focus-trapped, Escape-dismissable
+	 * overlay. One overlay is built lazily and reused by every image block that
+	 * turns on "expand" mode. Reduced motion is respected by the CSS.
+	 * ------------------------------------------------------------------- */
+	Basalio.register( 'lightbox', function ( root ) {
+		var triggers = root.querySelectorAll(
+			'[data-basalio-lightbox]:not([data-basalio-lb-ready])'
+		);
+		if ( ! triggers.length ) {
+			return;
+		}
+
+		var overlay = document.getElementById( 'basalio-lightbox' );
+		var imgEl, captionEl, closeBtn, lastFocused;
+
+		var close = function () {
+			if ( ! overlay ) {
+				return;
+			}
+			overlay.classList.remove( 'is-open' );
+			document.documentElement.style.overflow = '';
+			window.setTimeout( function () { overlay.hidden = true; }, 220 );
+			if ( lastFocused && lastFocused.focus ) {
+				lastFocused.focus();
+			}
+		};
+
+		var build = function () {
+			overlay = document.createElement( 'div' );
+			overlay.id = 'basalio-lightbox';
+			overlay.className = 'basalio-lightbox';
+			overlay.setAttribute( 'role', 'dialog' );
+			overlay.setAttribute( 'aria-modal', 'true' );
+			overlay.setAttribute( 'aria-label', 'Image viewer' );
+			overlay.hidden = true;
+			overlay.innerHTML =
+				'<div class="basalio-lightbox__backdrop" data-basalio-lb-dismiss></div>' +
+				'<figure class="basalio-lightbox__figure">' +
+					'<img class="basalio-lightbox__img" alt="" />' +
+					'<figcaption class="basalio-lightbox__caption"></figcaption>' +
+				'</figure>' +
+				'<button type="button" class="basalio-lightbox__close" aria-label="Close image viewer">&#215;</button>';
+			document.body.appendChild( overlay );
+			imgEl = overlay.querySelector( '.basalio-lightbox__img' );
+			captionEl = overlay.querySelector( '.basalio-lightbox__caption' );
+			closeBtn = overlay.querySelector( '.basalio-lightbox__close' );
+
+			closeBtn.addEventListener( 'click', close );
+			overlay.querySelector( '[data-basalio-lb-dismiss]' ).addEventListener( 'click', close );
+			overlay.addEventListener( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key ) {
+					close();
+				} else if ( 'Tab' === e.key ) {
+					// The close button is the only focusable control, keep focus on it.
+					e.preventDefault();
+					closeBtn.focus();
+				}
+			} );
+		};
+
+		var open = function ( src, alt ) {
+			if ( ! overlay ) {
+				build();
+			}
+			lastFocused = document.activeElement;
+			imgEl.setAttribute( 'src', src );
+			imgEl.setAttribute( 'alt', alt || '' );
+			captionEl.textContent = alt || '';
+			captionEl.hidden = ! alt;
+			overlay.hidden = false;
+			document.documentElement.style.overflow = 'hidden';
+			window.requestAnimationFrame( function () {
+				overlay.classList.add( 'is-open' );
+			} );
+			closeBtn.focus();
+		};
+
+		forEach( triggers, function ( t ) {
+			t.setAttribute( 'data-basalio-lb-ready', '' );
+			t.addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+				open(
+					t.getAttribute( 'data-basalio-lightbox' ),
+					t.getAttribute( 'data-basalio-lightbox-alt' )
+				);
 			} );
 		} );
 	} );

@@ -75,11 +75,78 @@
 	 * @return {Object} React element.
 	 */
 	BasalioEd.Tip = function ( text ) {
+		// The icon glyph is drawn in CSS (::before). Keeping the span empty means
+		// that if the stylesheet ever fails to load, there is no stray letter.
 		return el(
 			'p',
 			{ className: 'basalio-ed-tip' },
-			el( 'span', { className: 'basalio-ed-tip-mark', 'aria-hidden': 'true' }, 'i' ),
-			el( 'span', null, text )
+			el( 'span', { className: 'basalio-ed-tip-mark', 'aria-hidden': 'true' } ),
+			el( 'span', { className: 'basalio-ed-tip-text' }, text )
 		);
+	};
+
+	/**
+	 * Shared image-behavior controls, reused by every block that shows an image:
+	 * a numeric corner-radius field, an optional Link URL, and a lightbox toggle.
+	 * Returns an array of controls to drop into a panel body.
+	 *
+	 * @param {Object} o { radius, onRadius, linkUrl, onLink, lightbox, onLightbox }
+	 * @return {Array} React elements.
+	 */
+	BasalioEd.ImageOptions = function ( o ) {
+		var wp = window.wp;
+		var __ = wp.i18n.__;
+		var cmp = wp.components;
+		return [
+			el( cmp.TextControl, {
+				key: 'radius',
+				type: 'number',
+				label: __( 'Corner radius (px)', 'basalio' ),
+				value: ( o.radius == null ? '' : o.radius ),
+				min: 0,
+				onChange: function ( v ) { o.onRadius( '' === v ? 0 : parseInt( v, 10 ) || 0 ); },
+				help: __( 'Rounds the image corners. 0 is square.', 'basalio' )
+			} ),
+			el( cmp.TextControl, {
+				key: 'link',
+				type: 'url',
+				label: __( 'Link URL', 'basalio' ),
+				value: o.linkUrl || '',
+				placeholder: 'https://',
+				onChange: o.onLink,
+				help: __( 'Optional. Clicking the image opens this page.', 'basalio' )
+			} ),
+			el( cmp.ToggleControl, {
+				key: 'lb',
+				label: __( 'Open image in a lightbox', 'basalio' ),
+				checked: !! o.lightbox,
+				onChange: o.onLightbox,
+				help: __( 'Shows the full image in an overlay. Takes priority over the link when both are set.', 'basalio' )
+			} )
+		];
+	};
+
+	/**
+	 * Shared animation-speed control (milliseconds), for the blocks whose
+	 * entrance is otherwise too quick to notice.
+	 *
+	 * @param {string}   label
+	 * @param {number}   value
+	 * @param {Function} onChange
+	 * @param {string}   [help]
+	 * @return {Object} React element.
+	 */
+	BasalioEd.DurationField = function ( label, value, onChange, help ) {
+		var wp = window.wp;
+		var cmp = wp.components;
+		return el( cmp.RangeControl, {
+			label: label,
+			value: value,
+			min: 200,
+			max: 4000,
+			step: 100,
+			onChange: onChange,
+			help: help
+		} );
 	};
 }( window.wp ) );

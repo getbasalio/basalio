@@ -3,7 +3,7 @@
  * Plugin Name:       Basalio
  * Plugin URI:        https://example.com/basalio
  * Description:        A narrow, opinionated interaction toolkit for portfolio and case-study sites. Framer-quality, accessibility-first Gutenberg blocks. Not a page builder, not a general animation engine.
- * Version:           0.2.1
+ * Version:           0.5.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Basalio
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version constant. Also used as the asset cache-busting version for every
  * enqueued script/style so bumping this here busts caches everywhere.
  */
-define( 'BASALIO_VERSION', '0.2.1' );
+define( 'BASALIO_VERSION', '0.5.0' );
 
 /** Absolute path to the plugin root, with trailing slash. */
 define( 'BASALIO_PATH', plugin_dir_path( __FILE__ ) );
@@ -55,6 +55,34 @@ require_once BASALIO_PATH . 'includes/class-basalio.php';
  */
 function basalio_enqueue_core() {
 	wp_enqueue_script( 'basalio-core' );
+	wp_enqueue_style( 'basalio-core' );
+}
+
+/**
+ * Wrap an image's HTML in the click behavior an image block was configured with.
+ *
+ * Lightbox wins over a link when both are set. Returns the image untouched when
+ * neither is configured. Shared by every image block so the behavior is
+ * identical and escaping lives in one place.
+ *
+ * @param string $img_html  Fully-built (already escaped) <img> markup.
+ * @param string $link_url  Optional link target.
+ * @param bool   $lightbox  Whether to open the full image in the lightbox.
+ * @param string $full_url  Full-size image URL for the lightbox.
+ * @param string $alt       Alt/caption text for the lightbox.
+ * @return string
+ */
+function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = '' ) {
+	if ( $lightbox && $full_url ) {
+		return '<button type="button" class="basalio-media-expand" data-basalio-lightbox="'
+			. esc_url( $full_url ) . '" data-basalio-lightbox-alt="' . esc_attr( $alt )
+			. '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '">' . $img_html . '</button>';
+	}
+	$link_url = esc_url( (string) $link_url );
+	if ( '' !== $link_url ) {
+		return '<a class="basalio-media-link" href="' . $link_url . '">' . $img_html . '</a>';
+	}
+	return $img_html;
 }
 
 /**

@@ -22,6 +22,7 @@
 	var cmp           = wp.components;
 	var PanelBody     = cmp.PanelBody;
 	var TextControl   = cmp.TextControl;
+	var ToggleControl = cmp.ToggleControl;
 	var ToolbarGroup  = cmp.ToolbarGroup;
 	var ToolbarButton = cmp.ToolbarButton;
 
@@ -84,6 +85,19 @@
 						onChange: function ( v ) { setA( { url: v } ); },
 						placeholder: 'https://…',
 						help: __( 'Optional. Where the item links to.', 'basalio' )
+					} ),
+					el( ToggleControl, {
+						label: __( 'Open image in a lightbox', 'basalio' ),
+						checked: !! a.lightbox,
+						onChange: function ( v ) { setA( { lightbox: v } ); },
+						help: __( 'Shows the full image in an overlay. Takes priority over the link.', 'basalio' )
+					} ),
+					el( TextControl, {
+						type: 'number',
+						label: __( 'Corner radius (px)', 'basalio' ),
+						value: a.borderRadius == null ? 0 : a.borderRadius,
+						min: 0,
+						onChange: function ( v ) { setA( { borderRadius: '' === v ? 0 : parseInt( v, 10 ) || 0 } ); }
 					} ),
 					el( TextControl, {
 						label: __( 'Image alt text', 'basalio' ),

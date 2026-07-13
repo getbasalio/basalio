@@ -54,12 +54,20 @@ if ( '' === $basalio_img_html && '' !== $basalio_image_url ) {
 	);
 }
 
-// The image frame is a link when a URL is set.
-if ( '' !== $basalio_url ) {
-	$basalio_frame_open  = '<a class="basalio-grid-item__frame" href="' . esc_url( $basalio_url ) . '">';
+$basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 0;
+$basalio_lightbox = ! empty( $attributes['lightbox'] );
+$basalio_full     = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
+$basalio_frame_style = $basalio_radius ? ' style="border-radius:' . $basalio_radius . 'px;overflow:hidden"' : '';
+
+// The image frame is a lightbox trigger, a link, or a plain container.
+if ( $basalio_lightbox && $basalio_full ) {
+	$basalio_frame_open  = '<button type="button" class="basalio-grid-item__frame basalio-media-expand" data-basalio-lightbox="' . esc_url( $basalio_full ) . '" data-basalio-lightbox-alt="' . esc_attr( $basalio_image_alt ) . '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '"' . $basalio_frame_style . '>';
+	$basalio_frame_close = '</button>';
+} elseif ( '' !== $basalio_url ) {
+	$basalio_frame_open  = '<a class="basalio-grid-item__frame" href="' . esc_url( $basalio_url ) . '"' . $basalio_frame_style . '>';
 	$basalio_frame_close = '</a>';
 } else {
-	$basalio_frame_open  = '<div class="basalio-grid-item__frame">';
+	$basalio_frame_open  = '<div class="basalio-grid-item__frame"' . $basalio_frame_style . '>';
 	$basalio_frame_close = '</div>';
 }
 

@@ -44,9 +44,28 @@ final class Basalio {
 	 * Wire up hooks.
 	 */
 	private function __construct() {
+		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( $this, 'register_assets' ), 5 );
 		add_action( 'init', array( $this, 'register_modules' ), 10 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		add_filter( 'block_editor_settings_all', array( $this, 'inject_editor_iframe_styles' ) );
+	}
+
+	/**
+	 * Load translations for the PHP side of the plugin.
+	 *
+	 * Hooked on init (never earlier) so it plays well with the just-in-time
+	 * translation loading in current WordPress. Editor-script (JS) strings are
+	 * wired separately in register_modules() via wp_set_script_translations().
+	 *
+	 * @return void
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain(
+			'basalio',
+			false,
+			dirname( plugin_basename( BASALIO_FILE ) ) . '/languages'
+		);
 	}
 
 	/**
@@ -68,6 +87,15 @@ final class Basalio {
 				'in_footer' => true,
 				'strategy'  => 'defer',
 			)
+		);
+
+		// Shared front-end styles (lightbox + clickable-image affordances),
+		// enqueued next to the core script by basalio_enqueue_core().
+		wp_register_style(
+			'basalio-core',
+			BASALIO_URL . 'assets/css/basalio-core.css',
+			array(),
+			BASALIO_VERSION
 		);
 
 		// Shared editor UI helper + styling. Every module's editor script lists
@@ -97,8 +125,36 @@ final class Basalio {
 	 * @return void
 	 */
 	public function enqueue_editor_assets() {
+		// The helper script must load in the editor's main frame, where block
+		// registration runs.
 		wp_enqueue_script( 'basalio-editor' );
+		// The style is also enqueued for the outer frame as a fallback.
 		wp_enqueue_style( 'basalio-editor' );
+	}
+
+	/**
+	 * Inject the editor chrome CSS into the block-canvas iframe.
+	 *
+	 * WordPress 6+ renders the block canvas inside an iframe. A normally enqueued
+	 * stylesheet does not reach inside it, so the BasalioEd panels would render
+	 * unstyled. Adding the CSS to the editor "styles" settings loads it in the
+	 * iframe, where the block edit() output actually lives.
+	 *
+	 * @param array $settings Block editor settings.
+	 * @return array
+	 */
+	public function inject_editor_iframe_styles( $settings ) {
+		$css_path = BASALIO_PATH . 'assets/css/basalio-editor.css';
+		if ( file_exists( $css_path ) ) {
+			$css = file_get_contents( $css_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+			if ( false !== $css ) {
+				if ( ! isset( $settings['styles'] ) || ! is_array( $settings['styles'] ) ) {
+					$settings['styles'] = array();
+				}
+				$settings['styles'][] = array( 'css' => $css );
+			}
+		}
+		return $settings;
 	}
 
 	/**
@@ -119,7 +175,16 @@ final class Basalio {
 		}
 
 		foreach ( $modules as $block_json ) {
-			register_block_type_from_metadata( dirname( $block_json ) );
+			$block_type = register_block_type_from_metadata( dirname( $block_json ) );
+
+			// Point each block's editor script at the plugin's /languages folder so
+			// its wp.i18n __() strings resolve once translation files ship. Harmless
+			// with no translations installed (it simply finds nothing to load).
+			if ( $block_type instanceof WP_Block_Type && function_exists( 'wp_set_script_translations' ) ) {
+				foreach ( (array) $block_type->editor_script_handles as $handle ) {
+					wp_set_script_translations( $handle, 'basalio', BASALIO_PATH . 'languages' );
+				}
+			}
 		}
 	}
 }

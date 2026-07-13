@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "basalio/text-reveal",
-	"version": "0.2.1",
+	"version": "0.5.0",
 	"title": "Basalio: Text Reveal",
 	"category": "text",
 	"icon": "editor-textcolor",
@@ -52,6 +52,10 @@
 		"wordByWord": {
 			"type": "boolean",
 			"default": false
+		},
+		"duration": {
+			"type": "number",
+			"default": 600
 		}
 	},
 	"editorScript": "file:./index.js",

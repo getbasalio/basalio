@@ -1,0 +1,88 @@
+/**
+ * Basalio: Scroll Sequence, front-end + editor styles.
+ *
+ * The tall wrapper creates scroll distance. The stage sticks to the viewport and
+ * shows the active frame. Frame swaps are instant (no motion), so there is
+ * nothing to disable under reduced motion beyond the scroll driver, which the
+ * script skips. The controls always work.
+ */
+
+.basalio-scroll-sequence {
+	position: relative;
+	height: calc( var( --basalio-seq-screens, 3 ) * 100vh );
+}
+
+.basalio-scroll-sequence__stage {
+	position: sticky;
+	top: 0;
+	overflow: hidden;
+	background: #0d0d0f;
+}
+
+/* The first frame sits in flow and sets the stage height to the image's own
+   height (no letterbox padding above/below). The rest overlay it exactly. */
+.basalio-scroll-sequence__frame {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+}
+
+.basalio-scroll-sequence__frame:first-of-type {
+	position: relative;
+	height: auto;
+}
+
+.basalio-scroll-sequence__frame.is-active {
+	opacity: 1;
+}
+
+.basalio-scroll-sequence__controls {
+	position: absolute;
+	left: 50%;
+	bottom: 24px;
+	transform: translateX( -50% );
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	border-radius: 999px;
+	background: rgba( 13, 13, 15, 0.72 );
+	backdrop-filter: blur( 6px );
+}
+
+.basalio-scroll-sequence__btn {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	/* !important so a theme's <button> styles can't repaint the step controls. */
+	border: 1px solid rgba( 255, 255, 255, 0.28 ) !important;
+	background: transparent !important;
+	color: #fff !important;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.basalio-scroll-sequence__btn:hover {
+	background: rgba( 255, 255, 255, 0.12 );
+	border-color: rgba( 255, 255, 255, 0.55 );
+}
+
+.basalio-scroll-sequence__btn:focus-visible {
+	outline: 2px solid #c6f135;
+	outline-offset: 2px;
+}
+
+.basalio-scroll-sequence__status {
+	margin: 0;
+	min-width: 8ch;
+	text-align: center;
+	font-family: 'IBM Plex Mono', ui-monospace, monospace;
+	font-size: 12px;
+	color: #fff;
+}

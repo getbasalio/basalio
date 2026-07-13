@@ -1,0 +1,58 @@
+/**
+ * Basalio: Custom Cursor, front-end + editor styles.
+ *
+ * The accent is decorative (pointer-events:none) and the native cursor is left
+ * alone, so it never blocks or hides a click target. Position comes from two
+ * custom properties the shared core sets on pointer move. With no JS, on touch,
+ * or under reduced motion, the accent stays hidden.
+ */
+
+.basalio-custom-cursor {
+	position: relative;
+}
+
+.basalio-custom-cursor__accent {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: var( --basalio-cursor-size, 30px );
+	height: var( --basalio-cursor-size, 30px );
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0;
+	z-index: 5;
+	transform: translate(
+		calc( var( --basalio-cursor-x, 0px ) - 50% ),
+		calc( var( --basalio-cursor-y, 0px ) - 50% )
+	);
+	transition: opacity 0.2s ease, transform 0.12s ease-out;
+	will-change: transform;
+}
+
+.basalio-custom-cursor.is-cursor-ring .basalio-custom-cursor__accent {
+	border: 2px solid var( --basalio-cursor-color, #c6f135 );
+}
+
+.basalio-custom-cursor.is-cursor-dot .basalio-custom-cursor__accent {
+	background: var( --basalio-cursor-color, #c6f135 );
+}
+
+/* A custom uploaded image / SVG cursor. */
+.basalio-custom-cursor.is-cursor-image .basalio-custom-cursor__accent {
+	background-image: var( --basalio-cursor-img );
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 0;
+}
+
+.basalio-custom-cursor.is-cursor-active .basalio-custom-cursor__accent {
+	opacity: 1;
+}
+
+/* No trailing accent for anyone who prefers reduced motion. */
+@media ( prefers-reduced-motion: reduce ) {
+	.basalio-custom-cursor__accent {
+		display: none;
+	}
+}

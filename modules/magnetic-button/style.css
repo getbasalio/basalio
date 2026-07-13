@@ -17,7 +17,7 @@
 	--basalio-btn-bg: #17171a;
 	--basalio-btn-color: #f6f4ef;
 	--basalio-btn-radius: 2px;
-	--basalio-btn-focus: #3049ff;
+	--basalio-btn-focus: #c6f135;
 	--basalio-btn-ease: cubic-bezier( 0.16, 1, 0.3, 1 );
 
 	display: inline-flex;
@@ -25,9 +25,10 @@
 	justify-content: center;
 	gap: 8px;
 	padding: 13px 24px;
-	background: var( --basalio-btn-bg );
-	color: var( --basalio-btn-color );
-	border: 1px solid var( --basalio-btn-bg );
+	/* !important so a theme's <a>/button styles can't recolor the CTA. */
+	background: var( --basalio-btn-bg ) !important;
+	color: var( --basalio-btn-color ) !important;
+	border: 1px solid var( --basalio-btn-bg ) !important;
 	border-radius: var( --basalio-btn-radius );
 	font-weight: 500;
 	line-height: 1;

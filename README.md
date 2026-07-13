@@ -11,7 +11,7 @@ site-wide.
 
 ## Blocks
 
-Six blocks ship today, plus one child block used inside the Filterable Grid:
+All nine roadmap blocks ship today, plus one child block used inside the Filterable Grid:
 
 - **Grid Reveal.** A portfolio tile that reveals its caption on hover, focus, or tap.
 - **Case Study Transition.** A shared-element view transition from a grid tile to its case-study page, with a plain-navigation fallback.
@@ -19,6 +19,9 @@ Six blocks ship today, plus one child block used inside the Filterable Grid:
 - **Magnetic Button.** A call-to-action that pulls toward the pointer. Pointer only, off on touch and under reduced motion.
 - **Before / After.** An interactive comparison slider built as a real ARIA slider, operable by drag, touch, and arrow keys.
 - **Filterable Grid** (with its **Grid Item** child). A portfolio grid visitors filter by discipline, using real buttons with `aria-pressed` and a live-region count.
+- **Custom Cursor.** A branded cursor accent that trails the pointer inside an area. Pointer only, off on touch and reduced motion, and it never covers a click target.
+- **Scroll Sequence.** A frame sequence tied to scroll, with Previous and Next buttons so it also works without scrolling (WCAG 2.5.1).
+- **Pinned Scroll.** A pinned image beside a story that scrolls past it. Pure CSS sticky, so it never traps focus and degrades to a normal stack under reduced motion.
 
 `WCAG-QA.md` documents the accessibility behavior of each block, with how it was verified.
 
@@ -43,8 +46,12 @@ basalio/
 │   ├── magnetic-button/
 │   ├── before-after/
 │   ├── filterable-grid/
-│   └── grid-item/               Child of filterable-grid (no standalone insert)
+│   ├── grid-item/               Child of filterable-grid (no standalone insert)
+│   ├── custom-cursor/
+│   ├── scroll-sequence/
+│   └── pinned-scroll/           Pure CSS, ships no JS
 ├── uninstall.php                Removes the plugin's version option on delete
+├── LICENSE                      GPL-2.0 full text
 ├── README.md
 └── WCAG-QA.md
 ```

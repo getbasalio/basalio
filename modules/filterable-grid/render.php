@@ -64,11 +64,17 @@ if ( 0 === $basalio_total ) {
 	return '';
 }
 
-$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => 'basalio-filterable-grid' ) );
+$basalio_btn_radius = isset( $attributes['buttonRadius'] ) ? max( 0, absint( $attributes['buttonRadius'] ) ) : 2;
+$basalio_wrapper    = get_block_wrapper_attributes(
+	array(
+		'class' => 'basalio-filterable-grid',
+		'style' => '--basalio-fg-radius:' . $basalio_btn_radius . 'px',
+	)
+);
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-filterable-grid>
 	<?php if ( ! empty( $basalio_cats ) ) : ?>
-		<div class="basalio-filterable-grid__filters" role="group" aria-label="<?php esc_attr_e( 'Filter by discipline', 'basalio' ); ?>">
+		<div class="basalio-filterable-grid__filters" role="toolbar" aria-orientation="horizontal" aria-label="<?php esc_attr_e( 'Filter by discipline', 'basalio' ); ?>">
 			<button type="button" class="basalio-filterable-grid__filter is-active" data-basalio-filter="*" aria-pressed="true"><?php echo esc_html( $basalio_all_label ); ?></button>
 			<?php foreach ( $basalio_cats as $basalio_slug => $basalio_label ) : ?>
 				<button type="button" class="basalio-filterable-grid__filter" data-basalio-filter="<?php echo esc_attr( $basalio_slug ); ?>" aria-pressed="false"><?php echo esc_html( $basalio_label ); ?></button>

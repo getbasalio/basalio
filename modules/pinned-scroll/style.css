@@ -1,0 +1,62 @@
+/**
+ * Basalio: Pinned Scroll, front-end + editor styles.
+ *
+ * Pure CSS pinning with position: sticky. No JavaScript, no scroll hijacking.
+ * The sticky is dropped under reduced motion and on narrow screens, where the
+ * layout becomes a normal vertical stack.
+ */
+
+.basalio-pinned-scroll {
+	display: grid;
+	grid-template-columns: var( --basalio-ps-cols, 1fr 1fr );
+	gap: 48px;
+	/* stretch (not start) so the media column is as tall as the story column.
+	   The sticky image lives inside it and can only travel as far as its own
+	   column is tall, so the column must match the story for the pin to hold
+	   through the whole scroll. */
+	align-items: stretch;
+}
+
+.basalio-pinned-scroll.media-right .basalio-pinned-scroll__media {
+	order: 2;
+}
+
+.basalio-pinned-scroll__media-inner {
+	position: sticky;
+	top: 12vh;
+}
+
+.basalio-pinned-scroll__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var( --basalio-ps-radius, 4px );
+}
+
+.basalio-pinned-scroll__story > *:first-child {
+	margin-top: 0;
+}
+
+/* Give the story some vertical room so the pin has something to hold against. */
+.basalio-pinned-scroll__story > * + * {
+	margin-top: 1.2em;
+}
+
+@media ( max-width: 781px ) {
+	.basalio-pinned-scroll {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+	.basalio-pinned-scroll.media-right .basalio-pinned-scroll__media {
+		order: 0;
+	}
+	.basalio-pinned-scroll__media-inner {
+		position: static;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.basalio-pinned-scroll__media-inner {
+		position: static;
+	}
+}

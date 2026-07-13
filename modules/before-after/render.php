@@ -81,6 +81,22 @@ $basalio_after_label  = ( isset( $attributes['afterLabel'] ) && '' !== $attribut
 $basalio_start = isset( $attributes['startPosition'] ) ? (int) $attributes['startPosition'] : 50;
 $basalio_start = max( 0, min( 100, $basalio_start ) );
 
+// Optional fixed aspect ratio, so the comparison can be cropped to a shape the
+// user picks (landscape / square / portrait) regardless of the source images.
+$basalio_ratios = array(
+	'1:1'  => '1 / 1',
+	'4:3'  => '4 / 3',
+	'3:2'  => '3 / 2',
+	'16:9' => '16 / 9',
+	'21:9' => '21 / 9',
+	'4:5'  => '4 / 5',
+	'3:4'  => '3 / 4',
+	'2:3'  => '2 / 3',
+	'9:16' => '9 / 16',
+);
+$basalio_ratio_key = isset( $attributes['aspectRatio'] ) ? (string) $attributes['aspectRatio'] : 'auto';
+$basalio_ratio_css = isset( $basalio_ratios[ $basalio_ratio_key ] ) ? $basalio_ratios[ $basalio_ratio_key ] : '';
+
 $basalio_slider_label = sprintf(
 	/* translators: 1: before label, 2: after label. */
 	__( 'Reveal %1$s over %2$s', 'basalio' ),
@@ -88,9 +104,14 @@ $basalio_slider_label = sprintf(
 	$basalio_after_label
 );
 
-$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => 'basalio-before-after' ) );
+$basalio_classes = 'basalio-before-after' . ( '' !== $basalio_ratio_css ? ' has-ratio' : '' );
+$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => $basalio_classes ) );
+$basalio_style   = '--basalio-ba-pos:' . (int) $basalio_start . '%';
+if ( '' !== $basalio_ratio_css ) {
+	$basalio_style .= ';--basalio-ba-ratio:' . $basalio_ratio_css;
+}
 ?>
-<div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-before-after style="--basalio-ba-pos:<?php echo (int) $basalio_start; ?>%">
+<div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-before-after style="<?php echo esc_attr( $basalio_style ); ?>">
 	<div class="basalio-before-after__frame">
 		<?php echo $basalio_after; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>
 		<?php echo $basalio_before; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>

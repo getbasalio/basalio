@@ -18,6 +18,7 @@
 	var TextControl   = cmp.TextControl;
 	var RangeControl  = cmp.RangeControl;
 	var ToggleControl = cmp.ToggleControl;
+	var SelectControl = cmp.SelectControl;
 
 	var BE    = window.BasalioEd || {};
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
@@ -60,6 +61,18 @@
 					max: 40,
 					onChange: function ( v ) { setA( { strength: v } ); },
 					help: __( 'How far the button pulls toward the pointer.', 'basalio' )
+				} ),
+				el( SelectControl, {
+					key: 'align',
+					label: __( 'Alignment', 'basalio' ),
+					value: a.alignment || 'left',
+					options: [
+						{ label: __( 'Left', 'basalio' ), value: 'left' },
+						{ label: __( 'Center', 'basalio' ), value: 'center' },
+						{ label: __( 'Right', 'basalio' ), value: 'right' }
+					],
+					onChange: function ( v ) { setA( { alignment: v } ); },
+					help: __( 'Where the button sits within its width.', 'basalio' )
 				} ),
 				Tip( __( 'The pull is pointer-only. On touch screens and for anyone using reduced motion, it stays a normal, keyboard-friendly button.', 'basalio' ) )
 			];

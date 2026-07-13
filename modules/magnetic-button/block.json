@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "basalio/magnetic-button",
-	"version": "0.2.1",
+	"version": "0.5.0",
 	"title": "Basalio: Magnetic Button",
 	"category": "design",
 	"icon": "button",
@@ -36,6 +36,10 @@
 		"opensInNewTab": {
 			"type": "boolean",
 			"default": false
+		},
+		"alignment": {
+			"type": "string",
+			"default": "left"
 		}
 	},
 	"editorScript": "file:./index.js",

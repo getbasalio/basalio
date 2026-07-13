@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "basalio/grid-reveal",
-	"version": "0.2.1",
+	"version": "0.5.0",
 	"title": "Basalio: Grid Reveal",
 	"category": "media",
 	"icon": "images-alt2",
@@ -41,6 +41,22 @@
 			"type": "string",
 			"enum": [ "crossfade", "opacity" ],
 			"default": "crossfade"
+		},
+		"aspectRatio": {
+			"type": "string",
+			"default": "auto"
+		},
+		"borderRadius": {
+			"type": "number",
+			"default": 2
+		},
+		"linkUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"lightbox": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"editorScript": "file:./index.js",

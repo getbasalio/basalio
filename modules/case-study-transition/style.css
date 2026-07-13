@@ -44,7 +44,7 @@
 
 /* Keyboard focus for the linked source tile (WCAG 2.4.7). */
 .basalio-cst--source:focus-visible {
-	outline: 3px solid var( --basalio-focus-color, #4f46e5 );
+	outline: 3px solid var( --basalio-focus-color, #c6f135 );
 	outline-offset: 3px;
 }
 

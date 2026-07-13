@@ -14,7 +14,7 @@
 	--basalio-fg-paper: #f6f4ef;
 	--basalio-fg-stone: #83796c;
 	--basalio-fg-line: #dbd6cb;
-	--basalio-fg-focus: #3049ff;
+	--basalio-fg-focus: #c6f135;
 	--basalio-fg-radius: 2px;
 	--basalio-fg-cols: 3;
 }
@@ -32,11 +32,14 @@
 	font-size: 13px;
 	line-height: 1;
 	padding: 9px 16px;
-	border: 1px solid var( --basalio-fg-line );
-	background: transparent;
-	color: var( --basalio-fg-ink );
+	/* !important so a theme's generic <button> styling can't repaint our filter
+	   pills (classic themes give every button their own background/border). */
+	border: 1px solid var( --basalio-fg-line ) !important;
+	background: transparent !important;
+	color: var( --basalio-fg-ink ) !important;
 	border-radius: var( --basalio-fg-radius );
 	cursor: pointer;
+	box-shadow: none !important;
 	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
@@ -45,9 +48,9 @@
 }
 
 .basalio-filterable-grid__filter.is-active {
-	background: var( --basalio-fg-ink );
-	color: var( --basalio-fg-paper );
-	border-color: var( --basalio-fg-ink );
+	background: var( --basalio-fg-ink ) !important;
+	color: var( --basalio-fg-paper ) !important;
+	border-color: var( --basalio-fg-ink ) !important;
 }
 
 .basalio-filterable-grid__filter:focus-visible {

@@ -39,11 +39,16 @@ if ( ! in_array( $basalio_level, array( 'h1', 'h2', 'h3', 'h4' ), true ) ) {
 
 $basalio_word_by_word = ! empty( $attributes['wordByWord'] );
 
+// Per-element fade duration (ms), user-controllable. The stagger between words
+// and stages scales with it so a slower duration also spreads the entrance out,
+// which is what makes the reveal actually noticeable.
+$basalio_duration = isset( $attributes['duration'] ) ? max( 200, min( 4000, absint( $attributes['duration'] ) ) ) : 600;
+
 // Timing (ms). Delays are computed here so the CSS stays trivial. A single
 // monotonic fade per element/word, nothing loops, so there is no flashing
 // (2.3.1).
-$basalio_word_step  = 55;
-$basalio_stage_step = 140;
+$basalio_word_step  = max( 20, (int) round( $basalio_duration * 0.09 ) );
+$basalio_stage_step = max( 60, (int) round( $basalio_duration * 0.23 ) );
 $basalio_cursor     = 0; // running delay in ms
 
 /**
@@ -139,7 +144,12 @@ if ( '' !== $basalio_cta_text ) {
 	}
 }
 
-$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => 'basalio-text-reveal' ) );
+$basalio_wrapper = get_block_wrapper_attributes(
+	array(
+		'class' => 'basalio-text-reveal',
+		'style' => '--basalio-tr-duration:' . $basalio_duration . 'ms',
+	)
+);
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-text-reveal>
 	<?php echo $basalio_parts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_html / esc_url / esc_attr above. ?>

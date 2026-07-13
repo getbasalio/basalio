@@ -1,43 +1,40 @@
 /**
- * Basalio, block editor chrome (admin editor only).
+ * Basalio, block editor chrome.
  *
- * Styles the shared BasalioEd.Panel / Field / Tip helpers so every Basalio
- * block reads clearly and looks intentional in the editor. Scoped to
- * .basalio-ed-* so it never touches the front end or other plugins.
+ * Injected into the block canvas iframe (see class-basalio.php), so it styles
+ * the BasalioEd.Panel / Field / Tip helpers where the blocks actually render.
+ * The look intentionally matches Gutenberg: white cards, light gray borders,
+ * the editor's own typography and control styling, with one small brand mark.
  */
 
 .basalio-ed-panel {
-	--bed-ink: #17171a;
-	--bed-paper: #f6f4ef;
-	--bed-stone: #6b6357;
-	--bed-line: #e5e1d8;
-	--bed-cobalt: #3049ff;
-	--bed-cobalt-dim: #ebeeff;
-
-	border: 1px solid var( --bed-line );
-	border-radius: 10px;
+	margin: 0;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
 	background: #fff;
 	overflow: hidden;
-	box-shadow: 0 1px 2px rgba( 23, 23, 26, 0.04 );
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #1e1e1e;
 }
 
-/* --- Header: mark + name + badge --- */
+/* --- Header: small brand mark + block name --- */
 .basalio-ed-head {
 	display: flex;
 	align-items: center;
-	gap: 9px;
-	padding: 11px 16px;
-	background: var( --bed-paper );
-	border-bottom: 1px solid var( --bed-line );
+	gap: 8px;
+	padding: 10px 14px;
+	background: #fbfbfb;
+	border-bottom: 1px solid #f0f0f0;
 }
 
 .basalio-ed-mark {
 	position: relative;
 	flex: none;
-	width: 14px;
-	height: 14px;
-	border: 2px solid var( --bed-ink );
+	width: 12px;
+	height: 12px;
+	border: 1.5px solid #17171a;
 	border-radius: 2px;
 }
 
@@ -46,143 +43,133 @@
 	position: absolute;
 	left: 2px;
 	right: 2px;
-	bottom: -5px;
-	height: 2px;
-	background: var( --bed-ink );
+	bottom: -4px;
+	height: 1.5px;
+	background: #c6f135;
 }
 
 .basalio-ed-name {
+	font-size: 11px;
 	font-weight: 600;
-	font-size: 13px;
-	letter-spacing: 0.01em;
-	color: var( --bed-ink );
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #1e1e1e;
 }
 
 .basalio-ed-badge {
 	margin-left: auto;
-	font-size: 10.5px;
+	font-size: 10px;
 	font-weight: 600;
-	letter-spacing: 0.03em;
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	color: var( --bed-cobalt );
-	background: var( --bed-cobalt-dim );
-	padding: 3px 9px;
-	border-radius: 999px;
+	color: #17171a;
+	background: #e4f7a3;
+	padding: 2px 8px;
+	border-radius: 2px;
 }
 
 /* --- Description --- */
 .basalio-ed-desc {
 	margin: 0;
-	padding: 11px 16px 0;
+	padding: 12px 14px 0;
 	font-size: 12.5px;
-	line-height: 1.55;
-	color: var( --bed-stone );
+	line-height: 1.5;
+	color: #757575;
 }
 
-/* --- Body + fields --- */
+/* --- Body --- */
 .basalio-ed-body {
-	padding: 14px 16px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 14px;
 }
 
-.basalio-ed-field {
-	margin-bottom: 14px;
-}
-
-.basalio-ed-field:last-child {
+/* Tighten the gap the WordPress controls add so spacing stays even. */
+.basalio-ed-body .components-base-control {
 	margin-bottom: 0;
+}
+
+/* --- Field label (used for image slots and grouped controls) --- */
+.basalio-ed-field {
+	margin: 0;
 }
 
 .basalio-ed-label {
 	display: block;
+	margin-bottom: 6px;
 	font-size: 11px;
 	font-weight: 600;
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: #83796c;
-	margin-bottom: 5px;
+	color: #757575;
 }
 
 .basalio-ed-hint {
 	display: block;
-	font-size: 11.5px;
-	line-height: 1.45;
-	color: #9a9184;
 	margin-top: 5px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #949494;
 }
 
-/* Editable text fields inside the canvas (title, category, etc.) */
-.basalio-ed-field .basalio-ed-input,
-.basalio-ed-panel .basalio-ed-input {
-	width: 100%;
-	padding: 8px 10px;
-	border: 1px solid var( --bed-line );
-	border-radius: 6px;
-	background: #fff;
-	font-size: 13px;
-	color: var( --bed-ink );
-	box-shadow: none;
-}
-
-.basalio-ed-field .basalio-ed-input:focus,
-.basalio-ed-panel .basalio-ed-input:focus {
-	outline: 2px solid var( --bed-cobalt );
-	outline-offset: 0;
-	border-color: transparent;
-}
-
-/* --- Tip line --- */
+/* --- Tip line: styled like a WordPress info notice --- */
 .basalio-ed-tip {
 	display: flex;
-	gap: 8px;
+	gap: 9px;
 	align-items: flex-start;
-	margin: 12px 0 0;
-	padding: 9px 11px;
-	font-size: 12px;
+	margin: 2px 0 0;
+	padding: 10px 12px;
+	font-size: 12.5px;
 	line-height: 1.5;
-	color: var( --bed-stone );
-	background: var( --bed-paper );
-	border: 1px dashed #d9d2c5;
-	border-radius: 7px;
+	color: #1e1e1e;
+	background: #f7fce2;
+	border: 1px solid #e3efb0;
+	border-radius: 4px;
 }
 
 .basalio-ed-tip-mark {
 	flex: none;
-	width: 15px;
-	height: 15px;
+	width: 16px;
+	height: 16px;
 	margin-top: 1px;
 	border-radius: 50%;
-	background: var( --bed-cobalt );
+	background: #17171a;
 	color: #fff;
-	font-size: 10px;
-	font-weight: 700;
-	font-style: italic;
-	line-height: 15px;
 	text-align: center;
-	font-family: Georgia, "Times New Roman", serif;
 }
 
-/* --- Preview media inside the panel --- */
+.basalio-ed-tip-mark::before {
+	content: "i";
+	font-family: Georgia, "Times New Roman", serif;
+	font-style: italic;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 16px;
+}
+
+/* --- Media preview + rows --- */
 .basalio-ed-preview {
 	display: block;
 	width: 100%;
 	height: auto;
-	border-radius: 6px;
-	border: 1px solid var( --bed-line );
+	border-radius: 4px;
+	border: 1px solid #e0e0e0;
 }
 
 .basalio-ed-media-row {
 	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
+	gap: 12px;
 }
 
 .basalio-ed-media-row > * {
-	flex: 1 1 140px;
+	flex: 1 1 0;
+	min-width: 0;
 }
 
-/* Tighten the core MediaPlaceholder so it sits nicely in the panel body. */
+/* Keep the core MediaPlaceholder tidy inside a panel. */
 .basalio-ed-body .components-placeholder {
-	border-radius: 8px;
+	border-radius: 4px;
 	min-height: 0;
-	padding: 1.4em;
+	padding: 1.25em;
 }

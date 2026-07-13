@@ -17,11 +17,25 @@
 	var MediaUpload      = be.MediaUpload;
 	var MediaUploadCheck = be.MediaUploadCheck;
 
-	var cmp          = wp.components;
-	var PanelBody    = cmp.PanelBody;
-	var Button       = cmp.Button;
-	var TextControl  = cmp.TextControl;
-	var RangeControl = cmp.RangeControl;
+	var cmp           = wp.components;
+	var PanelBody     = cmp.PanelBody;
+	var Button        = cmp.Button;
+	var TextControl   = cmp.TextControl;
+	var RangeControl  = cmp.RangeControl;
+	var SelectControl = cmp.SelectControl;
+
+	var RATIOS = [
+		{ label: 'Original (match the images)', value: 'auto' },
+		{ label: 'Landscape, 16:9', value: '16:9' },
+		{ label: 'Landscape, 3:2', value: '3:2' },
+		{ label: 'Landscape, 4:3', value: '4:3' },
+		{ label: 'Ultrawide, 21:9', value: '21:9' },
+		{ label: 'Square, 1:1', value: '1:1' },
+		{ label: 'Portrait, 4:5', value: '4:5' },
+		{ label: 'Portrait, 3:4', value: '3:4' },
+		{ label: 'Portrait, 2:3', value: '2:3' },
+		{ label: 'Tall, 9:16', value: '9:16' }
+	];
 
 	var BE    = window.BasalioEd || {};
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
@@ -80,6 +94,14 @@
 					max: 100,
 					onChange: function ( v ) { setA( { startPosition: v } ); },
 					help: __( 'Where the divider sits when the page loads.', 'basalio' )
+				} ),
+				el( SelectControl, {
+					key: 'ratio',
+					label: __( 'Aspect ratio', 'basalio' ),
+					value: a.aspectRatio || 'auto',
+					options: RATIOS,
+					onChange: function ( v ) { setA( { aspectRatio: v } ); },
+					help: __( 'Crop the comparison to a shape. “Original” keeps the images’ own proportions.', 'basalio' )
 				} ),
 				Tip( __( 'Visitors drag the divider, or focus it and use the arrow keys, to compare the two images. Works with a mouse, touch, and keyboard.', 'basalio' ) )
 			];

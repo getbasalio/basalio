@@ -11,7 +11,7 @@
 	--basalio-ba-pos: 50%;
 	--basalio-ba-line: #ffffff;
 	--basalio-ba-ink: #17171a;
-	--basalio-ba-focus: #3049ff;
+	--basalio-ba-focus: #c6f135;
 	--basalio-ba-radius: 2px;
 }
 
@@ -35,6 +35,20 @@
 .basalio-before-after__img--after {
 	position: relative;
 	z-index: 0;
+}
+
+/* When a fixed aspect ratio is chosen, the frame owns the shape and both images
+   fill it with object-fit: cover, so any source images can be compared. */
+.basalio-before-after.has-ratio .basalio-before-after__frame {
+	aspect-ratio: var( --basalio-ba-ratio );
+}
+
+.basalio-before-after.has-ratio .basalio-before-after__img--after {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 /* The "before" image overlays it at the same size, revealed from the left up to
@@ -74,8 +88,10 @@
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	background: var( --basalio-ba-line );
-	box-shadow: 0 1px 6px rgba( 0, 0, 0, 0.32 );
+	/* !important so a theme's <button> styles can't recolor the drag handle. */
+	background: var( --basalio-ba-line ) !important;
+	border: 0 !important;
+	box-shadow: 0 1px 6px rgba( 0, 0, 0, 0.32 ) !important;
 	cursor: ew-resize;
 	touch-action: none;
 }

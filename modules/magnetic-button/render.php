@@ -45,8 +45,20 @@ if ( '' !== $basalio_url ) {
 	}
 }
 
-$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => 'basalio-magnetic-button' ) );
+$basalio_align = isset( $attributes['alignment'] ) ? $attributes['alignment'] : 'left';
+$basalio_align = in_array( $basalio_align, array( 'left', 'center', 'right' ), true ) ? $basalio_align : 'left';
+
+// The block wrapper is a block-level container so the button sits exactly where
+// the block is placed and can be aligned; the button itself stays inline.
+$basalio_wrapper = get_block_wrapper_attributes(
+	array(
+		'class' => 'basalio-magnetic-button-wrap',
+		'style' => 'text-align:' . $basalio_align,
+	)
+);
 ?>
-<<?php echo esc_html( $basalio_tag ); ?> <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-magnetic="<?php echo esc_attr( $basalio_strength ); ?>"<?php echo $basalio_link_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_url above. ?>>
-	<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span>
-</<?php echo esc_html( $basalio_tag ); ?>>
+<div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
+	<<?php echo esc_html( $basalio_tag ); ?> class="basalio-magnetic-button" data-basalio-magnetic="<?php echo esc_attr( $basalio_strength ); ?>"<?php echo $basalio_link_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_url above. ?>>
+		<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span>
+	</<?php echo esc_html( $basalio_tag ); ?>>
+</div>

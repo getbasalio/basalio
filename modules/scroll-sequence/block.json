@@ -1,0 +1,26 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "basalio/scroll-sequence",
+	"version": "0.5.0",
+	"title": "Basalio: Scroll Sequence",
+	"category": "media",
+	"icon": "images-alt2",
+	"description": "Play a sequence of frames tied to scroll position, like a flipbook. Always includes Previous and Next buttons, so it works without scrolling too.",
+	"keywords": [ "scroll", "sequence", "frames", "scrub", "process" ],
+	"textdomain": "basalio",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ]
+	},
+	"attributes": {
+		"frames": { "type": "array", "default": [] },
+		"scrollScreens": { "type": "number", "default": 3 },
+		"showControls": { "type": "boolean", "default": true },
+		"paginationFormat": { "type": "string", "default": "Frame {current} of {total}" }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

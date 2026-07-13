@@ -57,7 +57,16 @@
 					onChange: function ( v ) { setA( { allLabel: v } ); },
 					placeholder: __( 'All', 'basalio' )
 				} ),
-				Tip( __( 'Add items below and give every item a Category. The filter buttons on the live page are built automatically from those categories.', 'basalio' ) ),
+				el( TextControl, {
+					key: 'btnradius',
+					type: 'number',
+					label: __( 'Filter button radius (px)', 'basalio' ),
+					value: a.buttonRadius == null ? 2 : a.buttonRadius,
+					min: 0,
+					onChange: function ( v ) { setA( { buttonRadius: '' === v ? 0 : parseInt( v, 10 ) || 0 } ); },
+					help: __( '0 for square, higher for rounder pills.', 'basalio' )
+				} ),
+				Tip( __( 'Add items below and give every item a Category. Visitors can move between filters with the arrow keys. The filter buttons on the live page are built automatically from those categories.', 'basalio' ) ),
 				el( 'div', { key: 'grid', style: { marginTop: '14px' } }, el( 'div', innerProps ) )
 			];
 
