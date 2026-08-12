@@ -161,6 +161,57 @@ bv_ok(
 	false === strpos( $core_js, "'aria-label', 'Image viewer'" )
 );
 
+echo "\n=== Case Study Transition: bounded morph duration ===\n";
+
+$cst_json = json_decode( bv_src( 'modules/case-study-transition/block.json' ), true );
+$cst_php  = bv_src( 'modules/case-study-transition/render.php' );
+$cst_js   = bv_src( 'modules/case-study-transition/index.js' );
+
+bv_ok( 'attribute default is 300ms', 300 === $cst_json['attributes']['transitionDuration']['default'] );
+bv_ok(
+	'server clamps to 150-600ms',
+	(bool) preg_match( '/max\(\s*150,\s*min\(\s*600,/', $cst_php ),
+	'A wider range lets a large scaling morph run long enough to be uncomfortable.'
+);
+bv_ok( 'server default matches the attribute default', (bool) preg_match( '/\)\s*\)\s*:\s*300;/', $cst_php ) );
+bv_ok( 'scoped duration style is skipped at the 300ms default', false !== strpos( $cst_php, '300 !== $basalio_dur' ) );
+bv_ok( 'editor range matches the server clamp', false !== strpos( $cst_js, 'min: 150' ) && false !== strpos( $cst_js, 'max: 600' ) );
+bv_ok( 'editor warns above 400ms', (bool) preg_match( '/duration\s*>\s*400/', $cst_js ) );
+
+echo "\n=== Release consistency ===\n";
+
+// Each block.json's "version" is what register_block_type_from_metadata() uses to
+// cache-bust THAT block's own style.css and index.js. A stale value here means
+// browsers keep serving the old CSS after a fix, which is invisible in testing
+// and very visible to users.
+$plugin_php  = bv_src( 'basalio.php' );
+preg_match( '/^\s*\*\s*Version:\s*(\S+)/m', $plugin_php, $m );
+$plugin_ver = isset( $m[1] ) ? $m[1] : '';
+
+bv_ok( 'plugin header declares a version', '' !== $plugin_ver );
+bv_ok(
+	'BASALIO_VERSION matches the plugin header',
+	false !== strpos( $plugin_php, "define( 'BASALIO_VERSION', '" . $plugin_ver . "' )" )
+);
+bv_ok(
+	'readme.txt stable tag matches',
+	false !== strpos( bv_src( 'readme.txt' ), 'Stable tag: ' . $plugin_ver )
+);
+bv_ok( 'no placeholder URLs in the plugin header', false === strpos( $plugin_php, 'example.com' ) );
+
+$stale = array();
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/block.json' ) as $bj ) {
+	$data = json_decode( (string) file_get_contents( $bj ), true );
+	if ( ! isset( $data['version'] ) || $data['version'] !== $plugin_ver ) {
+		$stale[] = basename( dirname( $bj ) ) . ' (' . ( isset( $data['version'] ) ? $data['version'] : 'missing' ) . ')';
+	}
+}
+bv_ok(
+	'every block.json version matches the plugin version',
+	empty( $stale ),
+	empty( $stale ) ? '' : 'Stale, so their CSS/JS will be served from cache: ' . implode( ', ', $stale )
+);
+
 echo "\n=== Known caveat 8.11 (behaviour to confirm, not a fix) ===\n";
 
 bv_ok(

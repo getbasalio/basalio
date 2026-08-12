@@ -27,6 +27,7 @@
 	var RangeControl  = cmp.RangeControl;
 	var ToolbarGroup  = cmp.ToolbarGroup;
 	var ToolbarButton = cmp.ToolbarButton;
+	var Notice        = cmp.Notice;
 
 	var BE    = window.BasalioEd || {};
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
@@ -106,16 +107,32 @@
 				help: __( 'Rounds the image corners. 0 is square.', 'basalio' )
 			} ) );
 
+			var duration = ( a.transitionDuration == null ? 300 : a.transitionDuration );
+
 			body.push( el( RangeControl, {
 				key: 'dur',
 				label: __( 'Transition speed (ms)', 'basalio' ),
-				value: ( a.transitionDuration == null ? 500 : a.transitionDuration ),
-				min: 100,
-				max: 3000,
-				step: 50,
+				value: duration,
+				min: 150,
+				max: 600,
+				step: 25,
 				onChange: function ( v ) { setA( { transitionDuration: v } ); },
-				help: __( 'How long the morph takes on supporting browsers. Higher is slower and easier to see.', 'basalio' )
+				help: __( 'How long the morph takes on supporting browsers. 300ms suits most work.', 'basalio' )
 			} ) );
+
+			// A shared-element morph animates a large area and changes scale, which
+			// is the riskier end of what provokes a vestibular response. Warn rather
+			// than forbid: the author may have a reason, but should make the choice
+			// knowingly. Anyone with prefers-reduced-motion set never sees the morph
+			// at all, but most people with vestibular sensitivity have never heard
+			// of that setting, so the default has to be comfortable on its own.
+			if ( duration > 400 ) {
+				body.push( el(
+					Notice,
+					{ key: 'dur-warn', status: 'warning', isDismissible: false },
+					__( 'Above 400ms a full-image morph can feel slow, and large moving areas are more likely to cause discomfort for visitors sensitive to motion. 300ms is the recommended default.', 'basalio' )
+				) );
+			}
 
 			if ( role === 'source' ) {
 				body.push( el( ToggleControl, {

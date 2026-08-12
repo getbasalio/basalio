@@ -1,0 +1,19 @@
+# Paths excluded from `git archive`, i.e. from the distributed plugin zip.
+#
+# Build the release with:
+#   git archive --format=zip --prefix=basalio/ -o basalio-0.5.1.zip HEAD
+#
+# Nothing here belongs in a user's wp-content/plugins directory, and a
+# WordPress.org reviewer will ask why a plugin bundles scripts that create pages.
+
+tests/                  export-ignore
+.wordpress-org/         export-ignore
+.gitattributes          export-ignore
+.gitignore              export-ignore
+.netlify/               export-ignore
+.impeccable/            export-ignore
+index.html              export-ignore
+WCAG-QA.md              export-ignore
+README.md               export-ignore
+
+# readme.txt and LICENSE are NOT excluded: both are required in the shipped zip.

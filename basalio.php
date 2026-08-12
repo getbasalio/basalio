@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name:       Basalio
- * Plugin URI:        https://example.com/basalio
+ * Plugin URI:        https://basalio.com
  * Description:        A narrow, opinionated interaction toolkit for portfolio and case-study sites. Framer-quality, accessibility-first Gutenberg blocks. Not a page builder, not a general animation engine.
- * Version:           0.5.0
+ * Version:           0.5.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
- * Author:            Basalio
- * Author URI:        https://example.com
+ * Author:            ChrowmDesigns
+ * Author URI:        https://chrowmdesigns.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       basalio
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version constant. Also used as the asset cache-busting version for every
  * enqueued script/style so bumping this here busts caches everywhere.
  */
-define( 'BASALIO_VERSION', '0.5.0' );
+define( 'BASALIO_VERSION', '0.5.1' );
 
 /** Absolute path to the plugin root, with trailing slash. */
 define( 'BASALIO_PATH', plugin_dir_path( __FILE__ ) );

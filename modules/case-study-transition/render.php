@@ -104,10 +104,17 @@ if ( '' === $basalio_img_html && '' !== $basalio_image_url ) {
 }
 
 // Corner radius, lightbox, and morph-duration options.
+// Duration: WCAG sets no threshold for interaction-triggered motion (2.3.3
+// requires it be disableable, which prefers-reduced-motion handles). The
+// 150-600ms clamp follows motion-design practice for medium-to-large
+// transitions, and reflects that a shared-element morph animates a large area
+// with a scale change, which is the riskier end of vestibular triggers. It is
+// also a page navigation: past ~600ms the visitor is watching an image travel
+// instead of reading the page they asked for.
 $basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 0;
 $basalio_lightbox = ! empty( $attributes['lightbox'] );
 $basalio_full_url = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
-$basalio_dur      = isset( $attributes['transitionDuration'] ) ? max( 100, min( 3000, absint( $attributes['transitionDuration'] ) ) ) : 500;
+$basalio_dur      = isset( $attributes['transitionDuration'] ) ? max( 150, min( 600, absint( $attributes['transitionDuration'] ) ) ) : 300;
 
 $basalio_extra = array();
 if ( $basalio_radius ) {
@@ -116,7 +123,7 @@ if ( $basalio_radius ) {
 
 // Scoped duration for the cross-page morph (only when it differs from the default).
 $basalio_dur_style = '';
-if ( '' !== $basalio_vt_name && 500 !== $basalio_dur ) {
+if ( '' !== $basalio_vt_name && 300 !== $basalio_dur ) {
 	$basalio_dur_style = '<style>::view-transition-group(' . $basalio_vt_name . '),::view-transition-image-pair(' . $basalio_vt_name . '){animation-duration:' . $basalio_dur . 'ms}</style>';
 }
 

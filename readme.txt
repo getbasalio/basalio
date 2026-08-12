@@ -4,7 +4,7 @@ Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,18 @@ Basalio targets standard block themes and classic themes that support the block 
 
 == Changelog ==
 
+= 0.5.1 =
+* Accessibility fixes found in a full audit of every block. Details below.
+* Pinned Scroll: the "expand image" lightbox button did nothing when a Pinned Scroll block was the only Basalio block on a page, because the shared script was never loaded. Fixed, and fixed at the root so no future block can repeat it.
+* Scroll Sequence: alt text typed in the editor is no longer discarded in favour of the media library's own alt.
+* Scroll Sequence: scrolling no longer interrupts screen readers on every frame. The frame count is now announced only when the Previous or Next buttons are used.
+* Scroll Sequence: frames that are not on screen are properly hidden from screen readers, so a six-frame sequence is announced as one image, not six.
+* Filterable Grid: a portfolio item that is linked but has no alt text now takes its accessible name from the visible title, instead of being an unlabelled link.
+* Filterable Grid and Scroll Sequence: the result count, the "All" filter label, and the frame counter are now translatable. Previously they reverted to English on non-English sites.
+* Lightbox: the dialog's own labels are now translatable.
+* Case Study Transition: the morph now defaults to 300ms and is limited to 150-600ms, with a warning in the editor above 400ms. It previously defaulted to 500ms and allowed up to 3 seconds, which is uncomfortably long for a large moving image. **If you set a custom speed above 600ms it will now render at 600ms.** Blocks left at the default get a faster morph than before.
+* Added an automated accessibility test suite (33 checks) that runs against real rendered output.
+
 = 0.5.0 =
 * Big configurability pass across every block:
 * Image blocks (Grid Reveal, Case Study Transition, Filterable Grid items, Pinned Scroll) gain a corner-radius field, an optional Link URL, and an optional built-in lightbox (accessible, Escape to close).
@@ -104,6 +116,9 @@ Basalio targets standard block themes and classic themes that support the block 
 * Redesigned the block editor chrome to match native Gutenberg styling.
 
 == Upgrade Notice ==
+
+= 0.5.1 =
+Accessibility fix release. One block's lightbox button did not work at all; several blocks were not translatable. The Case Study Transition morph is now faster by default and capped at 600ms.
 
 = 0.4.0 =
 Beta-hardening release. Recommended for anyone testing Basalio ahead of launch.

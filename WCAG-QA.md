@@ -66,30 +66,37 @@ caption with no slide; on a phone, tap reveals.
 |---|---|---|---|---|
 | 2.1 | Focus moves to the destination `<h1>` after the transition (2.4.3) | ✅ | Per-tab `sessionStorage` handshake; destination focuses the first `<h1>` with `tabindex="-1"`, awaiting `pagereveal`'s `viewTransition.finished` | ✅ Verified: click-through landed focus on the destination H1 |
 | 2.2 | Fully disabled under `prefers-reduced-motion`, plain navigation | ✅ | `@view-transition { navigation:auto }` lives inside `@media (prefers-reduced-motion: no-preference)`. Focus management still runs | ✅ Verified: forced `reduce`, focus still reached H1 |
-| 2.3 | Transition duration capped at ≤400ms (vestibular safety) | ❌ | **Open defect. See below.** | ▫︎ (`case-study-transition/render.php`) |
+| 2.3 | Morph duration is bounded and comfortable by default | ✔︎ | Defaults to 300ms, clamped 150–600ms server-side, with an editor warning above 400ms. Easing is `cubic-bezier(0.2,0.7,0.2,1)`, a decelerate curve, so perceived duration is shorter than nominal. Fully disabled under `prefers-reduced-motion` | ▫︎ (`case-study-transition/render.php`, `block.json`, `index.js`) |
 | 2.4 | Back button behaves normally, no trapped history state | ✅ | Cross-document (MPA) transition is ordinary navigation; the JS never calls `history.*` | ✅ Verified · ◆ |
 
-### ❌ Open defect 2.3 — this document contradicts the code
+### Note on 2.3 — why these numbers
 
-The 0.5.0 "adjustable animation speed" pass raised `transitionDuration` to a
-default of **500ms** with a permitted range of **100–3000ms**:
+**WCAG sets no duration threshold.** 2.3.3 (Animation from Interactions, AAA)
+requires that interaction-triggered motion be disableable, which
+`prefers-reduced-motion` satisfies; it attaches no number. 2.2.2 applies only to
+auto-starting content above five seconds. An earlier revision of this document
+cited a "≤400ms (vestibular safety)" cap as though it were normative. It was not,
+and that wording has been removed.
 
-```php
-$basalio_dur = ... max( 100, min( 3000, absint( ... ) ) ) : 500;
-```
+What actually provokes a vestibular response is the character of the movement
+more than its length: the area of the viewport in motion, scale changes,
+parallax, rotation, and distance travelled. A shared-element morph animates a
+large area *and* changes scale, which is the riskier end of that list. That is
+the argument for keeping it short, not an external rule.
 
-The row above previously asserted a verified 300ms cap. That guarantee no longer
-holds. **A decision is required before this row can be closed:**
+The 150–600ms clamp with a 300ms default follows common motion-design practice
+for medium-to-large transitions (roughly 250–400ms). The 600ms ceiling is also a
+usability bound, not only an accessibility one: this is a page navigation, and
+past that point the visitor is watching an image travel instead of reading the
+page they asked for.
 
-1. Clamp to `min( 400, … )`, default back to 300. Keeps the guarantee, loses the
-   configurability just shipped.
-2. Keep the range, and restate the row as "author-configurable, values above
-   400ms are the site owner's responsibility." Honest, weaker claim.
-3. Keep the range, warn in the editor panel above 400ms, and document that.
-   Preserves the promise and the flexibility.
+The editor warns above 400ms rather than forbidding it. An author may have a
+reason, but should choose knowingly.
 
-Related: the demo video production spec assumes 300ms. If the default stays at
-500ms the videos will not match the shipped product.
+**Do not lean on reduced-motion as the whole mitigation.** It is real, and
+anyone who has set the preference never sees the morph. But most people with
+vestibular sensitivity have never heard of the setting, so the default has to be
+comfortable on its own.
 
 **Caveat (2.1):** the focus target is the page's first `<h1>`. A case-study
 template with no `<h1>` leaves focus unchanged; no target is invented.
@@ -339,7 +346,7 @@ Applies only to user-facing text. Enum-ish defaults (`revealStyle`,
 
 | Item | Kind | Blocking |
 |---|---|---|
-| 2.3 Case Study Transition duration | ❌ Defect + product decision | Yes: this document asserts a cap the code does not honor |
+| 2.3 Case Study Transition duration | ✔︎ Resolved | No |
 | 5.6, 5.8 screen-reader confirmation | 🔬 | Promoting two fixes from Asserted to Verified |
 | L.2–L.5 lightbox focus behaviour | 🔬 | Highest-risk untested surface |
 | 6.8, 4.6, L.10 | 🔬 | Three stylesheets still unread |
