@@ -74,6 +74,14 @@ function basalio_enqueue_core() {
  */
 function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = '' ) {
 	if ( $lightbox && $full_url ) {
+		// A lightbox trigger is inert without the core script that binds it, and
+		// unstyled without the core stylesheet. Enqueue here rather than trusting
+		// every calling module to remember: a focusable button that announces
+		// "Expand image" and then does nothing is a 4.1.2 failure, not a cosmetic
+		// one. Enqueuing is idempotent, so modules that already call
+		// basalio_enqueue_core() themselves are unaffected.
+		basalio_enqueue_core();
+
 		return '<button type="button" class="basalio-media-expand" data-basalio-lightbox="'
 			. esc_url( $full_url ) . '" data-basalio-lightbox-alt="' . esc_attr( $alt )
 			. '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '">' . $img_html . '</button>';

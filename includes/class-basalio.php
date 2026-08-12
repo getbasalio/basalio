@@ -81,13 +81,26 @@ final class Basalio {
 		wp_register_script(
 			'basalio-core',
 			BASALIO_URL . 'assets/js/basalio-core.js',
-			array(),
+			array( 'wp-i18n' ),
 			BASALIO_VERSION,
 			array(
 				'in_footer' => true,
 				'strategy'  => 'defer',
 			)
 		);
+
+		// The core script builds a few user-facing strings at runtime (the
+		// filterable-grid result count, the lightbox dialog labels). Without this
+		// they render in English no matter the site locale, which previously
+		// overwrote correctly translated server-rendered text the moment a visitor
+		// clicked a filter. wp-i18n is a core dependency, not a third-party one.
+		//
+		// Note for release: JS translations resolve from .json files, so shipping a
+		// new locale needs `wp i18n make-json languages/` after make-pot. Absent
+		// those files the strings fall back to English, i.e. today's behaviour.
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'basalio-core', 'basalio', BASALIO_PATH . 'languages' );
+		}
 
 		// Shared front-end styles (lightbox + clickable-image affordances),
 		// enqueued next to the core script by basalio_enqueue_core().

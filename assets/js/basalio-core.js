@@ -56,6 +56,14 @@
 		Array.prototype.forEach.call( list, fn );
 	};
 
+	/**
+	 * Translation access. wp-i18n is a declared dependency of this script, so it
+	 * is present in practice; the guard only keeps a mis-enqueued page from
+	 * throwing and taking every behavior down with it. Falling back to the English
+	 * source string matches the pre-i18n behavior exactly.
+	 */
+	var i18n = ( window.wp && window.wp.i18n ) ? window.wp.i18n : null;
+
 	/* ---------------------------------------------------------------------
 	 * Module 1, Grid Reveal
 	 * ------------------------------------------------------------------- */
@@ -321,8 +329,15 @@
 				setRoving( activeBtn );
 
 				if ( status ) {
-					var noun = ( 1 === shown ) ? ' project.' : ' projects.';
-					status.textContent = 'Showing ' + shown + ' of ' + total + noun;
+					// Server-rendered initial text is translated via _n() in PHP. This
+					// must be too, or the count silently reverts to English the first
+					// time a visitor touches a filter.
+					var tmpl = i18n
+						? i18n._n( 'Showing %1$s of %2$s project.', 'Showing %1$s of %2$s projects.', shown, 'basalio' )
+						: ( 1 === shown ? 'Showing %1$s of %2$s project.' : 'Showing %1$s of %2$s projects.' );
+					status.textContent = tmpl
+						.replace( '%1$s', shown )
+						.replace( '%2$s', total );
 				}
 			};
 
@@ -546,6 +561,7 @@
 			seq.setAttribute( 'data-basalio-ready', '' );
 			var frames = seq.querySelectorAll( '.basalio-scroll-sequence__frame' );
 			var status = seq.querySelector( '.basalio-scroll-sequence__status' );
+			var announcer = seq.querySelector( '[data-basalio-seq-announcer]' );
 			var prev = seq.querySelector( '[data-basalio-seq-prev]' );
 			var next = seq.querySelector( '[data-basalio-seq-next]' );
 			var total = frames.length;
@@ -554,7 +570,19 @@
 			}
 			var current = 0;
 
-			var show = function ( i ) {
+			// The visible counter updates on every frame change, including the
+			// dozens produced by scrolling. The live region is written to ONLY when
+			// `announce` is true, i.e. from the Previous/Next buttons. Announcing on
+			// scroll would interrupt a screen reader continuously (WCAG 4.1.3
+			// status messages are for meaningful change, not every scroll tick).
+			var format = function ( i ) {
+				var fmt = ( status && status.getAttribute( 'data-basalio-seq-format' ) ) || 'Frame {current} of {total}';
+				return fmt
+					.replace( '{current}', i + 1 )
+					.replace( '{total}', total );
+			};
+
+			var show = function ( i, announce ) {
 				i = Math.max( 0, Math.min( total - 1, i ) );
 				if ( i === current ) {
 					return;
@@ -562,19 +590,20 @@
 				frames[ current ].classList.remove( 'is-active' );
 				frames[ i ].classList.add( 'is-active' );
 				current = i;
+				var text = format( i );
 				if ( status ) {
-					var fmt = status.getAttribute( 'data-basalio-seq-format' ) || 'Frame {current} of {total}';
-					status.textContent = fmt
-						.replace( '{current}', i + 1 )
-						.replace( '{total}', total );
+					status.textContent = text;
+				}
+				if ( announce && announcer ) {
+					announcer.textContent = text;
 				}
 			};
 
 			if ( prev ) {
-				prev.addEventListener( 'click', function () { show( current - 1 ); } );
+				prev.addEventListener( 'click', function () { show( current - 1, true ); } );
 			}
 			if ( next ) {
-				next.addEventListener( 'click', function () { show( current + 1 ); } );
+				next.addEventListener( 'click', function () { show( current + 1, true ); } );
 			}
 
 			// Scroll-driven scrubbing (skipped under reduced motion).
@@ -593,6 +622,7 @@
 							return;
 						}
 						var progress = Math.max( 0, Math.min( 1, -r.top / scrollable ) );
+						// No announce flag: scroll updates the visible counter only.
 						show( Math.round( progress * ( total - 1 ) ) );
 					} );
 				};
@@ -639,7 +669,7 @@
 			overlay.className = 'basalio-lightbox';
 			overlay.setAttribute( 'role', 'dialog' );
 			overlay.setAttribute( 'aria-modal', 'true' );
-			overlay.setAttribute( 'aria-label', 'Image viewer' );
+			overlay.setAttribute( 'aria-label', i18n ? i18n.__( 'Image viewer', 'basalio' ) : 'Image viewer' );
 			overlay.hidden = true;
 			overlay.innerHTML =
 				'<div class="basalio-lightbox__backdrop" data-basalio-lb-dismiss></div>' +
@@ -647,7 +677,9 @@
 					'<img class="basalio-lightbox__img" alt="" />' +
 					'<figcaption class="basalio-lightbox__caption"></figcaption>' +
 				'</figure>' +
-				'<button type="button" class="basalio-lightbox__close" aria-label="Close image viewer">&#215;</button>';
+				'<button type="button" class="basalio-lightbox__close" aria-label="' +
+					( i18n ? i18n.__( 'Close image viewer', 'basalio' ) : 'Close image viewer' ) +
+				'">&#215;</button>';
 			document.body.appendChild( overlay );
 			imgEl = overlay.querySelector( '.basalio-lightbox__img' );
 			captionEl = overlay.querySelector( '.basalio-lightbox__caption' );

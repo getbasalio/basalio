@@ -64,7 +64,20 @@ if ( $basalio_lightbox && $basalio_full ) {
 	$basalio_frame_open  = '<button type="button" class="basalio-grid-item__frame basalio-media-expand" data-basalio-lightbox="' . esc_url( $basalio_full ) . '" data-basalio-lightbox-alt="' . esc_attr( $basalio_image_alt ) . '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '"' . $basalio_frame_style . '>';
 	$basalio_frame_close = '</button>';
 } elseif ( '' !== $basalio_url ) {
-	$basalio_frame_open  = '<a class="basalio-grid-item__frame" href="' . esc_url( $basalio_url ) . '"' . $basalio_frame_style . '>';
+	// The <figcaption> deliberately sits OUTSIDE the link, so the link's only
+	// possible accessible name is the image's alt. An author who treats the image
+	// as decorative (blank alt) because the visible caption already says it would
+	// otherwise ship a link with no name at all: a 2.4.4 / 4.1.2 failure.
+	// Test the rendered markup rather than the alt attribute, so an attachment's
+	// own alt still counts and we never override a good name with a worse one.
+	$basalio_aria = '';
+	if ( ! preg_match( '/alt="[^"]+"/', $basalio_img_html ) ) {
+		$basalio_fallback = ( '' !== $basalio_title ) ? $basalio_title : $basalio_category;
+		if ( '' !== $basalio_fallback ) {
+			$basalio_aria = ' aria-label="' . esc_attr( $basalio_fallback ) . '"';
+		}
+	}
+	$basalio_frame_open  = '<a class="basalio-grid-item__frame" href="' . esc_url( $basalio_url ) . '"' . $basalio_aria . $basalio_frame_style . '>';
 	$basalio_frame_close = '</a>';
 } else {
 	$basalio_frame_open  = '<div class="basalio-grid-item__frame"' . $basalio_frame_style . '>';

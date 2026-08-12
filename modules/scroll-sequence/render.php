@@ -34,7 +34,8 @@ $basalio_total    = count( $basalio_frames );
 $basalio_controls = ! isset( $attributes['showControls'] ) || ! empty( $attributes['showControls'] );
 $basalio_format   = ( isset( $attributes['paginationFormat'] ) && '' !== trim( $attributes['paginationFormat'] ) )
 	? $attributes['paginationFormat']
-	: 'Frame {current} of {total}';
+	/* translators: {current} and {total} are placeholders replaced with frame numbers. Keep both. */
+	: __( 'Frame {current} of {total}', 'basalio' );
 
 $basalio_frames_html = '';
 foreach ( $basalio_frames as $basalio_i => $basalio_frame ) {
@@ -55,6 +56,13 @@ foreach ( $basalio_frames as $basalio_i => $basalio_frame ) {
 				'loading'  => ( 0 === $basalio_i ? 'eager' : 'lazy' ),
 			)
 		);
+		// Honor the author's per-frame alt override, matching Grid Reveal,
+		// Case Study Transition, Before/After and Pinned Scroll. Without this
+		// the alt entered in the editor is silently discarded in favour of the
+		// attachment's own alt, and behaviour differs from the URL branch below.
+		if ( '' !== $basalio_alt && $basalio_img ) {
+			$basalio_img = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $basalio_alt ) . '"', $basalio_img, 1 );
+		}
 	}
 	if ( '' === $basalio_img && '' !== $basalio_url ) {
 		$basalio_img = sprintf(
@@ -81,7 +89,7 @@ $basalio_wrapper = get_block_wrapper_attributes(
 		<?php if ( $basalio_controls ) : ?>
 		<div class="basalio-scroll-sequence__controls">
 			<button type="button" class="basalio-scroll-sequence__btn" data-basalio-seq-prev aria-label="<?php esc_attr_e( 'Previous frame', 'basalio' ); ?>">&larr;</button>
-			<p class="basalio-scroll-sequence__status" role="status" data-basalio-seq-total="<?php echo esc_attr( $basalio_total ); ?>" data-basalio-seq-format="<?php echo esc_attr( $basalio_format ); ?>">
+			<p class="basalio-scroll-sequence__status" data-basalio-seq-total="<?php echo esc_attr( $basalio_total ); ?>" data-basalio-seq-format="<?php echo esc_attr( $basalio_format ); ?>">
 				<?php
 				echo esc_html(
 					str_replace(
@@ -94,6 +102,8 @@ $basalio_wrapper = get_block_wrapper_attributes(
 			</p>
 			<button type="button" class="basalio-scroll-sequence__btn" data-basalio-seq-next aria-label="<?php esc_attr_e( 'Next frame', 'basalio' ); ?>">&rarr;</button>
 		</div>
+		<?php // The live region. Deliberately starts empty so the first button press is announced, and is written to only by the step buttons, never by the scroll driver. ?>
+		<span class="basalio-scroll-sequence__announcer" role="status" data-basalio-seq-announcer></span>
 		<?php endif; ?>
 	</div>
 </div>

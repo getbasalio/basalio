@@ -5,7 +5,11 @@
  * The pinning is pure CSS (position: sticky), so there is no scroll hijacking:
  * focus is never trapped, the back button behaves normally, and everything stays
  * in the DOM. Under reduced motion or on narrow screens the sticky is dropped and
- * the layout becomes a normal stack. This block ships no JavaScript.
+ * the layout becomes a normal stack.
+ *
+ * The pinning itself ships no JavaScript. The shared core is still enqueued
+ * because this block's image can be configured as a lightbox trigger, and that
+ * trigger is inert without it.
  *
  * @package Basalio
  *
@@ -16,6 +20,13 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
+}
+
+// This block's own pinning is pure CSS, but its image can be a lightbox
+// trigger, which needs the shared core script and stylesheet. Enqueue is
+// idempotent and load-once.
+if ( function_exists( 'basalio_enqueue_core' ) ) {
+	basalio_enqueue_core();
 }
 
 $basalio_id  = isset( $attributes['pinnedImageId'] ) ? absint( $attributes['pinnedImageId'] ) : 0;
