@@ -24,7 +24,7 @@
 		},
 		"allLabel": {
 			"type": "string",
-			"default": "All"
+			"default": ""
 		},
 		"buttonRadius": {
 			"type": "number",
