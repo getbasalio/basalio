@@ -10,6 +10,7 @@
 .basalio-scroll-sequence {
 	position: relative;
 	height: calc( var( --basalio-seq-screens, 3 ) * 100vh );
+	height: calc( var( --basalio-seq-screens, 3 ) * 100dvh );
 }
 
 .basalio-scroll-sequence__stage {
@@ -60,6 +61,19 @@
 	backdrop-filter: blur( 6px );
 }
 
+/* Author-hidden controls are removed visually for default-motion users, but
+   must remain available under reduced motion where scroll scrubbing is skipped
+   and the buttons become the only driver (WCAG 2.3.3). */
+.basalio-scroll-sequence.has-hidden-controls .basalio-scroll-sequence__controls {
+	display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.basalio-scroll-sequence.has-hidden-controls .basalio-scroll-sequence__controls {
+		display: flex;
+	}
+}
+
 .basalio-scroll-sequence__btn {
 	width: 36px;
 	height: 36px;
@@ -88,7 +102,7 @@
 	margin: 0;
 	min-width: 8ch;
 	text-align: center;
-	font-family: 'IBM Plex Mono', ui-monospace, monospace;
+	font-family: ui-monospace, monospace;
 	font-size: 12px;
 	color: #fff;
 }

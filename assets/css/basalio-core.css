@@ -6,26 +6,21 @@
  * "expand" mode, plus the shared "clickable image" affordances.
  */
 
-/* --- Lightbox overlay --- */
+/* --- Lightbox overlay (native <dialog>) --- */
 .basalio-lightbox {
-	position: fixed;
-	inset: 0;
-	z-index: 999999;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	/* Reset native dialog chrome; the top layer handles positioning. */
 	padding: clamp( 16px, 4vw, 48px );
+	border: 0;
+	background: transparent;
 	opacity: 0;
 	transition: opacity 0.2s ease;
 }
 
-.basalio-lightbox.is-open {
+.basalio-lightbox[open] {
 	opacity: 1;
 }
 
-.basalio-lightbox__backdrop {
-	position: absolute;
-	inset: 0;
+.basalio-lightbox::backdrop {
 	background: rgba( 12, 12, 14, 0.92 );
 	cursor: zoom-out;
 }
@@ -43,7 +38,7 @@
 	transition: transform 0.2s ease;
 }
 
-.basalio-lightbox.is-open .basalio-lightbox__figure {
+.basalio-lightbox[open] .basalio-lightbox__figure {
 	transform: scale( 1 );
 }
 
@@ -67,10 +62,10 @@
 
 .basalio-lightbox__close {
 	position: absolute;
-	top: -8px;
-	right: -8px;
-	width: 40px;
-	height: 40px;
+	top: 16px;
+	right: 16px;
+	width: 44px;
+	height: 44px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -117,6 +112,20 @@
 .basalio-media-link:focus-visible {
 	outline: 3px solid #c6f135;
 	outline-offset: 3px;
+}
+
+/* --- Shared screen-reader-only utility --- */
+.basalio-screen-reader-text {
+	border: 0;
+	clip: rect( 1px, 1px, 1px, 1px );
+	clip-path: inset( 50% );
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
 }
 
 @media ( prefers-reduced-motion: reduce ) {

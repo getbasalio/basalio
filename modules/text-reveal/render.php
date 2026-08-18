@@ -51,32 +51,6 @@ $basalio_word_step  = max( 20, (int) round( $basalio_duration * 0.09 ) );
 $basalio_stage_step = max( 60, (int) round( $basalio_duration * 0.23 ) );
 $basalio_cursor     = 0; // running delay in ms
 
-/**
- * Render one animated item.
- *
- * Guarded because render.php is included on every block render; without the
- * guard a second Text Reveal block on the page would fatally redeclare it.
- *
- * @param string $tag     HTML tag.
- * @param string $inner   Already-escaped inner HTML.
- * @param string $classes Space-separated class list.
- * @param int    $delay   animation-delay in ms.
- * @param string $extra   Extra attributes (already escaped), e.g. href.
- * @return string
- */
-if ( ! function_exists( 'basalio_tr_item' ) ) {
-	function basalio_tr_item( $tag, $inner, $classes, $delay, $extra = '' ) {
-		return sprintf(
-			'<%1$s class="%2$s" style="--basalio-tr-delay:%3$dms"%4$s>%5$s</%1$s>',
-			$tag,
-			esc_attr( $classes ),
-			(int) $delay,
-			$extra,
-			$inner
-		);
-	}
-}
-
 $basalio_parts = '';
 
 // --- Headline -----------------------------------------------------------

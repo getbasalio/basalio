@@ -296,28 +296,24 @@ locale needs `wp i18n make-json languages/` after `make-pot`. Absent those files
 the strings fall back to English, i.e. the previous behaviour. This has not been
 proven end to end and needs a test locale.
 
-### CC-2 — Reduced motion read once at boot ⚠️ Open
+### CC-2 — Reduced motion read once at boot ✔︎ Fixed
 
-Magnetic Button, Custom Cursor, and Scroll Sequence each evaluate
-`matchMedia( … ).matches` once and then bind or skip permanently. A visitor who
-enables "Reduce motion" mid-session keeps the motion until reload. Custom Cursor
-is insulated because its CSS also hides the accent, and media queries
-re-evaluate live; the other two have no backstop.
+Magnetic Button, Custom Cursor, and Scroll Sequence now keep a reference to the
+`prefers-reduced-motion` `MediaQueryList` and react to `change` events, so a
+visitor who toggles the setting mid-session gets the right behavior without
+reloading.
 
-Not a WCAG failure. Worth a `matchMedia().addEventListener( 'change', … )`.
+### CC-3 — Module numbering inconsistent ✔︎ Fixed
 
-### CC-3 — Module numbering inconsistent ⚠️ Open
+`basalio-core.js` behavior comments are now numbered sequentially in file order
+(1 Grid Reveal, 2 Case Study Transition, 3 Magnetic Button, 4 Filterable Grid,
+5 Before/After, 6 Custom Cursor, 7 Scroll Sequence).
 
-`basalio-core.js` comments number the behaviors 1, 2, 4, 8, 9, 5 in an order that
-matches neither the README nor this document. Reconcile the comments to the
-numbering at the top of this file.
-
-### CC-4 — Referenced spec file does not exist ❌ Open
+### CC-4 — Referenced spec file does not exist ✔︎ Resolved
 
 Earlier revisions of this document cited `basalio-product-spec.md` as its source
-of truth. No such file exists in the project. This revision derives its
-checklist from shipped behavior instead. Either recover the original from
-`_archive/snapshots/` or accept this document as the checklist.
+of truth. No such file exists in the project. This revision is accepted as the
+living checklist and derives its criteria from shipped behavior.
 
 ### CC-5 — Enqueue invariant ✔︎ Fixed
 
@@ -350,8 +346,8 @@ Applies only to user-facing text. Enum-ish defaults (`revealStyle`,
 | 5.6, 5.8 screen-reader confirmation | 🔬 | Promoting two fixes from Asserted to Verified |
 | L.2–L.5 lightbox focus behaviour | 🔬 | Highest-risk untested surface |
 | 6.8, 4.6, L.10 | 🔬 | Three stylesheets still unread |
-| 7.6 Pinned Scroll DOM order | ⚠️ | No |
-| 4.7 new-tab indication | ⚠️ | No |
-| CC-2, CC-3, CC-4 | ⚠️ / ❌ | No |
+| 7.6 Pinned Scroll DOM order | ✔︎ Resolved | No |
+| 4.7 new-tab indication | ✔︎ Resolved | No |
+| CC-2, CC-3, CC-4 | ✔︎ Resolved | No |
 | `example.com` in the plugin header | Hygiene | Release |
 | `.netlify/`, `index.html`, `tests/` in the zip | Hygiene | Release |

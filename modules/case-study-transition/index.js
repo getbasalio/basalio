@@ -87,6 +87,22 @@
 					placeholder: 'https://…',
 					help: __( 'The case-study page this tile opens.', 'basalio' )
 				} ) );
+
+				// Auto-pairing relies on PHP's url_to_postid(), which can fail for
+				// custom post types with non-standard permalinks or external URLs.
+				// Surface the risk so authors set a Pair ID when auto-matching is
+				// uncertain.
+				if ( ( a.linkUrl || '' ) !== '' && ( a.pairId || '' ) === '' ) {
+					var linkLower = a.linkUrl.toLowerCase();
+					var isExternal = linkLower.indexOf( '://' ) !== -1 && linkLower.indexOf( window.location.hostname ) === -1;
+					if ( isExternal ) {
+						body.push( el(
+							Notice,
+							{ key: 'pair-warn', status: 'warning', isDismissible: false },
+							__( 'This link points outside the site. Auto-pairing will not work; set a Pair ID to match this tile with its hero.', 'basalio' )
+						) );
+					}
+				}
 			}
 
 			body.push( el( TextControl, {

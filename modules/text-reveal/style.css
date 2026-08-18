@@ -81,8 +81,7 @@
 
 /* Editor: never animate in the canvas, so the text is always visible and
    editable regardless of the module's runtime behavior. */
-.basalio-editor .basalio-text-reveal__item,
-.editor-styles-wrapper .basalio-text-reveal__item {
+.basalio-editor .basalio-text-reveal__item {
 	animation: none;
 	opacity: 1;
 	transform: none;

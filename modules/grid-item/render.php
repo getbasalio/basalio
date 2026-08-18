@@ -19,7 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $basalio_title    = isset( $attributes['title'] ) ? trim( $attributes['title'] ) : '';
 $basalio_category = isset( $attributes['category'] ) ? trim( $attributes['category'] ) : '';
-$basalio_slug     = ( '' !== $basalio_category ) ? sanitize_title( $basalio_category ) : '';
+// Uncategorized items share a real slug so the parent grid can expose a filter
+// for them. Without this they disappear under every category filter.
+$basalio_slug     = ( '' !== $basalio_category ) ? sanitize_title( $basalio_category ) : 'uncategorized';
 $basalio_image_id = isset( $attributes['imageId'] ) ? absint( $attributes['imageId'] ) : 0;
 $basalio_image_url = isset( $attributes['imageUrl'] ) ? $attributes['imageUrl'] : '';
 $basalio_image_alt = isset( $attributes['imageAlt'] ) ? $attributes['imageAlt'] : '';
@@ -30,29 +32,16 @@ if ( ! $basalio_image_id && '' === $basalio_image_url ) {
 	return '';
 }
 
-$basalio_img_html = '';
-if ( $basalio_image_id ) {
-	$basalio_img_html = wp_get_attachment_image(
-		$basalio_image_id,
-		'large',
-		false,
-		array(
-			'class'    => 'basalio-grid-item__image',
-			'loading'  => 'lazy',
-			'decoding' => 'async',
-		)
-	);
-	if ( '' !== $basalio_image_alt && $basalio_img_html ) {
-		$basalio_img_html = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $basalio_image_alt ) . '"', $basalio_img_html, 1 );
-	}
-}
-if ( '' === $basalio_img_html && '' !== $basalio_image_url ) {
-	$basalio_img_html = sprintf(
-		'<img class="basalio-grid-item__image" src="%s" alt="%s" loading="lazy" decoding="async" />',
-		esc_url( $basalio_image_url ),
-		esc_attr( $basalio_image_alt )
-	);
-}
+$basalio_img_html = basalio_get_image_html(
+	$basalio_image_id,
+	$basalio_image_url,
+	$basalio_image_alt,
+	array(
+		'class'    => 'basalio-grid-item__image',
+		'loading'  => 'lazy',
+		'decoding' => 'async',
+	)
+);
 
 $basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 0;
 $basalio_lightbox = ! empty( $attributes['lightbox'] );
@@ -65,14 +54,11 @@ if ( $basalio_lightbox && $basalio_full ) {
 	$basalio_frame_close = '</button>';
 } elseif ( '' !== $basalio_url ) {
 	// The <figcaption> deliberately sits OUTSIDE the link, so the link's only
-	// possible accessible name is the image's alt. An author who treats the image
-	// as decorative (blank alt) because the visible caption already says it would
-	// otherwise ship a link with no name at all: a 2.4.4 / 4.1.2 failure.
-	// Test the rendered markup rather than the alt attribute, so an attachment's
-	// own alt still counts and we never override a good name with a worse one.
+	// possible accessible name is the image's alt. When the author left the alt
+	// empty, fall back to attachment alt, then title, then category.
 	$basalio_aria = '';
-	if ( ! preg_match( '/alt="[^"]+"/', $basalio_img_html ) ) {
-		$basalio_fallback = ( '' !== $basalio_title ) ? $basalio_title : $basalio_category;
+	if ( '' === $basalio_image_alt ) {
+		$basalio_fallback = basalio_resolve_image_name( $basalio_image_id, $basalio_image_alt, $basalio_title, $basalio_category );
 		if ( '' !== $basalio_fallback ) {
 			$basalio_aria = ' aria-label="' . esc_attr( $basalio_fallback ) . '"';
 		}

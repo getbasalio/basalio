@@ -95,7 +95,8 @@ bv_ok(
 $core_js = bv_src( 'assets/js/basalio-core.js' );
 bv_ok(
 	'JS announces only when explicitly asked',
-	false !== strpos( $core_js, 'show( current - 1, true )' ) && false !== strpos( $core_js, 'show( current + 1, true )' )
+	(bool) preg_match( '/show\(\s*target\s*,\s*true\s*\)/', $core_js ),
+	'Button clicks must pass the announce flag; the scroll driver must not.'
 );
 bv_ok(
 	'the scroll driver calls show() WITHOUT the announce flag',
@@ -121,6 +122,34 @@ bv_ok(
 	'items that DO have alt are left alone',
 	! preg_match( '/aria-label="Design Project"/', $grid ),
 	'The fallback must not override a good alt-derived name.'
+);
+
+echo "\n=== M1/M2: robust image alt handling across all image blocks ===\n";
+
+$empty_alt = bv_render( 'verify-empty-alt-override' );
+bv_ok(
+	'empty author alt is honoured on the image (decorative)',
+	(bool) preg_match( '/<img[^>]*class="basalio-grid-item__image"[^>]*alt=""/', $empty_alt ),
+	'The attachment alt must not leak into a deliberately blank author alt.'
+);
+bv_ok(
+	'empty author alt falls back to attachment alt on the surrounding link',
+	(bool) preg_match( '/<a class="basalio-grid-item__frame"[^>]*aria-label="A design project"/', $empty_alt ),
+	'The link still needs an accessible name when the image is decorative.'
+);
+
+$render_files = glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/render.php' );
+$regex_alt_override = false;
+foreach ( $render_files as $rf ) {
+	if ( preg_match( '/preg_replace\(\s*[\'"]\/alt="\[\^"\]\*"\/|preg_replace\(\s*[\'"]\/alt="[^"]*"\//', file_get_contents( $rf ) ) ) {
+		$regex_alt_override = true;
+		break;
+	}
+}
+bv_ok(
+	'no render file uses regex alt replacement',
+	! $regex_alt_override,
+	'Use basalio_get_image_html() so author alt always wins, even when empty.'
 );
 
 echo "\n=== i18n: no unreachable defaults, core script wired ===\n";
@@ -212,12 +241,30 @@ bv_ok(
 	empty( $stale ) ? '' : 'Stale, so their CSS/JS will be served from cache: ' . implode( ', ', $stale )
 );
 
-echo "\n=== Known caveat 8.11 (behaviour to confirm, not a fix) ===\n";
+$stale_assets = array();
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/index.asset.php' ) as $asset ) {
+	$data = require $asset;
+	if ( ! isset( $data['version'] ) || $data['version'] !== $plugin_ver ) {
+		$stale_assets[] = basename( dirname( $asset ) ) . ' (' . ( isset( $data['version'] ) ? $data['version'] : 'missing' ) . ')';
+	}
+}
+bv_ok(
+	'every index.asset.php version matches the plugin version',
+	empty( $stale_assets ),
+	empty( $stale_assets ) ? '' : 'Stale editor assets will be cached by WordPress: ' . implode( ', ', $stale_assets )
+);
+
+echo "\n=== Filterable Grid: uncategorised items are reachable (M8) ===\n";
 
 bv_ok(
-	'the uncategorised item renders an empty category slug',
-	false !== strpos( $grid, 'data-basalio-item-category=""' ),
-	'It appears under All and vanishes under every other filter.'
+	'uncategorised items use the "uncategorized" slug',
+	false !== strpos( $grid, 'data-basalio-item-category="uncategorized"' ),
+	'An empty slug made them disappear under every category filter.'
+);
+bv_ok(
+	'an Uncategorized filter button is rendered',
+	(bool) preg_match( '/<button[^>]*data-basalio-filter="uncategorized"[^>]*>Uncategorized</', $grid ),
+	'Uncategorised items must have a filter of their own.'
 );
 
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];

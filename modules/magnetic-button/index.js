@@ -77,6 +77,11 @@
 				Tip( __( 'The pull is pointer-only. On touch screens and for anyone using reduced motion, it stays a normal, keyboard-friendly button.', 'basalio' ) )
 			];
 
+			var previewLabel = a.text || __( 'Button text', 'basalio' );
+			var newTabHint = a.opensInNewTab
+				? el( 'span', { className: 'basalio-screen-reader-text' }, __( '(opens in a new tab)', 'basalio' ) )
+				: null;
+
 			return el(
 				'div',
 				blockProps,
@@ -85,7 +90,16 @@
 						name: __( 'Magnetic Button', 'basalio' ),
 						description: __( 'A call-to-action button that gently pulls toward the visitor’s cursor.', 'basalio' )
 					},
-					body
+					[
+						el( 'a', {
+							key: 'preview',
+							className: 'basalio-magnetic-button',
+							href: a.url || '#',
+							target: a.opensInNewTab ? '_blank' : undefined,
+							rel: a.opensInNewTab ? 'noopener noreferrer' : undefined
+						}, el( 'span', { className: 'basalio-magnetic-button__label' }, previewLabel ), newTabHint ),
+						body
+					]
 				)
 			);
 		},

@@ -54,7 +54,7 @@
 					label: __( 'Accent color (hex)', 'basalio' ),
 					value: a.color || '',
 					onChange: function ( v ) { setA( { color: v } ); },
-					placeholder: '#C6F135'
+					placeholder: '#DFFF00'
 				} ),
 				el( SelectControl, {
 					key: 'style',

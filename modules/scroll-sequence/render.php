@@ -44,41 +44,25 @@ foreach ( $basalio_frames as $basalio_i => $basalio_frame ) {
 	$basalio_alt = isset( $basalio_frame['alt'] ) ? $basalio_frame['alt'] : '';
 	$basalio_cls = 'basalio-scroll-sequence__frame' . ( 0 === $basalio_i ? ' is-active' : '' );
 
-	$basalio_img = '';
-	if ( $basalio_id ) {
-		$basalio_img = wp_get_attachment_image(
-			$basalio_id,
-			'large',
-			false,
-			array(
-				'class'    => $basalio_cls,
-				'decoding' => 'async',
-				'loading'  => ( 0 === $basalio_i ? 'eager' : 'lazy' ),
-			)
-		);
-		// Honor the author's per-frame alt override, matching Grid Reveal,
-		// Case Study Transition, Before/After and Pinned Scroll. Without this
-		// the alt entered in the editor is silently discarded in favour of the
-		// attachment's own alt, and behaviour differs from the URL branch below.
-		if ( '' !== $basalio_alt && $basalio_img ) {
-			$basalio_img = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $basalio_alt ) . '"', $basalio_img, 1 );
-		}
-	}
-	if ( '' === $basalio_img && '' !== $basalio_url ) {
-		$basalio_img = sprintf(
-			'<img class="%s" src="%s" alt="%s" decoding="async" loading="%s" />',
-			esc_attr( $basalio_cls ),
-			esc_url( $basalio_url ),
-			esc_attr( $basalio_alt ),
-			( 0 === $basalio_i ? 'eager' : 'lazy' )
-		);
-	}
+	$basalio_img = basalio_get_image_html(
+		$basalio_id,
+		$basalio_url,
+		$basalio_alt,
+		array(
+			'class'    => $basalio_cls,
+			'decoding' => 'async',
+			'loading'  => ( 0 === $basalio_i ? 'eager' : 'lazy' ),
+		)
+	);
 	$basalio_frames_html .= $basalio_img;
 }
 
 $basalio_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'basalio-scroll-sequence',
+		// Controls are always rendered in the DOM so reduced-motion users can
+		// still step through frames when the author has hidden them. CSS hides
+		// the controls for sighted users unless reduced motion is active.
+		'class' => 'basalio-scroll-sequence' . ( $basalio_controls ? '' : ' has-hidden-controls' ),
 		'style' => '--basalio-seq-screens:' . $basalio_screens . ';',
 	)
 );
@@ -86,24 +70,12 @@ $basalio_wrapper = get_block_wrapper_attributes(
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-scroll-sequence>
 	<div class="basalio-scroll-sequence__stage">
 		<?php echo $basalio_frames_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>
-		<?php if ( $basalio_controls ) : ?>
 		<div class="basalio-scroll-sequence__controls">
 			<button type="button" class="basalio-scroll-sequence__btn" data-basalio-seq-prev aria-label="<?php esc_attr_e( 'Previous frame', 'basalio' ); ?>">&larr;</button>
-			<p class="basalio-scroll-sequence__status" data-basalio-seq-total="<?php echo esc_attr( $basalio_total ); ?>" data-basalio-seq-format="<?php echo esc_attr( $basalio_format ); ?>">
-				<?php
-				echo esc_html(
-					str_replace(
-						array( '{current}', '{total}' ),
-						array( '1', (string) $basalio_total ),
-						$basalio_format
-					)
-				);
-				?>
-			</p>
+			<p class="basalio-scroll-sequence__status" data-basalio-seq-total="<?php echo esc_attr( $basalio_total ); ?>" data-basalio-seq-format="<?php echo esc_attr( $basalio_format ); ?>"><?php echo esc_html( str_replace( array( '{current}', '{total}' ), array( '1', (string) $basalio_total ), $basalio_format ) ); ?></p>
 			<button type="button" class="basalio-scroll-sequence__btn" data-basalio-seq-next aria-label="<?php esc_attr_e( 'Next frame', 'basalio' ); ?>">&rarr;</button>
 		</div>
 		<?php // The live region. Deliberately starts empty so the first button press is announced, and is written to only by the step buttons, never by the scroll driver. ?>
 		<span class="basalio-scroll-sequence__announcer" role="status" data-basalio-seq-announcer></span>
-		<?php endif; ?>
 	</div>
 </div>

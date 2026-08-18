@@ -23,51 +23,25 @@ if ( function_exists( 'basalio_enqueue_core' ) ) {
 	basalio_enqueue_core();
 }
 
-/**
- * Build an <img> for one side (attachment preferred, URL fallback). Guarded
- * because render.php is included on every block render.
- */
-if ( ! function_exists( 'basalio_ba_image' ) ) {
-	function basalio_ba_image( $id, $url, $alt, $class ) {
-		$html = '';
-		if ( $id ) {
-			$html = wp_get_attachment_image(
-				$id,
-				'large',
-				false,
-				array(
-					'class'    => $class,
-					'loading'  => 'lazy',
-					'decoding' => 'async',
-				)
-			);
-			if ( '' !== $alt && $html ) {
-				$html = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $html, 1 );
-			}
-		}
-		if ( '' === $html && '' !== $url ) {
-			$html = sprintf(
-				'<img class="%s" src="%s" alt="%s" loading="lazy" decoding="async" />',
-				esc_attr( $class ),
-				esc_url( $url ),
-				esc_attr( $alt )
-			);
-		}
-		return $html;
-	}
-}
-
-$basalio_before = basalio_ba_image(
+$basalio_before = basalio_get_image_html(
 	isset( $attributes['beforeImageId'] ) ? absint( $attributes['beforeImageId'] ) : 0,
 	isset( $attributes['beforeImageUrl'] ) ? $attributes['beforeImageUrl'] : '',
 	isset( $attributes['beforeImageAlt'] ) ? $attributes['beforeImageAlt'] : '',
-	'basalio-before-after__img basalio-before-after__img--before'
+	array(
+		'class'    => 'basalio-before-after__img basalio-before-after__img--before',
+		'loading'  => 'lazy',
+		'decoding' => 'async',
+	)
 );
-$basalio_after = basalio_ba_image(
+$basalio_after = basalio_get_image_html(
 	isset( $attributes['afterImageId'] ) ? absint( $attributes['afterImageId'] ) : 0,
 	isset( $attributes['afterImageUrl'] ) ? $attributes['afterImageUrl'] : '',
 	isset( $attributes['afterImageAlt'] ) ? $attributes['afterImageAlt'] : '',
-	'basalio-before-after__img basalio-before-after__img--after'
+	array(
+		'class'    => 'basalio-before-after__img basalio-before-after__img--after',
+		'loading'  => 'lazy',
+		'decoding' => 'async',
+	)
 );
 
 // A comparison needs both images.
@@ -130,8 +104,10 @@ if ( '' !== $basalio_ratio_css ) {
 			aria-valuemin="0"
 			aria-valuemax="100"
 			aria-valuenow="<?php echo (int) $basalio_start; ?>"
-			aria-valuetext="<?php echo esc_attr( $basalio_start . '%' ); ?>"
+			aria-valuetext="<?php echo esc_attr( sprintf( /* translators: 1: percentage, 2: before label, 3: after label */ __( '%1$s%% — Before: %2$s, After: %3$s', 'basalio' ), (int) $basalio_start, $basalio_before_label, $basalio_after_label ) ); ?>"
 			data-basalio-step="2"
+			data-basalio-before-label="<?php echo esc_attr( $basalio_before_label ); ?>"
+			data-basalio-after-label="<?php echo esc_attr( $basalio_after_label ); ?>"
 		>
 			<span class="basalio-before-after__handle-icon" aria-hidden="true"></span>
 		</div>

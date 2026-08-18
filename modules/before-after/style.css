@@ -19,7 +19,7 @@
 	position: relative;
 	overflow: hidden;
 	border-radius: var( --basalio-ba-radius );
-	touch-action: none; /* let the slider own touch drags */
+	touch-action: pan-y; /* keep vertical scrolling usable on mobile */
 	user-select: none;
 	-webkit-user-select: none;
 	line-height: 0;
@@ -136,7 +136,7 @@
 	top: 12px;
 	z-index: 2;
 	padding: 4px 9px;
-	font-family: 'IBM Plex Mono', ui-monospace, monospace;
+	font-family: ui-monospace, monospace;
 	font-size: 11px;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;

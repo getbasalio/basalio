@@ -268,6 +268,20 @@ $page_grid = bv_page(
 	'<!-- wp:basalio/filterable-grid {"columns":2} -->' . "\n" . $items . "\n" . '<!-- /wp:basalio/filterable-grid -->'
 );
 
+$page_empty_alt = bv_page(
+	'verify-empty-alt-override',
+	'Verify: empty author alt still overrides attachment alt',
+	'<!-- wp:basalio/grid-item ' . wp_json_encode(
+		array(
+			'imageId'  => $grid_design,
+			'imageAlt' => '',
+			'title'    => '',
+			'category' => '',
+			'url'      => '#empty-alt-override',
+		)
+	) . ' /-->'
+);
+
 $base = home_url();
 echo "\nFixtures ready.\n\n";
 printf( "1. Pinned Scroll lightbox        %s/?page_id=%d\n", $base, $page_pinned );

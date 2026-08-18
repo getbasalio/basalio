@@ -37,6 +37,7 @@ define( 'BASALIO_URL', plugin_dir_url( __FILE__ ) );
 define( 'BASALIO_FILE', __FILE__ );
 
 require_once BASALIO_PATH . 'includes/class-basalio.php';
+require_once BASALIO_PATH . 'includes/helpers.php';
 
 /**
  * Enqueue the one shared, versioned Basalio JS core.

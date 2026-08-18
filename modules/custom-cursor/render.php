@@ -27,7 +27,7 @@ $basalio_size = max( 10, min( 80, $basalio_size ) );
 
 $basalio_color = isset( $attributes['color'] ) ? sanitize_hex_color( $attributes['color'] ) : '';
 if ( '' === (string) $basalio_color ) {
-	$basalio_color = '#C6F135';
+	$basalio_color = '#DFFF00';
 }
 
 $basalio_type = ( isset( $attributes['cursorStyle'] ) && 'dot' === $attributes['cursorStyle'] ) ? 'dot' : 'ring';

@@ -45,6 +45,10 @@ if ( '' !== $basalio_url ) {
 	}
 }
 
+$basalio_new_tab_text = $basalio_new_tab
+	? ' <span class="basalio-screen-reader-text">' . esc_html__( '(opens in a new tab)', 'basalio' ) . '</span>'
+	: '';
+
 $basalio_align = isset( $attributes['alignment'] ) ? $attributes['alignment'] : 'left';
 $basalio_align = in_array( $basalio_align, array( 'left', 'center', 'right' ), true ) ? $basalio_align : 'left';
 
@@ -59,6 +63,6 @@ $basalio_wrapper = get_block_wrapper_attributes(
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
 	<<?php echo esc_html( $basalio_tag ); ?> class="basalio-magnetic-button" data-basalio-magnetic="<?php echo esc_attr( $basalio_strength ); ?>"<?php echo $basalio_link_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_url above. ?>>
-		<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span>
+		<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span><?php echo $basalio_new_tab_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_html__() above. ?>
 	</<?php echo esc_html( $basalio_tag ); ?>>
 </div>

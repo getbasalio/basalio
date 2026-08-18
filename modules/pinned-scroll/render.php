@@ -46,29 +46,16 @@ $basalio_link   = isset( $attributes['linkUrl'] ) ? $attributes['linkUrl'] : '';
 $basalio_lb     = ! empty( $attributes['lightbox'] );
 $basalio_full   = $basalio_id ? wp_get_attachment_image_url( $basalio_id, 'full' ) : $basalio_url;
 
-$basalio_img = '';
-if ( $basalio_id ) {
-	$basalio_img = wp_get_attachment_image(
-		$basalio_id,
-		'large',
-		false,
-		array(
-			'class'    => 'basalio-pinned-scroll__image',
-			'decoding' => 'async',
-			'loading'  => 'lazy',
-		)
-	);
-	if ( '' !== $basalio_alt && $basalio_img ) {
-		$basalio_img = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $basalio_alt ) . '"', $basalio_img, 1 );
-	}
-}
-if ( '' === $basalio_img && '' !== $basalio_url ) {
-	$basalio_img = sprintf(
-		'<img class="basalio-pinned-scroll__image" src="%s" alt="%s" decoding="async" loading="lazy" />',
-		esc_url( $basalio_url ),
-		esc_attr( $basalio_alt )
-	);
-}
+$basalio_img = basalio_get_image_html(
+	$basalio_id,
+	$basalio_url,
+	$basalio_alt,
+	array(
+		'class'    => 'basalio-pinned-scroll__image',
+		'decoding' => 'async',
+		'loading'  => 'eager',
+	)
+);
 
 $basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt );
 
@@ -79,12 +66,19 @@ $basalio_wrapper = get_block_wrapper_attributes(
 		'style' => $basalio_style,
 	)
 );
+
+// Match DOM order to visual order so Tab and screen-reader reading order follow
+// the layout (WCAG 1.3.2 / 2.4.3). On the right variant the story comes first
+// visually, so it is emitted first in the DOM.
+$basalio_media_html = '<div class="basalio-pinned-scroll__media"><div class="basalio-pinned-scroll__media-inner">' . $basalio_img . '</div></div>';
+$basalio_story_html = '<div class="basalio-pinned-scroll__story">' . $content . '</div>';
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
-	<div class="basalio-pinned-scroll__media">
-		<div class="basalio-pinned-scroll__media-inner">
-			<?php echo $basalio_img; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image / basalio_media_wrap above. ?>
-		</div>
-	</div>
-	<div class="basalio-pinned-scroll__story"><?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inner blocks rendered by core. ?></div>
+	<?php if ( 'right' === $basalio_pos ) : ?>
+		<?php echo $basalio_story_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from core-rendered inner blocks / escaped image parts. ?>
+		<?php echo $basalio_media_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from escaped image parts. ?>
+	<?php else : ?>
+		<?php echo $basalio_media_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from escaped image parts. ?>
+		<?php echo $basalio_story_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from core-rendered inner blocks. ?>
+	<?php endif; ?>
 </div>

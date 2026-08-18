@@ -59,37 +59,16 @@ $basalio_ratio_css = isset( $basalio_ratios[ $basalio_ratio_key ] ) ? $basalio_r
 
 // Build the image markup: prefer the attachment (responsive srcset + alt),
 // fall back to a bare URL if only that was stored.
-$basalio_img_html = '';
-if ( $basalio_image_id ) {
-	$basalio_img_html = wp_get_attachment_image(
-		$basalio_image_id,
-		'large',
-		false,
-		array(
-			'class'    => 'basalio-grid-reveal__image',
-			'loading'  => 'lazy',
-			'decoding' => 'async',
-		)
-	);
-
-	// If the editor supplied explicit alt text, honour it over the attachment's.
-	if ( '' !== $basalio_image_alt && $basalio_img_html ) {
-		$basalio_img_html = preg_replace(
-			'/alt="[^"]*"/',
-			'alt="' . esc_attr( $basalio_image_alt ) . '"',
-			$basalio_img_html,
-			1
-		);
-	}
-}
-
-if ( '' === $basalio_img_html && '' !== $basalio_image_url ) {
-	$basalio_img_html = sprintf(
-		'<img class="basalio-grid-reveal__image" src="%s" alt="%s" loading="lazy" decoding="async" />',
-		esc_url( $basalio_image_url ),
-		esc_attr( $basalio_image_alt )
-	);
-}
+$basalio_img_html = basalio_get_image_html(
+	$basalio_image_id,
+	$basalio_image_url,
+	$basalio_image_alt,
+	array(
+		'class'    => 'basalio-grid-reveal__image',
+		'loading'  => 'lazy',
+		'decoding' => 'async',
+	)
+);
 
 $basalio_has_caption = ( '' !== $basalio_title || '' !== $basalio_tag );
 $basalio_uid         = wp_unique_id( 'basalio-gr-' );

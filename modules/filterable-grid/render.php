@@ -35,9 +35,10 @@ $basalio_all_label = ( isset( $attributes['allLabel'] ) && '' !== $attributes['a
 	: __( 'All', 'basalio' );
 
 // Walk the inner grid-item blocks once: collect categories + render each.
-$basalio_cats     = array(); // slug => display label (first-seen order)
-$basalio_grid     = '';
-$basalio_total    = 0;
+$basalio_cats          = array(); // slug => display label (first-seen order)
+$basalio_grid          = '';
+$basalio_total         = 0;
+$basalio_uncategorized = false;
 
 if ( isset( $block->inner_blocks ) ) {
 	foreach ( $block->inner_blocks as $basalio_inner ) {
@@ -53,10 +54,16 @@ if ( isset( $block->inner_blocks ) ) {
 			if ( '' !== $basalio_slug && ! isset( $basalio_cats[ $basalio_slug ] ) ) {
 				$basalio_cats[ $basalio_slug ] = $basalio_cat;
 			}
+		} else {
+			$basalio_uncategorized = true;
 		}
 
 		$basalio_grid .= $basalio_html;
 	}
+}
+
+if ( $basalio_uncategorized ) {
+	$basalio_cats['uncategorized'] = __( 'Uncategorized', 'basalio' );
 }
 
 // Nothing to show.

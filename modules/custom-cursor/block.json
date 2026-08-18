@@ -20,7 +20,7 @@
 	},
 	"attributes": {
 		"size": { "type": "number", "default": 30 },
-		"color": { "type": "string", "default": "#C6F135" },
+		"color": { "type": "string", "default": "#DFFF00" },
 		"cursorStyle": { "type": "string", "enum": [ "ring", "dot" ], "default": "ring" },
 		"cursorImageId": { "type": "number" },
 		"cursorImageUrl": { "type": "string", "default": "" }

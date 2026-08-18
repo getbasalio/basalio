@@ -205,16 +205,16 @@
 
 		if ( supportsCrossDocVT && ! prefersReduced ) {
 			// Wait for the cross-document transition to settle, then focus.
+			var fallbackTimer = window.setTimeout( focusHeading, 400 );
 			window.addEventListener( 'pagereveal', function ( e ) {
+				// The transition handler is now responsible; cancel the fallback.
+				window.clearTimeout( fallbackTimer );
 				if ( e && e.viewTransition && e.viewTransition.finished ) {
 					e.viewTransition.finished.then( focusHeading, focusHeading );
 				} else {
 					focusHeading();
 				}
 			} );
-			// Safety net: this script is deferred, so 'pagereveal' may already
-			// have fired. Focus anyway just past the 300ms transition cap.
-			window.setTimeout( focusHeading, 400 );
 		} else {
 			// No view transition (unsupported, or reduced motion → plain nav):
 			// focus once the document is ready.
@@ -227,7 +227,7 @@
 	} );
 
 	/* ---------------------------------------------------------------------
-	 * Module 4, Magnetic Button (v2.0)
+	 * Module 3, Magnetic Button (v2.0)
 	 *
 	 * Pointer-only decorative pull toward the cursor. The button is a real,
 	 * keyboard-operable link regardless; this behavior only enhances fine
@@ -241,11 +241,9 @@
 		if ( ! fine || ! fine.matches ) {
 			return;
 		}
-		// Respect reduced-motion, the button stays put.
-		if ( window.matchMedia &&
-			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
-			return;
-		}
+
+		var reduce = window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' );
 
 		var buttons = root.querySelectorAll(
 			'[data-basalio-magnetic]:not([data-basalio-ready])'
@@ -261,6 +259,11 @@
 			};
 
 			btn.addEventListener( 'pointermove', function ( e ) {
+				// Respect reduced-motion even if the preference changes mid-session.
+				if ( reduce && reduce.matches ) {
+					reset();
+					return;
+				}
 				var r = btn.getBoundingClientRect();
 				if ( ! r.width || ! r.height ) {
 					return;
@@ -278,7 +281,7 @@
 	} );
 
 	/* ---------------------------------------------------------------------
-	 * Module 8, Filterable Grid (v2.0)
+	 * Module 4, Filterable Grid (v2.0)
 	 *
 	 * Progressive enhancement: server renders every item visible plus real
 	 * <button> filters. This wires the buttons to show/hide items (via the
@@ -393,7 +396,7 @@
 	} );
 
 	/* ---------------------------------------------------------------------
-	 * Module 6, Before / After (v2.0)
+	 * Module 5, Before / After (v2.0)
 	 *
 	 * Drives a real ARIA slider (role="slider"): pointer drag + full keyboard
 	 * (arrows / Home / End / PageUp / PageDown). Position is a single % custom
@@ -414,12 +417,19 @@
 
 			var step = parseFloat( handle.getAttribute( 'data-basalio-step' ) ) || 2;
 
+			var beforeLabel = handle.getAttribute( 'data-basalio-before-label' ) || '';
+			var afterLabel  = handle.getAttribute( 'data-basalio-after-label' ) || '';
+
 			var setPos = function ( p ) {
 				p = Math.max( 0, Math.min( 100, p ) );
 				var rounded = Math.round( p );
 				comp.style.setProperty( '--basalio-ba-pos', p + '%' );
 				handle.setAttribute( 'aria-valuenow', rounded );
-				handle.setAttribute( 'aria-valuetext', rounded + '%' );
+				var text = rounded + '%';
+				if ( beforeLabel || afterLabel ) {
+					text = rounded + '% — ' + ( i18n ? i18n.__( 'Before:', 'basalio' ) : 'Before:' ) + ' ' + beforeLabel + ', ' + ( i18n ? i18n.__( 'After:', 'basalio' ) : 'After:' ) + ' ' + afterLabel;
+				}
+				handle.setAttribute( 'aria-valuetext', text );
 			};
 
 			var posFromClientX = function ( clientX ) {
@@ -464,6 +474,7 @@
 				if ( e.target === handle || handle.contains( e.target ) ) {
 					return;
 				}
+				e.preventDefault();
 				setPos( posFromClientX( e.clientX ) );
 				handle.focus();
 			} );
@@ -507,7 +518,7 @@
 	} );
 
 	/* ---------------------------------------------------------------------
-	 * Module 9 (v2.0), Custom Cursor
+	 * Module 6 (v2.0), Custom Cursor
 	 *
 	 * A decorative accent that trails the pointer inside an area. Fine pointers
 	 * with hover only, never on touch, never under reduced motion. The native
@@ -520,10 +531,9 @@
 		if ( ! fine || ! fine.matches ) {
 			return;
 		}
-		if ( window.matchMedia &&
-			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
-			return;
-		}
+
+		var reduce = window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' );
 
 		var areas = root.querySelectorAll(
 			'[data-basalio-custom-cursor]:not([data-basalio-ready])'
@@ -531,6 +541,11 @@
 		forEach( areas, function ( area ) {
 			area.setAttribute( 'data-basalio-ready', '' );
 			area.addEventListener( 'pointermove', function ( e ) {
+				// Stop trailing if reduced motion is enabled mid-session.
+				if ( reduce && reduce.matches ) {
+					area.classList.remove( 'is-cursor-active' );
+					return;
+				}
 				var r = area.getBoundingClientRect();
 				area.style.setProperty( '--basalio-cursor-x', ( e.clientX - r.left ) + 'px' );
 				area.style.setProperty( '--basalio-cursor-y', ( e.clientY - r.top ) + 'px' );
@@ -543,7 +558,7 @@
 	} );
 
 	/* ---------------------------------------------------------------------
-	 * Module 5 (v2.0), Scroll Sequence
+	 * Module 7 (v2.0), Scroll Sequence
 	 *
 	 * Maps scroll progress through a tall wrapper to the active frame. The
 	 * Previous and Next buttons step frames manually, so the sequence is usable
@@ -555,7 +570,7 @@
 			'[data-basalio-scroll-sequence]:not([data-basalio-ready])'
 		);
 		var reduce = window.matchMedia &&
-			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			window.matchMedia( '(prefers-reduced-motion: reduce)' );
 
 		forEach( seqs, function ( seq ) {
 			seq.setAttribute( 'data-basalio-ready', '' );
@@ -599,36 +614,82 @@
 				}
 			};
 
+			// Scroll the page so the scroll driver lands on the requested frame.
+			// This keeps scroll position and active frame in sync; without it the
+			// next scroll tick would immediately reset the frame back to the one
+			// matching the unchanged scroll position.
+			var scrollToFrame = function ( i ) {
+				i = Math.max( 0, Math.min( total - 1, i ) );
+				if ( i === current ) {
+					return;
+				}
+				var seqRect = seq.getBoundingClientRect();
+				var scrollable = seq.offsetHeight - window.innerHeight;
+				if ( scrollable <= 0 ) {
+					return;
+				}
+				var targetTop = window.scrollY + seqRect.top + ( i / ( total - 1 ) ) * scrollable;
+				window.scrollTo( {
+					top: targetTop,
+					behavior: ( reduce && reduce.matches ) ? 'auto' : 'smooth'
+				} );
+			};
+
 			if ( prev ) {
-				prev.addEventListener( 'click', function () { show( current - 1, true ); } );
+				prev.addEventListener( 'click', function () {
+					var target = current - 1;
+					scrollToFrame( target );
+					show( target, true );
+				} );
 			}
 			if ( next ) {
-				next.addEventListener( 'click', function () { show( current + 1, true ); } );
+				next.addEventListener( 'click', function () {
+					var target = current + 1;
+					scrollToFrame( target );
+					show( target, true );
+				} );
 			}
 
-			// Scroll-driven scrubbing (skipped under reduced motion).
-			if ( ! reduce ) {
-				var ticking = false;
-				var onScroll = function () {
-					if ( ticking ) {
+			// Scroll-driven scrubbing: enabled/disabled dynamically so a user who
+			// turns reduced motion on or off mid-session gets the right driver.
+			var ticking = false;
+			var onScroll = function () {
+				if ( ticking ) {
+					return;
+				}
+				ticking = true;
+				window.requestAnimationFrame( function () {
+					ticking = false;
+					var r = seq.getBoundingClientRect();
+					var scrollable = seq.offsetHeight - window.innerHeight;
+					if ( scrollable <= 0 ) {
 						return;
 					}
-					ticking = true;
-					window.requestAnimationFrame( function () {
-						ticking = false;
-						var r = seq.getBoundingClientRect();
-						var scrollable = seq.offsetHeight - window.innerHeight;
-						if ( scrollable <= 0 ) {
-							return;
-						}
-						var progress = Math.max( 0, Math.min( 1, -r.top / scrollable ) );
-						// No announce flag: scroll updates the visible counter only.
-						show( Math.round( progress * ( total - 1 ) ) );
-					} );
-				};
-				window.addEventListener( 'scroll', onScroll, { passive: true } );
-				onScroll();
+					var progress = Math.max( 0, Math.min( 1, -r.top / scrollable ) );
+					// No announce flag: scroll updates the visible counter only.
+					show( Math.round( progress * ( total - 1 ) ) );
+				} );
+			};
+
+			var scrollListenerActive = false;
+			var updateScrollDriver = function () {
+				if ( reduce && reduce.matches ) {
+					if ( scrollListenerActive ) {
+						window.removeEventListener( 'scroll', onScroll, { passive: true } );
+						scrollListenerActive = false;
+					}
+				} else {
+					if ( ! scrollListenerActive ) {
+						window.addEventListener( 'scroll', onScroll, { passive: true } );
+						scrollListenerActive = true;
+						onScroll();
+					}
+				}
+			};
+			if ( reduce ) {
+				reduce.addEventListener( 'change', updateScrollDriver );
 			}
+			updateScrollDriver();
 		} );
 	} );
 
@@ -636,9 +697,10 @@
 	 * Shared, Lightbox
 	 *
 	 * Any element carrying data-basalio-lightbox (its value is the full-size
-	 * image URL) opens that image in a focus-trapped, Escape-dismissable
-	 * overlay. One overlay is built lazily and reused by every image block that
-	 * turns on "expand" mode. Reduced motion is respected by the CSS.
+	 * image URL) opens that image in a native modal <dialog>. One dialog is
+	 * built lazily and reused by every image block that turns on "expand" mode.
+	 * Using <dialog> gives the browser-native focus trap, Escape-to-close, and
+	 * inert background, so no custom Tab interception is required.
 	 * ------------------------------------------------------------------- */
 	Basalio.register( 'lightbox', function ( root ) {
 		var triggers = root.querySelectorAll(
@@ -652,27 +714,25 @@
 		var imgEl, captionEl, closeBtn, lastFocused;
 
 		var close = function () {
-			if ( ! overlay ) {
+			if ( ! overlay || ! overlay.open ) {
 				return;
 			}
 			overlay.classList.remove( 'is-open' );
-			document.documentElement.style.overflow = '';
-			window.setTimeout( function () { overlay.hidden = true; }, 220 );
-			if ( lastFocused && lastFocused.focus ) {
-				lastFocused.focus();
-			}
+			var prefersReduced = window.matchMedia &&
+				window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+			window.setTimeout( function () {
+				if ( overlay && overlay.open ) {
+					overlay.close();
+				}
+			}, prefersReduced ? 0 : 220 );
 		};
 
 		var build = function () {
-			overlay = document.createElement( 'div' );
+			overlay = document.createElement( 'dialog' );
 			overlay.id = 'basalio-lightbox';
 			overlay.className = 'basalio-lightbox';
-			overlay.setAttribute( 'role', 'dialog' );
-			overlay.setAttribute( 'aria-modal', 'true' );
 			overlay.setAttribute( 'aria-label', i18n ? i18n.__( 'Image viewer', 'basalio' ) : 'Image viewer' );
-			overlay.hidden = true;
 			overlay.innerHTML =
-				'<div class="basalio-lightbox__backdrop" data-basalio-lb-dismiss></div>' +
 				'<figure class="basalio-lightbox__figure">' +
 					'<img class="basalio-lightbox__img" alt="" />' +
 					'<figcaption class="basalio-lightbox__caption"></figcaption>' +
@@ -686,14 +746,17 @@
 			closeBtn = overlay.querySelector( '.basalio-lightbox__close' );
 
 			closeBtn.addEventListener( 'click', close );
-			overlay.querySelector( '[data-basalio-lb-dismiss]' ).addEventListener( 'click', close );
-			overlay.addEventListener( 'keydown', function ( e ) {
-				if ( 'Escape' === e.key ) {
+			// Clicks on the dialog itself (the ::backdrop area) close the lightbox;
+			// clicks on the figure or close button bubble from inside and are ignored.
+			overlay.addEventListener( 'click', function ( e ) {
+				if ( e.target === overlay ) {
 					close();
-				} else if ( 'Tab' === e.key ) {
-					// The close button is the only focusable control, keep focus on it.
-					e.preventDefault();
-					closeBtn.focus();
+				}
+			} );
+			overlay.addEventListener( 'close', function () {
+				document.documentElement.style.overflow = '';
+				if ( lastFocused && lastFocused.focus ) {
+					lastFocused.focus();
 				}
 			} );
 		};
@@ -707,8 +770,8 @@
 			imgEl.setAttribute( 'alt', alt || '' );
 			captionEl.textContent = alt || '';
 			captionEl.hidden = ! alt;
-			overlay.hidden = false;
 			document.documentElement.style.overflow = 'hidden';
+			overlay.showModal();
 			window.requestAnimationFrame( function () {
 				overlay.classList.add( 'is-open' );
 			} );

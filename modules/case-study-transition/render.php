@@ -77,31 +77,12 @@ if ( '' !== $basalio_vt_name ) {
 	$basalio_img_attr['style'] = 'view-transition-name:' . $basalio_vt_name . ';';
 }
 
-$basalio_img_html = '';
-if ( $basalio_image_id ) {
-	$basalio_img_html = wp_get_attachment_image( $basalio_image_id, 'large', false, $basalio_img_attr );
-
-	if ( '' !== $basalio_image_alt && $basalio_img_html ) {
-		$basalio_img_html = preg_replace(
-			'/alt="[^"]*"/',
-			'alt="' . esc_attr( $basalio_image_alt ) . '"',
-			$basalio_img_html,
-			1
-		);
-	}
-}
-
-if ( '' === $basalio_img_html && '' !== $basalio_image_url ) {
-	$basalio_loading    = ( 'hero' === $basalio_role ) ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
-	$basalio_style_attr = ( '' !== $basalio_vt_name ) ? ' style="' . esc_attr( 'view-transition-name:' . $basalio_vt_name . ';' ) . '"' : '';
-	$basalio_img_html   = sprintf(
-		'<img class="basalio-cst__image" src="%s" alt="%s"%s decoding="async"%s />',
-		esc_url( $basalio_image_url ),
-		esc_attr( $basalio_image_alt ),
-		$basalio_loading,
-		$basalio_style_attr
-	);
-}
+$basalio_img_html = basalio_get_image_html(
+	$basalio_image_id,
+	$basalio_image_url,
+	$basalio_image_alt,
+	$basalio_img_attr
+);
 
 // Corner radius, lightbox, and morph-duration options.
 // Duration: WCAG sets no threshold for interaction-triggered motion (2.3.3

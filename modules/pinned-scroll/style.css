@@ -17,10 +17,6 @@
 	align-items: stretch;
 }
 
-.basalio-pinned-scroll.media-right .basalio-pinned-scroll__media {
-	order: 2;
-}
-
 .basalio-pinned-scroll__media-inner {
 	position: sticky;
 	top: 12vh;
@@ -47,8 +43,10 @@
 		grid-template-columns: 1fr;
 		gap: 24px;
 	}
-	.basalio-pinned-scroll.media-right .basalio-pinned-scroll__media {
-		order: 0;
+	/* Keep the image first in the stacked mobile layout regardless of whether
+	   the desktop variant places it on the left or right. */
+	.basalio-pinned-scroll__media {
+		order: -1;
 	}
 	.basalio-pinned-scroll__media-inner {
 		position: static;
