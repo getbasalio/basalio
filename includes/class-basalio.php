@@ -52,6 +52,7 @@ final class Basalio {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
+		add_action( 'init', array( 'Basalio_Admin', 'instance' ), 1 );
 		add_action( 'init', array( 'Basalio_Tokens', 'get' ), 1 );
 		add_action( 'init', array( $this, 'register_assets' ), 5 );
 		add_action( 'init', array( $this, 'register_modules' ), 10 );
@@ -253,5 +254,14 @@ final class Basalio {
 
 		$json = json_decode( (string) file_get_contents( $path ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
 		return is_array( $json ) ? $json : array();
+	}
+
+	/**
+	 * Return the list of discovered module names.
+	 *
+	 * @return string[]
+	 */
+	public function get_module_names() {
+		return $this->module_names;
 	}
 }

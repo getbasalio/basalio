@@ -39,6 +39,7 @@ define( 'BASALIO_FILE', __FILE__ );
 require_once BASALIO_PATH . 'includes/class-basalio.php';
 require_once BASALIO_PATH . 'includes/class-contrast.php';
 require_once BASALIO_PATH . 'includes/class-tokens.php';
+require_once BASALIO_PATH . 'includes/class-admin.php';
 require_once BASALIO_PATH . 'includes/helpers.php';
 
 /**
