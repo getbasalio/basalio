@@ -82,7 +82,8 @@ class Basalio_Admin {
 			echo '<nav class="nav-tab-wrapper" aria-label="Basalio sections">';
 			foreach ( $tabs as $slug => $tab ) {
 				$label = isset( $tab['label'] ) ? $tab['label'] : $slug;
-				echo '<a href="' . esc_url( $tab['url'] ) . '" class="nav-tab">' . esc_html( $label ) . '</a>';
+				$url   = isset( $tab['url'] ) ? $tab['url'] : '#';
+				echo '<a href="' . esc_url( $url ) . '" class="nav-tab">' . esc_html( $label ) . '</a>';
 			}
 			echo '</nav>';
 		}
