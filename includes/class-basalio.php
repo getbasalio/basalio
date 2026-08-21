@@ -264,4 +264,26 @@ final class Basalio {
 	public function get_module_names() {
 		return $this->module_names;
 	}
+
+	/**
+	 * Return every free module folder name, whether registered or not.
+	 *
+	 * Pro uses this to identify free blocks for the disable filter.
+	 *
+	 * @return string[]
+	 */
+	public function get_all_module_names() {
+		$modules = glob( BASALIO_PATH . 'modules/*/block.json' );
+
+		if ( empty( $modules ) ) {
+			return array();
+		}
+
+		return array_map(
+			function ( $block_json ) {
+				return basename( dirname( $block_json ) );
+			},
+			$modules
+		);
+	}
 }
