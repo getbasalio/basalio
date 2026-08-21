@@ -286,6 +286,19 @@ bv_ok(
 	'got: ' . Basalio_Contrast::choose_foreground( '#f5a623' )
 );
 
+echo "\n=== Audit hook ===\n";
+
+add_filter(
+	'basalio_audit_checks',
+	function( $checks ) {
+		$checks['test'] = array( 'label' => 'Test check' );
+		return $checks;
+	}
+);
+
+$audit = basalio_get_audit_checks();
+bv_ok( 'basalio_audit_checks filter is applied', isset( $audit['test'] ) && 'Test check' === $audit['test']['label'] );
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 

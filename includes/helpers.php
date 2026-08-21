@@ -144,3 +144,16 @@ if ( ! function_exists( 'basalio_tr_item' ) ) {
 		);
 	}
 }
+
+if ( ! function_exists( 'basalio_get_audit_checks' ) ) {
+	/**
+	 * Get the full list of compliance audit checks.
+	 *
+	 * Pro injects its own checks via the `basalio_audit_checks` filter.
+	 *
+	 * @return array
+	 */
+	function basalio_get_audit_checks() {
+		return apply_filters( 'basalio_audit_checks', array() );
+	}
+}
