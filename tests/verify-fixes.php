@@ -267,6 +267,25 @@ bv_ok(
 	'Uncategorised items must have a filter of their own.'
 );
 
+echo "\n=== Shared contrast class ===\n";
+
+bv_ok( 'Basalio_Contrast class exists', class_exists( 'Basalio_Contrast' ) );
+
+$white = Basalio_Contrast::hex_to_rgb( '#ffffff' );
+$black = Basalio_Contrast::hex_to_rgb( '#000000' );
+bv_ok(
+	'white-on-black contrast is ~21:1',
+	abs( Basalio_Contrast::contrast_ratio( $white, $black ) - 21.0 ) < 0.1,
+	'got: ' . Basalio_Contrast::contrast_ratio( $white, $black )
+);
+
+$amber9 = Basalio_Contrast::hex_to_rgb( '#f5a623' );
+bv_ok(
+	'amber-9 chooses black foreground',
+	'#000000' === Basalio_Contrast::choose_foreground( '#f5a623' ),
+	'got: ' . Basalio_Contrast::choose_foreground( '#f5a623' )
+);
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 
