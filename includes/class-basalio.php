@@ -36,6 +36,13 @@ final class Basalio {
 	private $module_names = array();
 
 	/**
+	 * Filtered block schemas keyed by block name.
+	 *
+	 * @var array<string, array>
+	 */
+	private static $block_schemas = array();
+
+	/**
 	 * Get (and lazily create) the singleton.
 	 *
 	 * @return Basalio
@@ -215,10 +222,16 @@ final class Basalio {
 			$block_type = register_block_type_from_metadata( $module_dir );
 
 			if ( $block_type instanceof WP_Block_Type ) {
+				if ( ! empty( $supports ) ) {
+					$block_type->supports = array_merge( (array) $block_type->supports, $supports );
+				}
+
+				self::$block_schemas[ $block_type->name ] = $schema;
+
 				if ( ! empty( $variations ) ) {
 					foreach ( $variations as $variation ) {
 						if ( isset( $variation['name'] ) ) {
-							register_block_style( $block_type->name, $variation );
+							register_block_variation( $block_type->name, $variation );
 						}
 					}
 				}
@@ -285,5 +298,15 @@ final class Basalio {
 			},
 			$modules
 		);
+	}
+
+	/**
+	 * Get the filtered schema for a registered block.
+	 *
+	 * @param string $block_name Block name, e.g. "basalio/text-reveal".
+	 * @return array
+	 */
+	public static function get_block_schema( $block_name ) {
+		return isset( self::$block_schemas[ $block_name ] ) ? self::$block_schemas[ $block_name ] : array();
 	}
 }

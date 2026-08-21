@@ -157,3 +157,35 @@ if ( ! function_exists( 'basalio_get_audit_checks' ) ) {
 		return apply_filters( 'basalio_audit_checks', array() );
 	}
 }
+
+if ( ! function_exists( 'register_block_variation' ) ) {
+	/**
+	 * Register a block variation for a block type.
+	 *
+	 * WordPress does not ship a dedicated PHP function for registering block
+	 * variations, so this compatibility helper appends the variation to the
+	 * registered block type. It mirrors the expected signature of the upstream
+	 * function proposed for core.
+	 *
+	 * @param string|WP_Block_Type $block_type Block type name or instance.
+	 * @param array                $variation  Variation definition.
+	 * @return bool True on success, false on failure.
+	 */
+	function register_block_variation( $block_type, $variation ) {
+		$registry = WP_Block_Type_Registry::get_instance();
+
+		if ( is_string( $block_type ) ) {
+			$block_type = $registry->get_registered( $block_type );
+		}
+
+		if ( ! $block_type instanceof WP_Block_Type ) {
+			return false;
+		}
+
+		$variations = $block_type->variations;
+		$variations[] = $variation;
+		$block_type->variations = $variations;
+
+		return true;
+	}
+}

@@ -299,6 +299,83 @@ add_filter(
 $audit = basalio_get_audit_checks();
 bv_ok( 'basalio_audit_checks filter is applied', isset( $audit['test'] ) && 'Test check' === $audit['test']['label'] );
 
+echo "\n=== Block extension hooks ===\n";
+
+add_filter(
+	'basalio_block_supports',
+	function( $supports, $module_name ) {
+		if ( 'text-reveal' === $module_name ) {
+			$supports['__basalio_test_support'] = true;
+		}
+		return $supports;
+	},
+	10,
+	2
+);
+
+add_filter(
+	'basalio_block_schema',
+	function( $schema, $module_name ) {
+		if ( 'text-reveal' === $module_name ) {
+			$schema['__basalio_test_schema'] = 1;
+		}
+		return $schema;
+	},
+	10,
+	2
+);
+
+add_filter(
+	'basalio_block_variations',
+	function( $variations, $module_name ) {
+		if ( 'text-reveal' === $module_name ) {
+			$variations[] = array(
+				'name'  => 'test-variation',
+				'title' => 'Test Variation',
+			);
+		}
+		return $variations;
+	},
+	10,
+	2
+);
+
+$registry = WP_Block_Type_Registry::get_instance();
+foreach ( $registry->get_all_registered() as $name => $block ) {
+	if ( 0 === strpos( $name, 'basalio/' ) ) {
+		$registry->unregister( $name );
+	}
+}
+Basalio::instance()->register_modules();
+
+$text_reveal = $registry->get_registered( 'basalio/text-reveal' );
+bv_ok(
+	'basalio_block_supports filter is applied',
+	isset( $text_reveal->supports['__basalio_test_support'] ) && true === $text_reveal->supports['__basalio_test_support']
+);
+
+$schema = Basalio::get_block_schema( 'basalio/text-reveal' );
+bv_ok(
+	'basalio_block_schema filter is stored and applied',
+	isset( $schema['__basalio_test_schema'] ) && 1 === $schema['__basalio_test_schema']
+);
+
+$variations = $text_reveal->variations;
+$found_variation = false;
+if ( is_array( $variations ) ) {
+	foreach ( $variations as $v ) {
+		if ( isset( $v['name'] ) && 'test-variation' === $v['name'] ) {
+			$found_variation = true;
+			break;
+		}
+	}
+}
+bv_ok(
+	'basalio_block_variations filter is applied',
+	$found_variation,
+	'variations: ' . wp_json_encode( $variations )
+);
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 
