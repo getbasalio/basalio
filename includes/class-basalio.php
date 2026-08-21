@@ -29,6 +29,13 @@ final class Basalio {
 	private static $instance = null;
 
 	/**
+	 * Discovered module names.
+	 *
+	 * @var string[]
+	 */
+	private $module_names = array();
+
+	/**
 	 * Get (and lazily create) the singleton.
 	 *
 	 * @return Basalio
@@ -189,16 +196,62 @@ final class Basalio {
 		}
 
 		foreach ( $modules as $block_json ) {
-			$block_type = register_block_type_from_metadata( dirname( $block_json ) );
+			$module_name = basename( dirname( $block_json ) );
 
-			// Point each block's editor script at the plugin's /languages folder so
-			// its wp.i18n __() strings resolve once translation files ship. Harmless
-			// with no translations installed (it simply finds nothing to load).
-			if ( $block_type instanceof WP_Block_Type && function_exists( 'wp_set_script_translations' ) ) {
+			if ( false === apply_filters( 'basalio_register_module', true, $module_name ) ) {
+				continue;
+			}
+
+			$module_dir = dirname( $block_json );
+
+			$schema = $this->load_block_schema( $module_dir );
+			$schema = apply_filters( 'basalio_block_schema', $schema, $module_name );
+
+			$supports = apply_filters( 'basalio_block_supports', array(), $module_name );
+
+			$variations = apply_filters( 'basalio_block_variations', array(), $module_name );
+
+			$block_type = register_block_type_from_metadata( $module_dir );
+
+			if ( $block_type instanceof WP_Block_Type ) {
+				if ( ! empty( $variations ) ) {
+					foreach ( $variations as $variation ) {
+						if ( isset( $variation['name'] ) ) {
+							register_block_style( $block_type->name, $variation );
+						}
+					}
+				}
+
+				if ( is_callable( $block_type->render_callback ) ) {
+					$original = $block_type->render_callback;
+					$block_type->render_callback = function( $attributes, $content, $block ) use ( $original, $module_name ) {
+						$html = call_user_func( $original, $attributes, $content, $block );
+						return apply_filters( 'basalio_block_render', (string) $html, $attributes, $module_name );
+					};
+				}
+
 				foreach ( (array) $block_type->editor_script_handles as $handle ) {
 					wp_set_script_translations( $handle, 'basalio', BASALIO_PATH . 'languages' );
 				}
 			}
+
+			$this->module_names[] = $module_name;
 		}
+	}
+
+	/**
+	 * Read a module's motion schema, if one exists.
+	 *
+	 * @param string $module_dir Module directory.
+	 * @return array
+	 */
+	private function load_block_schema( $module_dir ) {
+		$path = $module_dir . '/motion.schema.json';
+		if ( ! is_readable( $path ) ) {
+			return array();
+		}
+
+		$json = json_decode( (string) file_get_contents( $path ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+		return is_array( $json ) ? $json : array();
 	}
 }
