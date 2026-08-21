@@ -45,6 +45,7 @@ final class Basalio {
 	 */
 	private function __construct() {
 		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
+		add_action( 'init', array( 'Basalio_Tokens', 'get' ), 1 );
 		add_action( 'init', array( $this, 'register_assets' ), 5 );
 		add_action( 'init', array( $this, 'register_modules' ), 10 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
