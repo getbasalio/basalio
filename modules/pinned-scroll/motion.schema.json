@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pinned Scroll",
+  "description": "Pins content in view while scroll progress drives a transition. Respects prefers-reduced-motion by shortening or removing the pin.",
+  "motionType": "schema-driven",
+  "trigger": "Scroll",
+  "parameters": {
+    "pinDuration": {
+      "label": "Pin duration",
+      "type": "range",
+      "token": "viewport",
+      "default": 100,
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "unit": "%"
+    },
+    "scrubSmoothness": {
+      "label": "Scrub smoothness",
+      "type": "range",
+      "token": "smoothing",
+      "default": 1,
+      "min": 1,
+      "max": 10,
+      "step": 1
+    },
+    "easing": {
+      "label": "Easing",
+      "type": "select",
+      "token": "easing",
+      "default": "linear",
+      "options": [
+        { "value": "linear", "label": "Linear" },
+        { "value": "glide", "label": "Glide" },
+        { "value": "ease", "label": "Ease" }
+      ]
+    },
+    "reducedMotionFallback": {
+      "label": "Reduced-motion fallback",
+      "type": "select",
+      "token": "fallback",
+      "default": "no pin",
+      "options": [
+        { "value": "no pin", "label": "No pin" },
+        { "value": "short pin", "label": "Short pin" },
+        { "value": "none", "label": "No change" }
+      ]
+    }
+  }
+}

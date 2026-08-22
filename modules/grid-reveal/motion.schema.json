@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Grid Reveal",
+  "description": "A grid of items that reveal on hover or focus. Keyboard users see the same reveal order as pointer users.",
+  "motionType": "css-only",
+  "trigger": "Hover / focus",
+  "parameters": {
+    "revealAxis": {
+      "label": "Reveal axis",
+      "type": "select",
+      "token": "axis",
+      "default": "up",
+      "options": [
+        { "value": "up", "label": "Up" },
+        { "value": "down", "label": "Down" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    "duration": {
+      "label": "Duration",
+      "type": "select",
+      "token": "duration",
+      "default": "base",
+      "options": [
+        { "value": "short", "label": "Short" },
+        { "value": "base", "label": "Base" },
+        { "value": "long", "label": "Long" }
+      ]
+    },
+    "easing": {
+      "label": "Easing",
+      "type": "select",
+      "token": "easing",
+      "default": "glide",
+      "options": [
+        { "value": "glide", "label": "Glide" },
+        { "value": "snap", "label": "Snap" },
+        { "value": "ease", "label": "Ease" }
+      ]
+    },
+    "stagger": {
+      "label": "Stagger",
+      "type": "range",
+      "token": "delay",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "ms"
+    },
+    "reducedMotionFallback": {
+      "label": "Reduced-motion fallback",
+      "type": "select",
+      "token": "fallback",
+      "default": "appear instantly",
+      "options": [
+        { "value": "appear instantly", "label": "Appear instantly" },
+        { "value": "fade", "label": "Fade in" },
+        { "value": "none", "label": "No motion" }
+      ]
+    }
+  }
+}

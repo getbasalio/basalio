@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Filterable Grid",
+  "description": "A filterable collection with live region announcements, focus trapping, and keyboard-operable controls.",
+  "motionType": "schema-driven",
+  "trigger": "Click / keyboard",
+  "parameters": {
+    "layoutDuration": {
+      "label": "Layout duration",
+      "type": "select",
+      "token": "duration",
+      "default": "base",
+      "options": [
+        { "value": "short", "label": "Short" },
+        { "value": "base", "label": "Base" },
+        { "value": "long", "label": "Long" }
+      ]
+    },
+    "layoutEasing": {
+      "label": "Layout easing",
+      "type": "select",
+      "token": "easing",
+      "default": "glide",
+      "options": [
+        { "value": "glide", "label": "Glide" },
+        { "value": "snap", "label": "Snap" },
+        { "value": "ease", "label": "Ease" }
+      ]
+    },
+    "resultCount": {
+      "label": "Announce result count",
+      "type": "select",
+      "token": "announcement",
+      "default": "polite",
+      "options": [
+        { "value": "polite", "label": "Polite" },
+        { "value": "off", "label": "Off" }
+      ]
+    },
+    "emptyState": {
+      "label": "Empty state message",
+      "type": "text",
+      "token": "message",
+      "default": "No items match the selected filters."
+    },
+    "reducedMotionFallback": {
+      "label": "Reduced-motion fallback",
+      "type": "select",
+      "token": "fallback",
+      "default": "appear instantly",
+      "options": [
+        { "value": "appear instantly", "label": "Appear instantly" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "none", "label": "No motion" }
+      ]
+    }
+  }
+}

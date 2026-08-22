@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Before / After",
+  "description": "A draggable comparison slider with arrow-key and screen-reader support.",
+  "motionType": "schema-driven",
+  "trigger": "Drag / arrow keys",
+  "parameters": {
+    "handlePosition": {
+      "label": "Default handle position",
+      "type": "range",
+      "token": "percentage",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%"
+    },
+    "dragStep": {
+      "label": "Keyboard drag step",
+      "type": "range",
+      "token": "step",
+      "default": 5,
+      "min": 1,
+      "max": 25,
+      "step": 1,
+      "unit": "%"
+    },
+    "duration": {
+      "label": "Snap duration",
+      "type": "select",
+      "token": "duration",
+      "default": "short",
+      "options": [
+        { "value": "short", "label": "Short" },
+        { "value": "base", "label": "Base" },
+        { "value": "long", "label": "Long" }
+      ]
+    },
+    "easing": {
+      "label": "Easing",
+      "type": "select",
+      "token": "easing",
+      "default": "snap",
+      "options": [
+        { "value": "glide", "label": "Glide" },
+        { "value": "snap", "label": "Snap" },
+        { "value": "ease", "label": "Ease" }
+      ]
+    },
+    "reducedMotionFallback": {
+      "label": "Reduced-motion fallback",
+      "type": "select",
+      "token": "fallback",
+      "default": "instant",
+      "options": [
+        { "value": "instant", "label": "Instant snap" },
+        { "value": "none", "label": "No animation" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Custom Cursor",
+  "description": "Replaces the default cursor on supported sections. Falls back to the system cursor for reduced-motion users and touch devices.",
+  "motionType": "schema-driven",
+  "trigger": "Pointer",
+  "parameters": {
+    "cursorSize": {
+      "label": "Cursor size",
+      "type": "range",
+      "token": "size",
+      "default": 24,
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px"
+    },
+    "lag": {
+      "label": "Follow lag",
+      "type": "range",
+      "token": "lag",
+      "default": 10,
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "%"
+    },
+    "blendMode": {
+      "label": "Blend mode",
+      "type": "select",
+      "token": "blend",
+      "default": "difference",
+      "options": [
+        { "value": "difference", "label": "Difference" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "exclusion", "label": "Exclusion" }
+      ]
+    },
+    "reducedMotionFallback": {
+      "label": "Reduced-motion fallback",
+      "type": "select",
+      "token": "fallback",
+      "default": "system cursor",
+      "options": [
+        { "value": "system cursor", "label": "System cursor" },
+        { "value": "static", "label": "Static custom cursor" },
+        { "value": "none", "label": "No change" }
+      ]
+    }
+  }
+}
