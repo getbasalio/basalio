@@ -1,61 +1,73 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "basalio/case-study-transition",
-	"version": "0.6.0",
-	"title": "Basalio: Case Study Transition",
-	"category": "media",
-	"icon": "images-alt",
-	"description": "Shared-element view transition from a portfolio grid tile to its case-study hero. Uses the cross-document View Transitions API with a silent fallback to plain navigation.",
-	"keywords": [ "portfolio", "transition", "view transition", "case study", "hero" ],
-	"textdomain": "basalio",
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"spacing": {
-			"margin": true
-		}
-	},
-	"attributes": {
-		"role": {
-			"type": "string",
-			"enum": [ "source", "hero" ],
-			"default": "source"
-		},
-		"imageId": {
-			"type": "number"
-		},
-		"imageUrl": {
-			"type": "string",
-			"default": ""
-		},
-		"imageAlt": {
-			"type": "string",
-			"default": ""
-		},
-		"linkUrl": {
-			"type": "string",
-			"default": ""
-		},
-		"pairId": {
-			"type": "string",
-			"default": ""
-		},
-		"borderRadius": {
-			"type": "number",
-			"default": 0
-		},
-		"lightbox": {
-			"type": "boolean",
-			"default": false
-		},
-		"transitionDuration": {
-			"type": "number",
-			"default": 300
-		}
-	},
-	"editorScript": "file:./index.js",
-	"style": "file:./style.css",
-	"render": "file:./render.php"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "basalio/case-study-transition",
+    "version": "0.6.0",
+    "title": "Basalio: Case Study Transition",
+    "category": "media",
+    "icon": "images-alt",
+    "description": "Shared-element view transition from a portfolio grid tile to its case-study hero. Uses the cross-document View Transitions API with a silent fallback to plain navigation.",
+    "keywords": [
+        "portfolio",
+        "transition",
+        "view transition",
+        "case study",
+        "hero"
+    ],
+    "textdomain": "basalio",
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "attributes": {
+        "role": {
+            "type": "string",
+            "enum": [
+                "source",
+                "hero"
+            ],
+            "default": "source"
+        },
+        "imageId": {
+            "type": "number"
+        },
+        "imageUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "imageAlt": {
+            "type": "string",
+            "default": ""
+        },
+        "linkUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "pairId": {
+            "type": "string",
+            "default": ""
+        },
+        "borderRadius": {
+            "type": "number",
+            "default": 0
+        },
+        "lightbox": {
+            "type": "boolean",
+            "default": false
+        },
+        "transitionDuration": {
+            "type": "number",
+            "default": 300
+        }
+    },
+    "editorScript": "file:./index.js",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
 }

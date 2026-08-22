@@ -1,33 +1,69 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "basalio/pinned-scroll",
-	"version": "0.6.0",
-	"title": "Basalio: Pinned Scroll",
-	"category": "media",
-	"icon": "align-pull-left",
-	"description": "Pin an image beside a story that scrolls. As the reader moves through the text, the image stays in view. Under reduced motion it becomes a normal, stacked layout.",
-	"keywords": [ "pinned", "sticky", "scroll", "story", "case study" ],
-	"textdomain": "basalio",
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"spacing": {
-			"margin": true
-		}
-	},
-	"attributes": {
-		"pinnedImageId": { "type": "number" },
-		"pinnedImageUrl": { "type": "string", "default": "" },
-		"pinnedImageAlt": { "type": "string", "default": "" },
-		"mediaPosition": { "type": "string", "enum": [ "left", "right" ], "default": "left" },
-		"mediaWidth": { "type": "number", "default": 50 },
-		"borderRadius": { "type": "number", "default": 4 },
-		"linkUrl": { "type": "string", "default": "" },
-		"lightbox": { "type": "boolean", "default": false }
-	},
-	"editorScript": "file:./index.js",
-	"style": "file:./style.css",
-	"render": "file:./render.php"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "basalio/pinned-scroll",
+    "version": "0.6.0",
+    "title": "Basalio: Pinned Scroll",
+    "category": "media",
+    "icon": "align-pull-left",
+    "description": "Pin an image beside a story that scrolls. As the reader moves through the text, the image stays in view. Under reduced motion it becomes a normal, stacked layout.",
+    "keywords": [
+        "pinned",
+        "sticky",
+        "scroll",
+        "story",
+        "case study"
+    ],
+    "textdomain": "basalio",
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "attributes": {
+        "pinnedImageId": {
+            "type": "number"
+        },
+        "pinnedImageUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "pinnedImageAlt": {
+            "type": "string",
+            "default": ""
+        },
+        "mediaPosition": {
+            "type": "string",
+            "enum": [
+                "left",
+                "right"
+            ],
+            "default": "left"
+        },
+        "mediaWidth": {
+            "type": "number",
+            "default": 50
+        },
+        "borderRadius": {
+            "type": "number",
+            "default": 4
+        },
+        "linkUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "lightbox": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "editorScript": "file:./index.js",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
 }

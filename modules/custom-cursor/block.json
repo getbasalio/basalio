@@ -1,31 +1,58 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "basalio/custom-cursor",
-	"version": "0.6.0",
-	"title": "Basalio: Custom Cursor",
-	"category": "design",
-	"icon": "art",
-	"description": "Adds a branded cursor accent that follows the pointer inside this area. Pointer only, off on touch and under reduced motion. It never covers what you click.",
-	"keywords": [ "cursor", "pointer", "hover", "branded", "accent" ],
-	"textdomain": "basalio",
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"spacing": {
-			"margin": true,
-			"padding": true
-		}
-	},
-	"attributes": {
-		"size": { "type": "number", "default": 30 },
-		"color": { "type": "string", "default": "#DFFF00" },
-		"cursorStyle": { "type": "string", "enum": [ "ring", "dot" ], "default": "ring" },
-		"cursorImageId": { "type": "number" },
-		"cursorImageUrl": { "type": "string", "default": "" }
-	},
-	"editorScript": "file:./index.js",
-	"style": "file:./style.css",
-	"render": "file:./render.php"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "basalio/custom-cursor",
+    "version": "0.6.0",
+    "title": "Basalio: Custom Cursor",
+    "category": "design",
+    "icon": "art",
+    "description": "Adds a branded cursor accent that follows the pointer inside this area. Pointer only, off on touch and under reduced motion. It never covers what you click.",
+    "keywords": [
+        "cursor",
+        "pointer",
+        "hover",
+        "branded",
+        "accent"
+    ],
+    "textdomain": "basalio",
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "size": {
+            "type": "number",
+            "default": 30
+        },
+        "color": {
+            "type": "string",
+            "default": "#DFFF00"
+        },
+        "cursorStyle": {
+            "type": "string",
+            "enum": [
+                "ring",
+                "dot"
+            ],
+            "default": "ring"
+        },
+        "cursorImageId": {
+            "type": "number"
+        },
+        "cursorImageUrl": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "editorScript": "file:./index.js",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
 }

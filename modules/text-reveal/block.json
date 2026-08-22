@@ -1,64 +1,78 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "basalio/text-reveal",
-	"version": "0.6.0",
-	"title": "Basalio: Text Reveal",
-	"category": "text",
-	"icon": "editor-textcolor",
-	"description": "Staged entrance for a headline, subhead, and optional CTA, with optional word-by-word reveal. CSS-only, so the real text is in the DOM and screen-reader-readable immediately.",
-	"keywords": [ "headline", "hero", "intro", "reveal", "animation" ],
-	"textdomain": "basalio",
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"color": {
-			"text": true,
-			"background": true,
-			"link": true
-		},
-		"typography": {
-			"fontSize": true,
-			"lineHeight": true
-		},
-		"spacing": {
-			"margin": true,
-			"padding": true
-		}
-	},
-	"attributes": {
-		"headline": {
-			"type": "string",
-			"default": ""
-		},
-		"subhead": {
-			"type": "string",
-			"default": ""
-		},
-		"ctaText": {
-			"type": "string",
-			"default": ""
-		},
-		"ctaUrl": {
-			"type": "string",
-			"default": ""
-		},
-		"headingLevel": {
-			"type": "string",
-			"enum": [ "h1", "h2", "h3", "h4" ],
-			"default": "h2"
-		},
-		"wordByWord": {
-			"type": "boolean",
-			"default": false
-		},
-		"duration": {
-			"type": "number",
-			"default": 600
-		}
-	},
-	"editorScript": "file:./index.js",
-	"style": "file:./style.css",
-	"render": "file:./render.php"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "basalio/text-reveal",
+    "version": "0.6.0",
+    "title": "Basalio: Text Reveal",
+    "category": "text",
+    "icon": "editor-textcolor",
+    "description": "Staged entrance for a headline, subhead, and optional CTA, with optional word-by-word reveal. CSS-only, so the real text is in the DOM and screen-reader-readable immediately.",
+    "keywords": [
+        "headline",
+        "hero",
+        "intro",
+        "reveal",
+        "animation"
+    ],
+    "textdomain": "basalio",
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "color": {
+            "text": true,
+            "background": true,
+            "link": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "headline": {
+            "type": "string",
+            "default": ""
+        },
+        "subhead": {
+            "type": "string",
+            "default": ""
+        },
+        "ctaText": {
+            "type": "string",
+            "default": ""
+        },
+        "ctaUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "headingLevel": {
+            "type": "string",
+            "enum": [
+                "h1",
+                "h2",
+                "h3",
+                "h4"
+            ],
+            "default": "h2"
+        },
+        "wordByWord": {
+            "type": "boolean",
+            "default": false
+        },
+        "duration": {
+            "type": "number",
+            "default": 600
+        }
+    },
+    "editorScript": "file:./index.js",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
 }

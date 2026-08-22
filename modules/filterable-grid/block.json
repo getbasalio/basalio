@@ -1,37 +1,46 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "basalio/filterable-grid",
-	"version": "0.6.0",
-	"title": "Basalio: Filterable Grid",
-	"category": "media",
-	"icon": "grid-view",
-	"description": "A portfolio grid visitors can filter by discipline. Filter buttons are generated from each item's category. Real, keyboard-operable buttons, with results announced to screen readers.",
-	"keywords": [ "portfolio", "grid", "filter", "gallery", "discipline" ],
-	"textdomain": "basalio",
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"spacing": {
-			"margin": true
-		}
-	},
-	"attributes": {
-		"columns": {
-			"type": "number",
-			"default": 3
-		},
-		"allLabel": {
-			"type": "string",
-			"default": ""
-		},
-		"buttonRadius": {
-			"type": "number",
-			"default": 2
-		}
-	},
-	"editorScript": "file:./index.js",
-	"style": "file:./style.css",
-	"render": "file:./render.php"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "basalio/filterable-grid",
+    "version": "0.6.0",
+    "title": "Basalio: Filterable Grid",
+    "category": "media",
+    "icon": "grid-view",
+    "description": "A portfolio grid visitors can filter by discipline. Filter buttons are generated from each item's category. Real, keyboard-operable buttons, with results announced to screen readers.",
+    "keywords": [
+        "portfolio",
+        "grid",
+        "filter",
+        "gallery",
+        "discipline"
+    ],
+    "textdomain": "basalio",
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "attributes": {
+        "columns": {
+            "type": "number",
+            "default": 3
+        },
+        "allLabel": {
+            "type": "string",
+            "default": ""
+        },
+        "buttonRadius": {
+            "type": "number",
+            "default": 2
+        }
+    },
+    "editorScript": "file:./index.js",
+    "style": "file:./style.css",
+    "render": "file:./render.php"
 }
