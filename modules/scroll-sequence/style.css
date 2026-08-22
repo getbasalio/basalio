@@ -17,7 +17,7 @@
 	position: sticky;
 	top: 0;
 	overflow: hidden;
-	background: #0d0d0f;
+	background: var( --basalio-fg, #0d0d0f );
 }
 
 /* The first frame sits in flow and sets the stage height to the image's own
@@ -81,7 +81,7 @@
 	/* !important so a theme's <button> styles can't repaint the step controls. */
 	border: 1px solid rgba( 255, 255, 255, 0.28 ) !important;
 	background: transparent !important;
-	color: #fff !important;
+	color: var( --basalio-bg, #fff ) !important;
 	font-size: 16px;
 	line-height: 1;
 	cursor: pointer;
@@ -94,7 +94,7 @@
 }
 
 .basalio-scroll-sequence__btn:focus-visible {
-	outline: 2px solid #c6f135;
+	outline: 2px solid var( --basalio-focus, #c6f135 );
 	outline-offset: 2px;
 }
 
@@ -104,7 +104,7 @@
 	text-align: center;
 	font-family: ui-monospace, monospace;
 	font-size: 12px;
-	color: #fff;
+	color: var( --basalio-bg, #fff );
 }
 
 /* Screen-reader-only announcer. The visible counter above carries no live

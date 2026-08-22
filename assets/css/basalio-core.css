@@ -71,8 +71,8 @@
 	justify-content: center;
 	font-size: 26px;
 	line-height: 1;
-	color: #17171a !important;
-	background: #c6f135 !important;
+	color: var( --basalio-accent-text, #17171a ) !important;
+	background: var( --basalio-accent, #c6f135 ) !important;
 	border: 0 !important;
 	border-radius: 50%;
 	box-shadow: none !important;
@@ -82,7 +82,7 @@
 }
 
 .basalio-lightbox__close:focus-visible {
-	outline: 3px solid #fff;
+	outline: 3px solid var( --basalio-bg, #fff );
 	outline-offset: 2px;
 }
 
@@ -110,7 +110,7 @@
 
 .basalio-media-expand:focus-visible,
 .basalio-media-link:focus-visible {
-	outline: 3px solid #c6f135;
+	outline: 3px solid var( --basalio-focus, #c6f135 );
 	outline-offset: 3px;
 }
 

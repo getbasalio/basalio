@@ -9,9 +9,9 @@
 
 .basalio-before-after {
 	--basalio-ba-pos: 50%;
-	--basalio-ba-line: #ffffff;
-	--basalio-ba-ink: #17171a;
-	--basalio-ba-focus: #c6f135;
+	--basalio-ba-line: var( --basalio-bg, #ffffff );
+	--basalio-ba-ink: var( --basalio-fg, #17171a );
+	--basalio-ba-focus: var( --basalio-focus, #c6f135 );
 	--basalio-ba-radius: 2px;
 }
 
@@ -141,7 +141,7 @@
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	line-height: 1.2;
-	color: #fff;
+	color: var( --basalio-bg, #fff );
 	background: rgba( 0, 0, 0, 0.62 );
 	border-radius: var( --basalio-ba-radius );
 	pointer-events: none;

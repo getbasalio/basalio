@@ -30,11 +30,11 @@
 }
 
 .basalio-custom-cursor.is-cursor-ring .basalio-custom-cursor__accent {
-	border: 2px solid var( --basalio-cursor-color, #dfff00 );
+	border: 2px solid var( --basalio-cursor-color, var( --basalio-accent, #dfff00 ) );
 }
 
 .basalio-custom-cursor.is-cursor-dot .basalio-custom-cursor__accent {
-	background: var( --basalio-cursor-color, #dfff00 );
+	background: var( --basalio-cursor-color, var( --basalio-accent, #dfff00 ) );
 }
 
 /* A custom uploaded image / SVG cursor. */

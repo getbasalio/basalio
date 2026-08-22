@@ -10,11 +10,11 @@
  */
 
 .basalio-filterable-grid {
-	--basalio-fg-ink: #17171a;
-	--basalio-fg-paper: #f6f4ef;
-	--basalio-fg-stone: #6d6254;
-	--basalio-fg-line: #dbd6cb;
-	--basalio-fg-focus: #c6f135;
+	--basalio-fg-ink: var( --basalio-fg, #17171a );
+	--basalio-fg-paper: var( --basalio-bg, #f6f4ef );
+	--basalio-fg-stone: var( --basalio-fg-secondary, #6d6254 );
+	--basalio-fg-line: var( --basalio-border, #dbd6cb );
+	--basalio-fg-focus: var( --basalio-focus, #c6f135 );
 	--basalio-fg-radius: 2px;
 	--basalio-fg-cols: 3;
 }
@@ -81,7 +81,7 @@
 	display: block;
 	overflow: hidden;
 	border-radius: var( --basalio-fg-radius, 2px );
-	background: #eee;
+	background: var( --basalio-bg-subtle, #eee );
 }
 
 .basalio-grid-item__image {
@@ -107,7 +107,7 @@
 
 .basalio-grid-item__category {
 	font-size: 12px;
-	color: var( --basalio-fg-stone, #83796c );
+	color: var( --basalio-fg-stone, #6b6257 );
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }
@@ -127,7 +127,7 @@
 /* Editor: the note above the grid. */
 .basalio-fg-editor-note {
 	font-size: 12px;
-	color: var( --basalio-fg-stone, #83796c );
+	color: var( --basalio-fg-stone, #6b6257 );
 	margin: 0 0 14px;
 	padding: 8px 12px;
 	border: 1px solid var( --basalio-fg-line, #dbd6cb );

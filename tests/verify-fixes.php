@@ -375,6 +375,51 @@ bv_ok(
 	$found_variation,
 	'variations: ' . wp_json_encode( $variations )
 );
+echo "\n=== Design-token readiness: no bare hex colors in CSS ===\n";
+
+/**
+ * Return true if a stylesheet contains a hex color outside a var() fallback.
+ *
+ * Ignores CSS comments. A hex inside var(--x, #fff) or nested var() is allowed.
+ *
+ * @param string $css Stylesheet content.
+ * @return bool
+ */
+function bv_css_has_bare_hex( $css ) {
+	$css = preg_replace( '/\/\*.*?\*\//s', '', $css );
+	if ( ! preg_match_all( '/#[0-9a-fA-F]{3,6}\b/', $css, $matches, PREG_OFFSET_CAPTURE ) ) {
+		return false;
+	}
+	foreach ( $matches[0] as $match ) {
+		$before  = substr( $css, 0, $match[1] );
+		$last_var = strrpos( $before, 'var(' );
+		if ( false === $last_var ) {
+			return true;
+		}
+		$between = substr( $before, $last_var + 4 );
+		// If a ')' or ';' appears between the opening var( and the hex, the hex
+		// is not inside that var() fallback.
+		if ( false !== strpos( $between, ')' ) || false !== strpos( $between, ';' ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+$css_files = array_merge(
+	glob( BASALIO_TESTS_PLUGIN_DIR . '/assets/css/*.css' ) ?: array(),
+	glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/style.css' ) ?: array()
+);
+
+foreach ( $css_files as $css_file ) {
+	$rel  = str_replace( BASALIO_TESTS_PLUGIN_DIR . '/', '', $css_file );
+	$css  = (string) file_get_contents( $css_file );
+	bv_ok(
+		"no bare hex in {$rel}",
+		! bv_css_has_bare_hex( $css ),
+		'All colors must flow through var(--basalio-*, <hex>) so Pro can override them.'
+	);
+}
 
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
