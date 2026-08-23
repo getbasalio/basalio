@@ -53,8 +53,7 @@
       "token": "fallback",
       "default": "instant",
       "options": [
-        { "value": "instant", "label": "Instant snap" },
-        { "value": "none", "label": "No animation" }
+        { "value": "instant", "label": "Instant snap" }
       ]
     }
   }

@@ -54,9 +54,7 @@
       "token": "fallback",
       "default": "crossfade",
       "options": [
-        { "value": "crossfade", "label": "Crossfade" },
-        { "value": "appear instantly", "label": "Appear instantly" },
-        { "value": "none", "label": "No motion" }
+        { "value": "crossfade", "label": "Crossfade" }
       ]
     }
   }

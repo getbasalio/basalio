@@ -54,7 +54,8 @@
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.basalio-pinned-scroll__media-inner {
+	.basalio-pinned-scroll__media-inner,
+	.basalio-pinned-scroll.basalio-pinned-scroll--fallback-no-pin .basalio-pinned-scroll__media-inner {
 		position: static;
 	}
 }

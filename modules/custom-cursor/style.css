@@ -52,7 +52,8 @@
 
 /* No trailing accent for anyone who prefers reduced motion. */
 @media ( prefers-reduced-motion: reduce ) {
-	.basalio-custom-cursor__accent {
+	.basalio-custom-cursor__accent,
+	.basalio-custom-cursor.basalio-custom-cursor--fallback-system-cursor .basalio-custom-cursor__accent {
 		display: none;
 	}
 }

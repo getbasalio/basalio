@@ -171,7 +171,9 @@
 /* --- Reduced motion: instant opacity swap, never any slide (WCAG). ----- */
 @media ( prefers-reduced-motion: reduce ) {
 	.basalio-grid-reveal__scrim,
-	.basalio-grid-reveal__caption {
+	.basalio-grid-reveal__caption,
+	.basalio-grid-reveal.basalio-grid-reveal--fallback-appear-instantly .basalio-grid-reveal__scrim,
+	.basalio-grid-reveal.basalio-grid-reveal--fallback-appear-instantly .basalio-grid-reveal__caption {
 		transition: none;
 		transform: none;
 	}

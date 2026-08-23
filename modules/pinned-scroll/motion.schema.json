@@ -41,9 +41,7 @@
       "token": "fallback",
       "default": "no pin",
       "options": [
-        { "value": "no pin", "label": "No pin" },
-        { "value": "short pin", "label": "Short pin" },
-        { "value": "none", "label": "No change" }
+        { "value": "no pin", "label": "No pin" }
       ]
     }
   }

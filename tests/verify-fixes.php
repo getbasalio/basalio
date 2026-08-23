@@ -563,6 +563,32 @@ bv_ok(
 
 remove_filter( 'basalio_block_schema', $inject_dummy_param, 10 );
 
+echo "\n=== Reduced-motion fallback CSS coverage ===\n";
+
+$bv_fallback_css_by_module = array();
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/style.css' ) as $bv_css_path ) {
+	$bv_fallback_css_by_module[ basename( dirname( $bv_css_path ) ) ] = (string) file_get_contents( $bv_css_path );
+}
+
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as $bv_schema_path ) {
+	$bv_module_name = basename( dirname( $bv_schema_path ) );
+	$bv_schema      = json_decode( (string) file_get_contents( $bv_schema_path ), true );
+
+	if ( empty( $bv_schema['parameters']['reducedMotionFallback']['options'] ) ) {
+		continue;
+	}
+
+	$bv_css = isset( $bv_fallback_css_by_module[ $bv_module_name ] ) ? $bv_fallback_css_by_module[ $bv_module_name ] : '';
+	foreach ( $bv_schema['parameters']['reducedMotionFallback']['options'] as $bv_option ) {
+		$bv_slug = 'fallback-' . preg_replace( '/\s+/', '-', strtolower( trim( $bv_option['value'] ) ) );
+		bv_ok(
+			"{$bv_module_name} reducedMotionFallback selector contains {$bv_slug}",
+			false !== strpos( $bv_css, $bv_slug ),
+			"Expected a selector containing '{$bv_slug}' in modules/{$bv_module_name}/style.css"
+		);
+	}
+}
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 

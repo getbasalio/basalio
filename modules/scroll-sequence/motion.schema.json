@@ -47,9 +47,7 @@
       "token": "fallback",
       "default": "last frame",
       "options": [
-        { "value": "last frame", "label": "Show last frame" },
-        { "value": "first frame", "label": "Show first frame" },
-        { "value": "none", "label": "No fallback" }
+        { "value": "last frame", "label": "Show last frame" }
       ]
     }
   }

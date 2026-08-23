@@ -52,7 +52,8 @@
 
 /* Reduced motion: never translate, no easing, a plain static button. */
 @media ( prefers-reduced-motion: reduce ) {
-	.basalio-magnetic-button {
+	.basalio-magnetic-button,
+	.basalio-magnetic-button.basalio-magnetic-button--fallback-no-magnetism {
 		transform: none;
 		transition: none;
 	}

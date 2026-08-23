@@ -53,9 +53,7 @@
       "token": "fallback",
       "default": "no magnetism",
       "options": [
-        { "value": "no magnetism", "label": "No magnetism" },
-        { "value": "subtle", "label": "Subtle" },
-        { "value": "none", "label": "No change" }
+        { "value": "no magnetism", "label": "No magnetism" }
       ]
     }
   }

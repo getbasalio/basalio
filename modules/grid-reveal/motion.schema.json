@@ -55,9 +55,7 @@
       "token": "fallback",
       "default": "appear instantly",
       "options": [
-        { "value": "appear instantly", "label": "Appear instantly" },
-        { "value": "fade", "label": "Fade in" },
-        { "value": "none", "label": "No motion" }
+        { "value": "appear instantly", "label": "Appear instantly" }
       ]
     }
   }

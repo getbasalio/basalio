@@ -56,6 +56,16 @@
 	}
 }
 
+/* Reduced-motion fallback: content appears instantly (the natural visible state).
+   The selector documents the hook; the class is not applied by render.php yet. */
+@media (prefers-reduced-motion: reduce) {
+	.basalio-text-reveal.basalio-text-reveal--fallback-appear-instantly .basalio-text-reveal__item {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+}
+
 @keyframes basalio-tr-in {
 	from {
 		opacity: 0;

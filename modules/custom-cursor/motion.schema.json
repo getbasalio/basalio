@@ -42,9 +42,7 @@
       "token": "fallback",
       "default": "system cursor",
       "options": [
-        { "value": "system cursor", "label": "System cursor" },
-        { "value": "static", "label": "Static custom cursor" },
-        { "value": "none", "label": "No change" }
+        { "value": "system cursor", "label": "System cursor" }
       ]
     }
   }
