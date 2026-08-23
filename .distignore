@@ -21,6 +21,3 @@ WCAG-QA-draft-modules-4-9-rev2.md
 
 # Tests and test fixtures.
 tests/
-
-# Placeholder marketing page; not part of the plugin runtime.
-index.html
