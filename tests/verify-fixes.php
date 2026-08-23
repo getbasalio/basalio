@@ -461,6 +461,121 @@ foreach ( $css_files as $css_file ) {
 	);
 }
 
+echo "\n=== Focus-visible rings: colour contrast against adjacent surfaces ===\n";
+
+$bv_focus_bad     = array();
+$bv_focus_files   = array_merge(
+	array( BASALIO_TESTS_PLUGIN_DIR . '/assets/css/basalio-core.css' ),
+	glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/style.css' ) ?: array()
+);
+$bv_core_css      = (string) file_get_contents( BASALIO_TESTS_PLUGIN_DIR . '/assets/css/basalio-core.css' );
+$bv_root_tokens   = array();
+if ( preg_match_all( '/--basalio-([a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,6})/', $bv_core_css, $bv_root_matches, PREG_SET_ORDER ) ) {
+	foreach ( $bv_root_matches as $bv_rm ) {
+		$bv_root_tokens[ $bv_rm[1] ] = strtolower( $bv_rm[2] );
+	}
+}
+
+$bv_surface_white = Basalio_Contrast::hex_to_rgb( '#ffffff' );
+$bv_backdrop      = Basalio_Contrast::hex_to_rgb( '#1a1a1a' ); // rgba(0,0,0,0.9) over white.
+$bv_acid          = Basalio_Contrast::hex_to_rgb( '#dfff00' ); // Default close-button background.
+
+foreach ( $bv_focus_files as $bv_focus_file ) {
+	$bv_css  = (string) file_get_contents( $bv_focus_file );
+	$bv_rel  = str_replace( BASALIO_TESTS_PLUGIN_DIR . '/', '', $bv_focus_file );
+
+	if ( ! preg_match_all( '/([^{}]+):focus-visible\s*\{([^}]+)\}/', $bv_css, $bv_rules, PREG_SET_ORDER ) ) {
+		continue;
+	}
+
+	foreach ( $bv_rules as $bv_rule ) {
+		$bv_selector = trim( $bv_rule[1] );
+		$bv_body     = $bv_rule[2];
+
+		// Find every colour used in outline/box-shadow declarations.
+		$bv_colours = array();
+
+		// var(--token, #hex) fallback.
+		if ( preg_match_all( '/var\(\s*--basalio-([a-z0-9-]+)\s*,\s*(#[0-9a-fA-F]{3,6})\s*\)/', $bv_body, $bv_var_matches, PREG_SET_ORDER ) ) {
+			foreach ( $bv_var_matches as $bv_vm ) {
+				// Test the fallback (the value that applies when the token is missing).
+				$bv_colours[] = array(
+					'type'  => 'fallback',
+					'name'  => $bv_vm[1],
+					'hex'   => strtolower( $bv_vm[2] ),
+				);
+				// Test the runtime token value from the free default palette.
+				if ( isset( $bv_root_tokens[ $bv_vm[1] ] ) ) {
+					$bv_colours[] = array(
+						'type' => 'runtime',
+						'name' => $bv_vm[1],
+						'hex'  => $bv_root_tokens[ $bv_vm[1] ],
+					);
+				}
+			}
+		}
+
+		// var(--token) with no fallback: resolve from the free default palette.
+		if ( preg_match_all( '/var\(\s*--basalio-([a-z0-9-]+)(?!\s*,)\s*\)/', $bv_body, $bv_var_nofb, PREG_SET_ORDER ) ) {
+			foreach ( $bv_var_nofb as $bv_vn ) {
+				if ( isset( $bv_root_tokens[ $bv_vn[1] ] ) ) {
+					$bv_colours[] = array(
+						'type' => 'runtime',
+						'name' => $bv_vn[1],
+						'hex'  => $bv_root_tokens[ $bv_vn[1] ],
+					);
+				}
+			}
+		}
+
+		// Plain hex (no var).
+		if ( preg_match_all( '/(outline|box-shadow)\s*:\s*[^;]*(#[0-9a-fA-F]{3,6})/', $bv_body, $bv_plain_matches, PREG_SET_ORDER ) ) {
+			foreach ( $bv_plain_matches as $bv_pm ) {
+				$bv_colours[] = array(
+					'type' => 'literal',
+					'name' => '',
+					'hex'  => strtolower( $bv_pm[2] ),
+				);
+			}
+		}
+
+		foreach ( $bv_colours as $bv_colour ) {
+			$bv_rgb = Basalio_Contrast::hex_to_rgb( $bv_colour['hex'] );
+			if ( null === $bv_rgb ) {
+				continue;
+			}
+
+			// For the lightbox close button, assert against both neighbours.
+			if ( false !== strpos( $bv_selector, 'basalio-lightbox__close' ) ) {
+				if ( 'paper' === $bv_colour['name'] || '#ffffff' === $bv_colour['hex'] ) {
+					$bv_ratio = Basalio_Contrast::contrast_ratio( $bv_rgb, $bv_backdrop );
+					if ( $bv_ratio < 3.0 ) {
+						$bv_focus_bad[] = "{$bv_rel} {$bv_selector} paper on backdrop {$bv_colour['hex']} " . round( $bv_ratio, 2 ) . ':1';
+					}
+				} elseif ( 'ink' === $bv_colour['name'] || '#0a0a0a' === $bv_colour['hex'] ) {
+					$bv_ratio = Basalio_Contrast::contrast_ratio( $bv_rgb, $bv_acid );
+					if ( $bv_ratio < 3.0 ) {
+						$bv_focus_bad[] = "{$bv_rel} {$bv_selector} ink on acid {$bv_colour['hex']} " . round( $bv_ratio, 2 ) . ':1';
+					}
+				}
+				continue;
+			}
+
+			// Everywhere else the ring sits on the (default white) surface.
+			$bv_ratio = Basalio_Contrast::contrast_ratio( $bv_rgb, $bv_surface_white );
+			if ( $bv_ratio < 3.0 ) {
+				$bv_focus_bad[] = "{$bv_rel} {$bv_selector} {$bv_colour['type']} {$bv_colour['name']} {$bv_colour['hex']} " . round( $bv_ratio, 2 ) . ':1';
+			}
+		}
+	}
+}
+
+bv_ok(
+	'every focus-visible ring meets 3:1 against its adjacent surface',
+	empty( $bv_focus_bad ),
+	implode( "\n        ", $bv_focus_bad )
+);
+
 echo "\n=== Motion schema pipeline (Tasks 1-3) ===\n";
 
 $token_css = Basalio_Tokens::to_css();
