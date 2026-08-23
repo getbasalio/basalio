@@ -4,20 +4,28 @@
 1. Recapture .wordpress-org screenshots — current three show old block UI
 2. "Tested up to" — verify all nine blocks against target WP version, then set
    readme.txt. Currently reverted to 7.0 pending real testing
-3. /blocks copy audit — Grid Reveal listed with threshold/stagger, which it has no
-   controls for. Marketing site repo. Open across multiple sessions
+3. /blocks copy audit — Grid Reveal listed with threshold/stagger. ROOT CAUSE
+   FOUND: the schema declares them and the runtime does not implement them. Fix
+   the schema first, then the copy
 4. Extension points — DONE, must not change after submission
 
-## Vertical slice — in progress
-- motion.schema.json pipeline: editor generates from schema ✓
-- Front-end render still enumerates known keys ✗ — slice not complete until generic
+## Motion pipeline
+- Vertical slice COMPLETE: schema-only param change renders on the front end,
+  proven via __pipeline_test_param
 - 1 of 9 blocks migrated (Text Reveal). Eight hardcoded
+- BLOCKER: schemas describe unimplemented behavior across most of the eight.
+  Audit every param for a runtime consumer before migrating anything
+- Migration (mechanical) and feature-building (Pinned Scroll scroll-scrub,
+  Scroll Sequence frame subsetting, Filterable Grid layout animation) are
+  separate decisions
 
 ## Open decisions
 - Pricing: lifetime vs. bounded term. Blocked on Freemius support answer re:
   decoupling expiry from one-time payment
 - Licensing: unlimited-site confirmed as intent, not yet configured
 - Reduced motion is now a single fixed behavior, no user choice. Confirm intended
+- Pinned Scroll / Scroll Sequence / Filterable Grid: build the specced behavior
+  or cut it from the schemas
 
 ## Patterns (Pro track — does NOT gate .org)
 - 72 patterns, all ship at launch, 12 categories x 6
@@ -30,3 +38,5 @@
 - One commit per item
 - A control that does not do what it says is a defect, not a follow-up
 - Front-end output never depends on license state
+- If you discover something while answering a question, report it — do not convert
+  it into a menu option
