@@ -141,6 +141,41 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 $total_consumer = $consumer_pass + $consumer_fail;
 echo "\n{$consumer_pass}/{$total_consumer} schema params have runtime consumers.\n";
 
+// Inverse test: every editor control that sets a motion/timing/easing attribute
+// must have a corresponding parameter in that block's motion.schema.json.
+$editor_motion_attributes = array(
+	'text-reveal'               => array( 'splitUnit', 'duration', 'easing', 'triggerThreshold', 'reducedMotionFallback' ),
+	'grid-reveal'               => array( 'revealStyle', 'reducedMotionFallback' ),
+	'before-after'              => array( 'startPosition', 'dragStep', 'reducedMotionFallback' ),
+	'case-study-transition'     => array( 'focusTarget', 'announceChange', 'reducedMotionFallback', 'transitionDuration' ),
+	'custom-cursor'             => array( 'size', 'cursorStyle', 'reducedMotionFallback' ),
+	'filterable-grid'           => array( 'resultCount', 'reducedMotionFallback' ),
+	'magnetic-button'           => array( 'strength', 'reducedMotionFallback' ),
+	'pinned-scroll'             => array( 'reducedMotionFallback' ),
+	'scroll-sequence'           => array( 'reducedMotionFallback', 'scrollScreens' ),
+);
+
+$inverse_pass = 0;
+$inverse_fail = 0;
+foreach ( $editor_motion_attributes as $module_name => $attributes ) {
+	$schema_path = BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/motion.schema.json';
+	$schema      = file_exists( $schema_path ) ? json_decode( (string) file_get_contents( $schema_path ), true ) : array();
+	$parameters  = isset( $schema['parameters'] ) && is_array( $schema['parameters'] ) ? array_keys( $schema['parameters'] ) : array();
+
+	foreach ( $attributes as $attr ) {
+		if ( in_array( $attr, $parameters, true ) ) {
+			$inverse_pass++;
+			echo "OK    {$module_name}::{$attr} has schema param\n";
+		} else {
+			$inverse_fail++;
+			echo "FAIL  {$module_name}::{$attr} missing from motion.schema.json\n";
+		}
+	}
+}
+
+$total_inverse = $inverse_pass + $inverse_fail;
+echo "\n{$inverse_pass}/{$total_inverse} editor motion attributes have schema params.\n";
+
 // Verify every motion block has a prefers-reduced-motion: reduce rule that does
 // NOT require the fallback class to apply. The fallback class is an authoring
 // override; reduced-motion suppression must work for any visitor who sets the
@@ -259,4 +294,4 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 $total_trap = $trap_pass + $trap_fail;
 echo "\n{$trap_pass}/{$total_trap} blocks have reduce rules that work without the fallback class.\n";
 
-exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 || $trap_fail > 0 ? 1 : 0 );
+exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 || $inverse_fail > 0 || $trap_fail > 0 ? 1 : 0 );
