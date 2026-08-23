@@ -63,6 +63,50 @@ function basalio_enqueue_core() {
 }
 
 /**
+ * Determine whether the current page contains a Basalio block.
+ *
+ * Used by the Pro add-on (and any future extension) to decide whether to load
+ * Pro assets. The detection looks at the main post content, the block template,
+ * and any blocks rendered so far in the current request.
+ *
+ * @return bool
+ */
+function basalio_has_block() {
+	static $has_block = null;
+
+	if ( null !== $has_block ) {
+		return $has_block;
+	}
+
+	$has_block = false;
+
+	// Current post content.
+	if ( is_singular() ) {
+		$post = get_post();
+		if ( $post && has_block( 'basalio/', $post->post_content ) ) {
+			$has_block = true;
+		}
+	}
+
+	// FSE block template.
+	if ( ! $has_block && function_exists( 'get_block_template' ) ) {
+		$template = get_block_template( get_stylesheet() . '//' . basename( get_page_template() ), 'wp_template' );
+		if ( $template && has_block( 'basalio/', $template->content ) ) {
+			$has_block = true;
+		}
+	}
+
+	/**
+	 * Filter whether the current page contains a Basalio block.
+	 *
+	 * @param bool $has_block Current detection result.
+	 */
+	$has_block = (bool) apply_filters( 'basalio_has_block', $has_block );
+
+	return $has_block;
+}
+
+/**
  * Wrap an image's HTML in the click behavior an image block was configured with.
  *
  * Lightbox wins over a link when both are set. Returns the image untouched when
