@@ -158,4 +158,132 @@
 			help: help
 		} );
 	};
+
+	/**
+	 * Render motion-parameter controls from a module's motion schema.
+	 *
+	 * Phase B: generic schema-driven form renderer. No block-specific labels or
+	 * parameter names are hardcoded here.
+	 *
+	 * @param {Object}   schema       Motion schema object with a `parameters` key.
+	 * @param {Object}   motionParams Current saved motionParams attribute value.
+	 * @param {Function} onChange     Callback receiving a partial motionParams object to merge.
+	 * @return {Array} Array of React elements.
+	 */
+	BasalioEd.renderMotionControls = function ( schema, motionParams, onChange ) {
+		var wp = window.wp;
+		var cmp = wp.components;
+		var element = wp.element;
+		var Fragment = element.Fragment;
+		motionParams = motionParams || {};
+
+		if ( ! schema || ! schema.parameters ) {
+			return [];
+		}
+
+		var params = schema.parameters;
+		var keys = Object.keys( params );
+		var controls = [];
+
+		for ( var i = 0; i < keys.length; i++ ) {
+			var paramName = keys[i];
+			var param = params[paramName];
+			var rawValue = motionParams[paramName];
+			var value = ( rawValue === undefined || rawValue === null ) ? param.default : rawValue;
+			var helpOrHint = param.help || param.hint || '';
+			var control = null;
+
+			if ( param.type === 'select' ) {
+				var selectProps = {
+					key: paramName + '-control',
+					options: param.options,
+					value: value,
+					onChange: ( function ( k ) {
+						return function ( v ) {
+							var update = {};
+							update[k] = v;
+							onChange( update );
+						};
+					}( paramName ) )
+				};
+				if ( ! helpOrHint ) {
+					selectProps.label = param.label;
+					selectProps.help = param.help || undefined;
+				}
+				control = el( cmp.SelectControl, selectProps );
+			} else if ( param.type === 'range' ) {
+				var rangeHelp = param.help || '';
+				if ( param.unit ) {
+					if ( rangeHelp ) {
+						rangeHelp += ' (' + param.unit + ')';
+					} else {
+						rangeHelp = param.unit;
+					}
+				}
+				var rangeProps = {
+					key: paramName + '-control',
+					min: param.min,
+					max: param.max,
+					step: param.step,
+					value: value,
+					onChange: ( function ( k ) {
+						return function ( v ) {
+							var update = {};
+							update[k] = parseFloat( v );
+							onChange( update );
+						};
+					}( paramName ) )
+				};
+				if ( ! helpOrHint ) {
+					rangeProps.label = param.label;
+					rangeProps.help = rangeHelp || undefined;
+				}
+				control = el( cmp.RangeControl, rangeProps );
+			} else if ( param.type === 'toggle' ) {
+				var toggleProps = {
+					key: paramName + '-control',
+					checked: !! value,
+					onChange: ( function ( k ) {
+						return function ( v ) {
+							var update = {};
+							update[k] = !! v;
+							onChange( update );
+						};
+					}( paramName ) )
+				};
+				if ( ! helpOrHint ) {
+					toggleProps.label = param.label;
+				}
+				control = el( cmp.ToggleControl, toggleProps );
+			} else if ( param.type === 'text' ) {
+				var textProps = {
+					key: paramName + '-control',
+					value: value || '',
+					onChange: ( function ( k ) {
+						return function ( v ) {
+							var update = {};
+							update[k] = v;
+							onChange( update );
+						};
+					}( paramName ) )
+				};
+				if ( ! helpOrHint ) {
+					textProps.label = param.label;
+				}
+				control = el( cmp.TextControl, textProps );
+			}
+
+			if ( ! control ) {
+				continue;
+			}
+
+			if ( helpOrHint ) {
+				controls.push( el( Fragment, { key: paramName }, BasalioEd.Field( param.label, control, helpOrHint ) ) );
+			} else {
+				controls.push( control );
+			}
+		}
+
+		return controls;
+	};
 }( window.wp ) );

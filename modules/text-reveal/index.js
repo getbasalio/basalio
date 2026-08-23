@@ -20,11 +20,29 @@
 	var TextControl     = cmp.TextControl;
 	var TextareaControl = cmp.TextareaControl;
 	var SelectControl   = cmp.SelectControl;
-	var ToggleControl   = cmp.ToggleControl;
 
 	var BE    = window.BasalioEd || {};
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
+
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
 
 	registerBlockType( 'basalio/text-reveal', {
 		edit: function ( props ) {
@@ -33,6 +51,33 @@
 			var level = a.headingLevel && /^h[1-4]$/.test( a.headingLevel ) ? a.headingLevel : 'h2';
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.splitUnit = ( a.wordByWord === true ) ? 'word' : 'line';
+
+				var dur = a.duration;
+				if ( typeof dur === 'number' ) {
+					if ( dur <= 350 ) {
+						migrated.duration = 'short';
+					} else if ( dur > 900 ) {
+						migrated.duration = 'long';
+					} else {
+						migrated.duration = 'base';
+					}
+				} else {
+					migrated.duration = 'base';
+				}
+
+				migrated.easing = 'glide';
+				migrated.triggerThreshold = 50;
+				migrated.reducedMotionFallback = 'appear instantly';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			var inspector = el(
 				InspectorControls,
@@ -84,24 +129,25 @@
 					onChange: function ( v ) { setA( { ctaText: v } ); },
 					placeholder: __( 'e.g. Get in touch', 'basalio' ),
 					help: __( 'Set the link under Advanced (sidebar).', 'basalio' )
-				} ),
-				el( ToggleControl, {
-					key: 'wbw',
-					label: __( 'Reveal headline word by word', 'basalio' ),
-					checked: !! a.wordByWord,
-					onChange: function ( v ) { setA( { wordByWord: v } ); },
-					help: __( 'Each word fades in one after another.', 'basalio' )
-				} ),
-				( BE.DurationField
-					? BE.DurationField(
-						__( 'Reveal speed (ms)', 'basalio' ),
-						( a.duration == null ? 600 : a.duration ),
-						function ( v ) { setA( { duration: v } ); },
-						__( 'How long each line/word takes to fade in. Higher is slower and easier to notice.', 'basalio' )
-					)
-					: null ),
-				Tip( __( 'On load, the lines fade in one after another. Screen readers get the full text immediately, and under reduced-motion it appears instantly.', 'basalio' ) )
+				} )
 			];
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/text-reveal'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.push( motionControls[mi] );
+			}
+
+			body.push( Tip( __( 'The lines fade in as they scroll into view. Screen readers get the full text immediately, and under reduced-motion it appears instantly.', 'basalio' ) ) );
 
 			return el(
 				'div',
@@ -110,7 +156,7 @@
 				Panel(
 					{
 						name: __( 'Text Reveal', 'basalio' ),
-						description: __( 'A choreographed entrance for a headline, subhead, and optional button. They fade in when the page loads.', 'basalio' )
+						description: __( 'A choreographed entrance for a headline, subhead, and optional button. They fade in as they scroll into view.', 'basalio' )
 					},
 					body
 				)
