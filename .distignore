@@ -1,0 +1,26 @@
+.git/
+.gitattributes
+.gitignore
+.impeccable/
+.netlify/
+.superpowers/
+.worktrees/
+.tmp/
+.wordpress-org/
+
+# Documentation and planning artifacts not required at runtime.
+AUDIT-REPORT.md
+basalio-open-items-issue.md
+CLAUDE.md
+EXTENSION-POINTS.md
+PATTERN-TRIAGE.md
+README.md
+WCAG-QA.md
+WCAG-QA-draft-modules-4-9.md
+WCAG-QA-draft-modules-4-9-rev2.md
+
+# Tests and test fixtures.
+tests/
+
+# Placeholder marketing page; not part of the plugin runtime.
+index.html
