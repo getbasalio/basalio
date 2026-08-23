@@ -188,6 +188,14 @@
 		for ( var i = 0; i < keys.length; i++ ) {
 			var paramName = keys[i];
 			var param = params[paramName];
+
+			// A select with only one option offers no real choice. Keep the param
+			// in the schema (fallback class emission depends on it) but do not
+			// render a useless control.
+			if ( param.type === 'select' && param.options && param.options.length <= 1 ) {
+				continue;
+			}
+
 			var rawValue = motionParams[paramName];
 			var value = ( rawValue === undefined || rawValue === null ) ? param.default : rawValue;
 			var helpOrHint = param.help || param.hint || '';
