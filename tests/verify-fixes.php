@@ -375,6 +375,43 @@ bv_ok(
 	$found_variation,
 	'variations: ' . wp_json_encode( $variations )
 );
+
+echo "\n=== Palette-class defect: core CSS loads for pattern-only content ===\n";
+
+// Render a page that contains only core blocks colored with Basalio palette
+// classes (no basalio/ block). The shared core stylesheet must still enqueue
+// so the palette classes resolve when the Pro add-on is inactive.
+$wp_enqueue_scripts_ran = did_action( 'wp_enqueue_scripts' );
+$page = get_page_by_path( 'browser-palette-check-hero-01' );
+if ( $page ) {
+	global $post;
+	$post = $page;
+	setup_postdata( $post );
+
+	wp_dequeue_style( 'basalio-core' );
+	wp_dequeue_script( 'basalio-core' );
+	$rendered = do_blocks( $post->post_content );
+
+	// Simulate the front-end enqueue hook firing after the main query is set.
+	if ( ! $wp_enqueue_scripts_ran ) {
+		do_action( 'wp_enqueue_scripts' );
+	}
+
+	bv_ok(
+		'fixture page contains Basalio palette classes',
+		false !== strpos( $rendered, 'has-basalio-' )
+	);
+	bv_ok(
+		'basalio-core STYLE enqueued for palette-only content',
+		wp_style_is( 'basalio-core', 'enqueued' ),
+		'If false, expanded patterns render with no Basalio palette.'
+	);
+
+	wp_reset_postdata();
+} else {
+	bv_ok( 'fixture page browser-palette-check-hero-01 exists', false, 'run tests/make-verify-pages.php' );
+}
+
 echo "\n=== Design-token readiness: no bare hex colors in CSS ===\n";
 
 /**
@@ -387,6 +424,9 @@ echo "\n=== Design-token readiness: no bare hex colors in CSS ===\n";
  */
 function bv_css_has_bare_hex( $css ) {
 	$css = preg_replace( '/\/\*.*?\*\//s', '', $css );
+	// Token definitions (--basalio-*: #hex) are the source of the variables, not
+	// bare usages. Strip them before checking component property values.
+	$css = preg_replace( '/--basalio-[-a-z0-9]+\s*:\s*#[0-9a-fA-F]{3,6}\b;?/', '', $css );
 	if ( ! preg_match_all( '/#[0-9a-fA-F]{3,6}\b/', $css, $matches, PREG_OFFSET_CAPTURE ) ) {
 		return false;
 	}
