@@ -24,12 +24,42 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	registerBlockType( 'basalio/magnetic-button', {
 		edit: function ( props ) {
 			var a    = props.attributes;
 			var setA = props.setAttributes;
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.strength = ( typeof a.strength === 'number' ) ? a.strength : 18;
+				migrated.reducedMotionFallback = 'no magnetism';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			var body = [
 				el( TextControl, {
@@ -53,15 +83,6 @@
 					checked: !! a.opensInNewTab,
 					onChange: function ( v ) { setA( { opensInNewTab: v } ); }
 				} ),
-				el( RangeControl, {
-					key: 'strength',
-					label: __( 'Magnetic strength', 'basalio' ),
-					value: typeof a.strength === 'number' ? a.strength : 18,
-					min: 4,
-					max: 40,
-					onChange: function ( v ) { setA( { strength: v } ); },
-					help: __( 'How far the button pulls toward the pointer.', 'basalio' )
-				} ),
 				el( SelectControl, {
 					key: 'align',
 					label: __( 'Alignment', 'basalio' ),
@@ -76,6 +97,21 @@
 				} ),
 				Tip( __( 'The pull is pointer-only. On touch screens and for anyone using reduced motion, it stays a normal, keyboard-friendly button.', 'basalio' ) )
 			];
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/magnetic-button'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.push( motionControls[mi] );
+			}
 
 			var previewLabel = a.text || __( 'Button text', 'basalio' );
 			var newTabHint = a.opensInNewTab

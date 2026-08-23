@@ -65,6 +65,10 @@
         "transitionDuration": {
             "type": "number",
             "default": 300
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

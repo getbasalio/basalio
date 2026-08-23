@@ -15,7 +15,7 @@
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Inner blocks (the story), rendered.
- * @var WP_Block $block      Block instance (unused).
+ * @var WP_Block $block      Block instance, used to read raw saved attributes for motionParams.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,9 +60,30 @@ $basalio_img = basalio_get_image_html(
 $basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt );
 
 $basalio_style   = '--basalio-ps-cols:' . $basalio_mw . 'fr ' . ( 100 - $basalio_mw ) . 'fr;--basalio-ps-radius:' . $basalio_radius . 'px';
+
+// Motion parameters.
+$basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
+	? $block->parsed_block['attrs']
+	: $attributes;
+$basalio_motion_params = isset( $basalio_raw_attrs['motionParams'] ) && is_array( $basalio_raw_attrs['motionParams'] )
+	? $basalio_raw_attrs['motionParams']
+	: array();
+
+$basalio_motion_css = class_exists( 'Basalio', false )
+	? Basalio::resolve_motion_params_to_css( 'basalio/pinned-scroll', $basalio_motion_params )
+	: array( 'style' => '', 'classes' => array() );
+
+$basalio_class = 'basalio-pinned-scroll media-' . $basalio_pos;
+if ( ! empty( $basalio_motion_css['classes'] ) ) {
+	$basalio_class .= ' ' . implode( ' ', array_map( 'esc_attr', $basalio_motion_css['classes'] ) );
+}
+if ( ! empty( $basalio_motion_css['style'] ) ) {
+	$basalio_style .= ';' . $basalio_motion_css['style'];
+}
+
 $basalio_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'basalio-pinned-scroll media-' . $basalio_pos,
+		'class' => $basalio_class,
 		'style' => $basalio_style,
 	)
 );

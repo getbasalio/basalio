@@ -8,7 +8,6 @@
     "revealStyle": {
       "label": "Reveal style",
       "type": "select",
-      "token": "style",
       "default": "crossfade",
       "options": [
         { "value": "crossfade", "label": "Crossfade" },

@@ -46,6 +46,10 @@
         "alignment": {
             "type": "string",
             "default": "left"
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

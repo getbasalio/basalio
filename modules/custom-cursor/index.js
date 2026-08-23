@@ -28,44 +28,55 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	registerBlockType( 'basalio/custom-cursor', {
 		edit: function ( props ) {
 			var a    = props.attributes;
 			var setA = props.setAttributes;
-			var size = typeof a.size === 'number' ? a.size : 30;
-
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.size = ( typeof a.size === 'number' ) ? a.size : 30;
+				migrated.cursorStyle = ( a.cursorStyle === 'dot' ) ? 'dot' : 'ring';
+				migrated.reducedMotionFallback = 'system cursor';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
+
 			var innerProps = useInnerBlocksProps(
 				{ className: 'basalio-custom-cursor__content' },
 				{ template: [ [ 'core/paragraph', { placeholder: __( 'Add the content this cursor should apply to…', 'basalio' ) } ] ] }
 			);
 
 			var body = [
-				el( RangeControl, {
-					key: 'size',
-					label: __( 'Accent size (px)', 'basalio' ),
-					value: size,
-					min: 10,
-					max: 80,
-					onChange: function ( v ) { setA( { size: v } ); }
-				} ),
 				el( TextControl, {
 					key: 'color',
 					label: __( 'Accent color (hex)', 'basalio' ),
 					value: a.color || '',
 					onChange: function ( v ) { setA( { color: v } ); },
 					placeholder: '#DFFF00'
-				} ),
-				el( SelectControl, {
-					key: 'style',
-					label: __( 'Accent shape', 'basalio' ),
-					value: a.cursorStyle === 'dot' ? 'dot' : 'ring',
-					options: [
-						{ label: __( 'Ring (hollow, sees through)', 'basalio' ), value: 'ring' },
-						{ label: __( 'Dot (solid)', 'basalio' ), value: 'dot' }
-					],
-					onChange: function ( v ) { setA( { cursorStyle: v } ); },
-					help: a.cursorImageUrl ? __( 'Ignored while a cursor image is set.', 'basalio' ) : undefined
 				} ),
 				el( 'div', { key: 'curimg', className: 'basalio-ed-field' },
 					el( 'span', { className: 'basalio-ed-label' }, __( 'Cursor image / SVG (optional)', 'basalio' ) ),
@@ -84,6 +95,21 @@
 				Tip( __( 'The accent appears on the live page when a visitor moves the mouse inside this area. It is off on touch and under reduced motion, and never blocks a click.', 'basalio' ) ),
 				el( 'div', { key: 'inner', style: { marginTop: '14px' } }, el( 'div', innerProps ) )
 			];
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/custom-cursor'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.splice( body.length - 2, 0, motionControls[mi] );
+			}
 
 			return el(
 				'div',

@@ -72,14 +72,38 @@ if ( 0 === $basalio_total ) {
 }
 
 $basalio_btn_radius = isset( $attributes['buttonRadius'] ) ? max( 0, absint( $attributes['buttonRadius'] ) ) : 2;
-$basalio_wrapper    = get_block_wrapper_attributes(
+
+// Motion parameters.
+$basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
+	? $block->parsed_block['attrs']
+	: $attributes;
+$basalio_motion_params = isset( $basalio_raw_attrs['motionParams'] ) && is_array( $basalio_raw_attrs['motionParams'] )
+	? $basalio_raw_attrs['motionParams']
+	: array();
+
+$basalio_result_count = isset( $basalio_motion_params['resultCount'] ) ? $basalio_motion_params['resultCount'] : 'polite';
+
+$basalio_motion_css = class_exists( 'Basalio', false )
+	? Basalio::resolve_motion_params_to_css( 'basalio/filterable-grid', $basalio_motion_params )
+	: array( 'style' => '', 'classes' => array() );
+
+$basalio_class = 'basalio-filterable-grid';
+if ( ! empty( $basalio_motion_css['classes'] ) ) {
+	$basalio_class .= ' ' . implode( ' ', array_map( 'esc_attr', $basalio_motion_css['classes'] ) );
+}
+$basalio_style = '--basalio-fg-radius:' . $basalio_btn_radius . 'px';
+if ( ! empty( $basalio_motion_css['style'] ) ) {
+	$basalio_style .= ';' . $basalio_motion_css['style'];
+}
+
+$basalio_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'basalio-filterable-grid',
-		'style' => '--basalio-fg-radius:' . $basalio_btn_radius . 'px',
+		'class' => $basalio_class,
+		'style' => $basalio_style,
 	)
 );
 ?>
-<div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-filterable-grid>
+<div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-filterable-grid data-basalio-result-count="<?php echo esc_attr( $basalio_result_count ); ?>">
 	<?php if ( ! empty( $basalio_cats ) ) : ?>
 		<div class="basalio-filterable-grid__filters" role="toolbar" aria-orientation="horizontal" aria-label="<?php esc_attr_e( 'Filter by discipline', 'basalio' ); ?>">
 			<button type="button" class="basalio-filterable-grid__filter is-active" data-basalio-filter="*" aria-pressed="true"><?php echo esc_html( $basalio_all_label ); ?></button>
@@ -89,7 +113,7 @@ $basalio_wrapper    = get_block_wrapper_attributes(
 		</div>
 	<?php endif; ?>
 
-	<p class="basalio-filterable-grid__status" role="status" data-basalio-total="<?php echo esc_attr( $basalio_total ); ?>">
+	<p class="basalio-filterable-grid__status"<?php echo ( 'polite' === $basalio_result_count ) ? ' aria-live="polite"' : ''; ?> role="status" data-basalio-total="<?php echo esc_attr( $basalio_total ); ?>">
 		<?php
 		printf(
 			/* translators: %d: number of projects currently shown. */

@@ -11,7 +11,7 @@
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Unused.
- * @var WP_Block $block      Block instance (unused).
+ * @var WP_Block $block      Block instance, used to read raw saved attributes for motionParams.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,8 +52,31 @@ if ( '' === $basalio_before || '' === $basalio_after ) {
 $basalio_before_label = ( isset( $attributes['beforeLabel'] ) && '' !== $attributes['beforeLabel'] ) ? $attributes['beforeLabel'] : __( 'Before', 'basalio' );
 $basalio_after_label  = ( isset( $attributes['afterLabel'] ) && '' !== $attributes['afterLabel'] ) ? $attributes['afterLabel'] : __( 'After', 'basalio' );
 
-$basalio_start = isset( $attributes['startPosition'] ) ? (int) $attributes['startPosition'] : 50;
+// Motion parameters (startPosition is also a legacy top-level attribute).
+$basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
+	? $block->parsed_block['attrs']
+	: $attributes;
+$basalio_motion_params = isset( $basalio_raw_attrs['motionParams'] ) && is_array( $basalio_raw_attrs['motionParams'] )
+	? $basalio_raw_attrs['motionParams']
+	: array();
+
+$basalio_start = isset( $basalio_motion_params['startPosition'] )
+	? (int) $basalio_motion_params['startPosition']
+	: ( isset( $attributes['startPosition'] ) ? (int) $attributes['startPosition'] : 50 );
 $basalio_start = max( 0, min( 100, $basalio_start ) );
+
+$basalio_step = isset( $basalio_motion_params['dragStep'] ) ? (int) $basalio_motion_params['dragStep'] : 5;
+$basalio_step = max( 1, min( 25, $basalio_step ) );
+
+// Merge legacy top-level values so resolved CSS matches the rendered values.
+$basalio_resolve_params = $basalio_motion_params;
+if ( ! isset( $basalio_resolve_params['startPosition'] ) ) {
+	$basalio_resolve_params['startPosition'] = $basalio_start;
+}
+
+$basalio_motion_css = class_exists( 'Basalio', false )
+	? Basalio::resolve_motion_params_to_css( 'basalio/before-after', $basalio_resolve_params )
+	: array( 'style' => '', 'classes' => array() );
 
 // Optional fixed aspect ratio, so the comparison can be cropped to a shape the
 // user picks (landscape / square / portrait) regardless of the source images.
@@ -79,7 +102,15 @@ $basalio_slider_label = sprintf(
 );
 
 $basalio_classes = 'basalio-before-after' . ( '' !== $basalio_ratio_css ? ' has-ratio' : '' );
-$basalio_wrapper = get_block_wrapper_attributes( array( 'class' => $basalio_classes ) );
+if ( ! empty( $basalio_motion_css['classes'] ) ) {
+	$basalio_classes .= ' ' . implode( ' ', array_map( 'esc_attr', $basalio_motion_css['classes'] ) );
+}
+$basalio_wrapper = get_block_wrapper_attributes(
+	array(
+		'class' => $basalio_classes,
+		'style' => $basalio_motion_css['style'],
+	)
+);
 $basalio_style   = '--basalio-ba-pos:' . (int) $basalio_start . '%';
 if ( '' !== $basalio_ratio_css ) {
 	$basalio_style .= ';--basalio-ba-ratio:' . $basalio_ratio_css;
@@ -105,7 +136,7 @@ if ( '' !== $basalio_ratio_css ) {
 			aria-valuemax="100"
 			aria-valuenow="<?php echo (int) $basalio_start; ?>"
 			aria-valuetext="<?php echo esc_attr( sprintf( /* translators: 1: percentage, 2: before label, 3: after label */ __( '%1$s%% — Before: %2$s, After: %3$s', 'basalio' ), (int) $basalio_start, $basalio_before_label, $basalio_after_label ) ); ?>"
-			data-basalio-step="2"
+			data-basalio-step="<?php echo (int) $basalio_step; ?>"
 			data-basalio-before-label="<?php echo esc_attr( $basalio_before_label ); ?>"
 			data-basalio-after-label="<?php echo esc_attr( $basalio_after_label ); ?>"
 		>

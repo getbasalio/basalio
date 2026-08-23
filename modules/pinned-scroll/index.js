@@ -29,6 +29,25 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	registerBlockType( 'basalio/pinned-scroll', {
 		edit: function ( props ) {
 			var a    = props.attributes;
@@ -36,6 +55,17 @@
 			var hasImage = !! ( a.pinnedImageUrl || a.pinnedImageId );
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.reducedMotionFallback = 'no pin';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
+
 			var innerProps = useInnerBlocksProps(
 				{ className: 'basalio-pinned-scroll__story' },
 				{ template: [ [ 'core/heading', { level: 3, placeholder: __( 'Story heading…', 'basalio' ) } ], [ 'core/paragraph', { placeholder: __( 'Tell the story here. The image stays pinned while this scrolls.', 'basalio' ) } ] ] }
@@ -98,7 +128,24 @@
 					lightbox: a.lightbox,
 					onLightbox: function ( v ) { setA( { lightbox: v } ); }
 				} ) : []
-			).concat( [
+			);
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/pinned-scroll'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.push( motionControls[mi] );
+			}
+
+			body = body.concat( [
 				el( TextControl, {
 					key: 'alt',
 					label: __( 'Image alt text', 'basalio' ),

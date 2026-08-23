@@ -27,6 +27,25 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	function toFrames( media ) {
 		var list = Array.isArray( media ) ? media : [ media ];
 		return list.map( function ( m ) { return { id: m.id, url: m.url, alt: m.alt || '' }; } );
@@ -40,6 +59,16 @@
 			var screens = typeof a.scrollScreens === 'number' ? a.scrollScreens : 3;
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.reducedMotionFallback = 'last frame';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			var body;
 			if ( ! frames.length ) {
@@ -100,6 +129,23 @@
 					} ) : null ),
 					Tip( __( 'The sequence sticks to the screen and steps through frames as the visitor scrolls. The Previous and Next buttons let anyone step through it without scrolling.', 'basalio' ) )
 				];
+			}
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/scroll-sequence'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			if ( body && Array.isArray( body ) ) {
+				for ( var mi = 0; mi < motionControls.length; mi++ ) {
+					body.push( motionControls[mi] );
+				}
 			}
 
 			return el(

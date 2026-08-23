@@ -18,7 +18,6 @@
     "cursorStyle": {
       "label": "Accent shape",
       "type": "select",
-      "token": "style",
       "default": "ring",
       "options": [
         { "value": "ring", "label": "Ring" },

@@ -181,22 +181,52 @@
 		} catch ( err ) {}
 
 		var focused = false;
-		var focusHeading = function () {
-			if ( focused ) {
+		var hero = document.querySelector( '[data-basalio-cst-hero]' );
+		var focusTarget = hero ? ( hero.getAttribute( 'data-basalio-cst-focus-target' ) || 'next panel' ) : 'next panel';
+		var announceChange = hero ? ( hero.getAttribute( 'data-basalio-cst-announce' ) || 'polite' ) : 'polite';
+
+		var announced = false;
+		var announce = function () {
+			if ( announced || 'polite' !== announceChange ) {
+				return;
+			}
+			announced = true;
+			var status = document.createElement( 'div' );
+			status.setAttribute( 'role', 'status' );
+			status.setAttribute( 'aria-live', 'polite' );
+			status.className = 'basalio-screen-reader-text';
+			status.textContent = i18n ? i18n.__( 'Case study loaded', 'basalio' ) : 'Case study loaded';
+			document.body.appendChild( status );
+			window.setTimeout( function () {
+				if ( status.parentNode ) {
+					status.parentNode.removeChild( status );
+				}
+			}, 1000 );
+		};
+
+		var moveFocus = function () {
+			if ( focused || 'none' === focusTarget ) {
+				announce();
 				return;
 			}
 			focused = true;
-			var h1 = document.querySelector( 'h1' );
-			if ( ! h1 ) {
+
+			var target = null;
+			if ( 'top' === focusTarget && hero ) {
+				target = hero;
+			} else {
+				target = document.querySelector( 'h1' );
+			}
+			if ( ! target ) {
+				announce();
 				return;
 			}
-			// Make the heading programmatically focusable without putting it in
-			// the Tab order.
-			if ( ! h1.hasAttribute( 'tabindex' ) ) {
-				h1.setAttribute( 'tabindex', '-1' );
+			if ( ! target.hasAttribute( 'tabindex' ) ) {
+				target.setAttribute( 'tabindex', '-1' );
 			}
-			h1.classList.add( 'basalio-cst-focus-target' );
-			h1.focus( { preventScroll: true } );
+			target.classList.add( 'basalio-cst-focus-target' );
+			target.focus( { preventScroll: true } );
+			announce();
 		};
 
 		var prefersReduced = window.matchMedia &&
@@ -205,23 +235,23 @@
 
 		if ( supportsCrossDocVT && ! prefersReduced ) {
 			// Wait for the cross-document transition to settle, then focus.
-			var fallbackTimer = window.setTimeout( focusHeading, 400 );
+			var fallbackTimer = window.setTimeout( moveFocus, 400 );
 			window.addEventListener( 'pagereveal', function ( e ) {
 				// The transition handler is now responsible; cancel the fallback.
 				window.clearTimeout( fallbackTimer );
 				if ( e && e.viewTransition && e.viewTransition.finished ) {
-					e.viewTransition.finished.then( focusHeading, focusHeading );
+					e.viewTransition.finished.then( moveFocus, moveFocus );
 				} else {
-					focusHeading();
+					moveFocus();
 				}
 			} );
 		} else {
 			// No view transition (unsupported, or reduced motion → plain nav):
 			// focus once the document is ready.
 			if ( document.readyState === 'loading' ) {
-				document.addEventListener( 'DOMContentLoaded', focusHeading );
+				document.addEventListener( 'DOMContentLoaded', moveFocus );
 			} else {
-				focusHeading();
+				moveFocus();
 			}
 		}
 	} );
@@ -301,6 +331,15 @@
 			var items   = grid.querySelectorAll( '.basalio-grid-item' );
 			var status  = grid.querySelector( '.basalio-filterable-grid__status' );
 			var total   = items.length;
+			var resultCount = grid.getAttribute( 'data-basalio-result-count' ) || 'polite';
+
+			if ( status ) {
+				if ( 'polite' === resultCount ) {
+					status.setAttribute( 'aria-live', 'polite' );
+				} else {
+					status.removeAttribute( 'aria-live' );
+				}
+			}
 
 			if ( ! filters.length || ! total ) {
 				return;

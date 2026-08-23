@@ -11,7 +11,7 @@
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Unused.
- * @var WP_Block $block      Block instance (unused).
+ * @var WP_Block $block      Block instance, used to read raw saved attributes for motionParams.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,13 +57,34 @@ foreach ( $basalio_frames as $basalio_i => $basalio_frame ) {
 	$basalio_frames_html .= $basalio_img;
 }
 
+// Motion parameters.
+$basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
+	? $block->parsed_block['attrs']
+	: $attributes;
+$basalio_motion_params = isset( $basalio_raw_attrs['motionParams'] ) && is_array( $basalio_raw_attrs['motionParams'] )
+	? $basalio_raw_attrs['motionParams']
+	: array();
+
+$basalio_motion_css = class_exists( 'Basalio', false )
+	? Basalio::resolve_motion_params_to_css( 'basalio/scroll-sequence', $basalio_motion_params )
+	: array( 'style' => '', 'classes' => array() );
+
+$basalio_class = 'basalio-scroll-sequence' . ( $basalio_controls ? '' : ' has-hidden-controls' );
+$basalio_style = '--basalio-seq-screens:' . $basalio_screens . ';';
+if ( ! empty( $basalio_motion_css['classes'] ) ) {
+	$basalio_class .= ' ' . implode( ' ', array_map( 'esc_attr', $basalio_motion_css['classes'] ) );
+}
+if ( ! empty( $basalio_motion_css['style'] ) ) {
+	$basalio_style .= $basalio_motion_css['style'];
+}
+
 $basalio_wrapper = get_block_wrapper_attributes(
 	array(
 		// Controls are always rendered in the DOM so reduced-motion users can
 		// still step through frames when the author has hidden them. CSS hides
 		// the controls for sighted users unless reduced motion is active.
-		'class' => 'basalio-scroll-sequence' . ( $basalio_controls ? '' : ' has-hidden-controls' ),
-		'style' => '--basalio-seq-screens:' . $basalio_screens . ';',
+		'class' => $basalio_class,
+		'style' => $basalio_style,
 	)
 );
 ?>

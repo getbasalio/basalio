@@ -50,6 +50,10 @@
         "cursorImageUrl": {
             "type": "string",
             "default": ""
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

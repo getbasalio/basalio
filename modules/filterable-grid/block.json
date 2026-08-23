@@ -38,6 +38,10 @@
         "buttonRadius": {
             "type": "number",
             "default": 2
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

@@ -64,6 +64,10 @@
         "aspectRatio": {
             "type": "string",
             "default": "auto"
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

@@ -25,6 +25,25 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	var ALLOWED  = [ 'basalio/grid-item' ];
 	var TEMPLATE = [ [ 'basalio/grid-item' ], [ 'basalio/grid-item' ], [ 'basalio/grid-item' ] ];
 
@@ -35,6 +54,17 @@
 			var cols = typeof a.columns === 'number' ? a.columns : 3;
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.resultCount = 'polite';
+				migrated.reducedMotionFallback = 'appear instantly';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			var innerProps = useInnerBlocksProps(
 				{ className: 'basalio-filterable-grid__grid', style: { '--basalio-fg-cols': cols } },
@@ -69,6 +99,21 @@
 				Tip( __( 'Add items below and give every item a Category. Visitors can move between filters with the arrow keys. The filter buttons on the live page are built automatically from those categories.', 'basalio' ) ),
 				el( 'div', { key: 'grid', style: { marginTop: '14px' } }, el( 'div', innerProps ) )
 			];
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/filterable-grid'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.splice( body.length - 2, 0, motionControls[mi] );
+			}
 
 			return el(
 				'div',

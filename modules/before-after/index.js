@@ -41,13 +41,43 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	registerBlockType( 'basalio/before-after', {
 		edit: function ( props ) {
 			var a    = props.attributes;
 			var setA = props.setAttributes;
-			var pos  = typeof a.startPosition === 'number' ? a.startPosition : 50;
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.startPosition = ( typeof a.startPosition === 'number' ) ? a.startPosition : 50;
+				migrated.dragStep = 5;
+				migrated.reducedMotionFallback = 'instant';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			function slot( key, label, url, alt, onSelect ) {
 				return el(
@@ -86,15 +116,6 @@
 					onChange: function ( v ) { setA( { afterLabel: v } ); },
 					placeholder: __( 'After', 'basalio' )
 				} ),
-				el( RangeControl, {
-					key: 'start',
-					label: __( 'Start position (%)', 'basalio' ),
-					value: pos,
-					min: 0,
-					max: 100,
-					onChange: function ( v ) { setA( { startPosition: v } ); },
-					help: __( 'Where the divider sits when the page loads.', 'basalio' )
-				} ),
 				el( SelectControl, {
 					key: 'ratio',
 					label: __( 'Aspect ratio', 'basalio' ),
@@ -105,6 +126,21 @@
 				} ),
 				Tip( __( 'Visitors drag the divider, or focus it and use the arrow keys, to compare the two images. Works with a mouse, touch, and keyboard.', 'basalio' ) )
 			];
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/before-after'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.push( motionControls[mi] );
+			}
 
 			var inspector = el(
 				InspectorControls,

@@ -69,6 +69,10 @@
         "lightbox": {
             "type": "boolean",
             "default": false
+        },
+        "motionParams": {
+            "type": "object",
+            "default": {}
         }
     },
     "editorScript": "file:./index.js",

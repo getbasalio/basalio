@@ -33,6 +33,25 @@
 	var Panel = BE.Panel || function ( o, b ) { return el( 'div', { className: 'basalio-ed-panel' }, b ); };
 	var Tip   = BE.Tip || function ( t ) { return el( 'p', null, t ); };
 
+	/**
+	 * ES5 shallow extend helper (replaces Object.assign).
+	 *
+	 * @param {Object} target
+	 * @param {...Object} sources
+	 * @return {Object}
+	 */
+	function extend( target ) {
+		for ( var i = 1; i < arguments.length; i++ ) {
+			var source = arguments[i];
+			for ( var key in source ) {
+				if ( source.hasOwnProperty( key ) ) {
+					target[key] = source[key];
+				}
+			}
+		}
+		return target;
+	}
+
 	registerBlockType( 'basalio/case-study-transition', {
 		edit: function ( props ) {
 			var a    = props.attributes;
@@ -41,6 +60,18 @@
 			var hasImage = !! ( a.imageUrl || a.imageId );
 
 			var blockProps = useBlockProps( { className: 'basalio-editor' } );
+
+			// Migrate legacy attributes to motionParams on first edit().
+			var motionParams = a.motionParams || {};
+			if ( Object.keys( motionParams ).length === 0 ) {
+				var migrated = {};
+				migrated.focusTarget = 'next panel';
+				migrated.announceChange = 'polite';
+				migrated.reducedMotionFallback = 'crossfade';
+
+				motionParams = migrated;
+				setA( { motionParams: migrated } );
+			}
 
 			function onSelectImage( m ) {
 				setA( { imageId: m.id, imageUrl: m.url, imageAlt: m.alt || '' } );
@@ -158,6 +189,21 @@
 					onChange: function ( v ) { setA( { lightbox: v } ); },
 					help: __( 'When on, clicking expands the image in an overlay rather than navigating to the case study.', 'basalio' )
 				} ) );
+			}
+
+			var motionControls = [];
+			if ( BE.renderMotionControls ) {
+				motionControls = BE.renderMotionControls(
+					BE.Schemas['basalio/case-study-transition'],
+					motionParams,
+					function ( update ) {
+						setA( { motionParams: extend( {}, motionParams, update ) } );
+					}
+				);
+			}
+
+			for ( var mi = 0; mi < motionControls.length; mi++ ) {
+				body.push( motionControls[mi] );
 			}
 
 			body.push( Tip( __( 'On supporting browsers the tile morphs into the hero when clicked. Elsewhere it’s a normal link, and the back button always works.', 'basalio' ) ) );
