@@ -5,35 +5,24 @@
   "motionType": "schema-driven",
   "trigger": "Pointer",
   "parameters": {
-    "cursorSize": {
+    "size": {
       "label": "Cursor size",
       "type": "range",
       "token": "size",
-      "default": 24,
-      "min": 8,
-      "max": 64,
+      "default": 30,
+      "min": 10,
+      "max": 80,
       "step": 1,
       "unit": "px"
     },
-    "lag": {
-      "label": "Follow lag",
-      "type": "range",
-      "token": "lag",
-      "default": 10,
-      "min": 0,
-      "max": 40,
-      "step": 1,
-      "unit": "%"
-    },
-    "blendMode": {
-      "label": "Blend mode",
+    "cursorStyle": {
+      "label": "Accent shape",
       "type": "select",
-      "token": "blend",
-      "default": "difference",
+      "token": "style",
+      "default": "ring",
       "options": [
-        { "value": "difference", "label": "Difference" },
-        { "value": "normal", "label": "Normal" },
-        { "value": "exclusion", "label": "Exclusion" }
+        { "value": "ring", "label": "Ring" },
+        { "value": "dot", "label": "Dot" }
       ]
     },
     "reducedMotionFallback": {

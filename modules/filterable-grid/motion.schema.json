@@ -5,28 +5,6 @@
   "motionType": "schema-driven",
   "trigger": "Click / keyboard",
   "parameters": {
-    "layoutDuration": {
-      "label": "Layout duration",
-      "type": "select",
-      "token": "duration",
-      "default": "base",
-      "options": [
-        { "value": "short", "label": "Short" },
-        { "value": "base", "label": "Base" },
-        { "value": "long", "label": "Long" }
-      ]
-    },
-    "layoutEasing": {
-      "label": "Layout easing",
-      "type": "select",
-      "token": "easing",
-      "default": "glide",
-      "options": [
-        { "value": "glide", "label": "Glide" },
-        { "value": "snap", "label": "Snap" },
-        { "value": "ease", "label": "Ease" }
-      ]
-    },
     "resultCount": {
       "label": "Announce result count",
       "type": "select",
@@ -36,12 +14,6 @@
         { "value": "polite", "label": "Polite" },
         { "value": "off", "label": "Off" }
       ]
-    },
-    "emptyState": {
-      "label": "Empty state message",
-      "type": "text",
-      "token": "message",
-      "default": "No items match the selected filters."
     },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",

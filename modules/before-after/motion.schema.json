@@ -5,7 +5,7 @@
   "motionType": "schema-driven",
   "trigger": "Drag / arrow keys",
   "parameters": {
-    "handlePosition": {
+    "startPosition": {
       "label": "Default handle position",
       "type": "range",
       "token": "percentage",
@@ -24,28 +24,6 @@
       "max": 25,
       "step": 1,
       "unit": "%"
-    },
-    "duration": {
-      "label": "Snap duration",
-      "type": "select",
-      "token": "duration",
-      "default": "short",
-      "options": [
-        { "value": "short", "label": "Short" },
-        { "value": "base", "label": "Base" },
-        { "value": "long", "label": "Long" }
-      ]
-    },
-    "easing": {
-      "label": "Easing",
-      "type": "select",
-      "token": "easing",
-      "default": "snap",
-      "options": [
-        { "value": "glide", "label": "Glide" },
-        { "value": "snap", "label": "Snap" },
-        { "value": "ease", "label": "Ease" }
-      ]
     },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",

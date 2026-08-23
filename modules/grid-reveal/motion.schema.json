@@ -5,49 +5,15 @@
   "motionType": "css-only",
   "trigger": "Hover / focus",
   "parameters": {
-    "revealAxis": {
-      "label": "Reveal axis",
+    "revealStyle": {
+      "label": "Reveal style",
       "type": "select",
-      "token": "axis",
-      "default": "up",
+      "token": "style",
+      "default": "crossfade",
       "options": [
-        { "value": "up", "label": "Up" },
-        { "value": "down", "label": "Down" },
-        { "value": "left", "label": "Left" },
-        { "value": "right", "label": "Right" }
+        { "value": "crossfade", "label": "Crossfade" },
+        { "value": "opacity", "label": "Simple opacity" }
       ]
-    },
-    "duration": {
-      "label": "Duration",
-      "type": "select",
-      "token": "duration",
-      "default": "base",
-      "options": [
-        { "value": "short", "label": "Short" },
-        { "value": "base", "label": "Base" },
-        { "value": "long", "label": "Long" }
-      ]
-    },
-    "easing": {
-      "label": "Easing",
-      "type": "select",
-      "token": "easing",
-      "default": "glide",
-      "options": [
-        { "value": "glide", "label": "Glide" },
-        { "value": "snap", "label": "Snap" },
-        { "value": "ease", "label": "Ease" }
-      ]
-    },
-    "stagger": {
-      "label": "Stagger",
-      "type": "range",
-      "token": "delay",
-      "default": 30,
-      "min": 0,
-      "max": 200,
-      "step": 10,
-      "unit": "ms"
     },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",

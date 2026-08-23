@@ -5,28 +5,6 @@
   "motionType": "schema-driven",
   "trigger": "Click / keyboard",
   "parameters": {
-    "transitionDuration": {
-      "label": "Transition duration",
-      "type": "select",
-      "token": "duration",
-      "default": "base",
-      "options": [
-        { "value": "short", "label": "Short" },
-        { "value": "base", "label": "Base" },
-        { "value": "long", "label": "Long" }
-      ]
-    },
-    "easing": {
-      "label": "Easing",
-      "type": "select",
-      "token": "easing",
-      "default": "glide",
-      "options": [
-        { "value": "glide", "label": "Glide" },
-        { "value": "snap", "label": "Snap" },
-        { "value": "ease", "label": "Ease" }
-      ]
-    },
     "focusTarget": {
       "label": "Focus target after transition",
       "type": "select",

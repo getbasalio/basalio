@@ -5,47 +5,15 @@
   "motionType": "schema-driven",
   "trigger": "Pointer / focus",
   "parameters": {
-    "magneticStrength": {
+    "strength": {
       "label": "Magnetic strength",
       "type": "range",
       "token": "strength",
-      "default": 30,
-      "min": 0,
-      "max": 100,
+      "default": 18,
+      "min": 4,
+      "max": 40,
       "step": 1,
       "unit": "%"
-    },
-    "maxDistance": {
-      "label": "Max pull distance",
-      "type": "range",
-      "token": "distance",
-      "default": 60,
-      "min": 10,
-      "max": 150,
-      "step": 5,
-      "unit": "px"
-    },
-    "duration": {
-      "label": "Return duration",
-      "type": "select",
-      "token": "duration",
-      "default": "short",
-      "options": [
-        { "value": "short", "label": "Short" },
-        { "value": "base", "label": "Base" },
-        { "value": "long", "label": "Long" }
-      ]
-    },
-    "easing": {
-      "label": "Easing",
-      "type": "select",
-      "token": "easing",
-      "default": "glide",
-      "options": [
-        { "value": "glide", "label": "Glide" },
-        { "value": "snap", "label": "Snap" },
-        { "value": "ease", "label": "Ease" }
-      ]
     },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",
