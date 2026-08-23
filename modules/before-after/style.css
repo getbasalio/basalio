@@ -11,7 +11,6 @@
 	--basalio-ba-pos: 50%;
 	--basalio-ba-line: var( --basalio-bg, #ffffff );
 	--basalio-ba-ink: var( --basalio-fg, #17171a );
-	--basalio-ba-focus: var( --basalio-focus, #c6f135 );
 	--basalio-ba-radius: 2px;
 }
 
@@ -97,7 +96,7 @@
 }
 
 .basalio-before-after__handle:focus-visible {
-	outline: 3px solid var( --basalio-ba-focus );
+	outline: 3px solid var( --basalio-focus, #202020 );
 	outline-offset: 3px;
 }
 

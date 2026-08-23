@@ -16,7 +16,6 @@
 	--basalio-slide-distance: 12px;
 	--basalio-radius: 6px;
 	--basalio-caption-color: var( --basalio-bg, #fff );
-	--basalio-focus-color: var( --basalio-focus, #c6f135 );
 	/* Default scrim: enforced for caption contrast (WCAG 1.4.3). */
 	--basalio-scrim: linear-gradient(
 		to top,
@@ -128,7 +127,7 @@
 
 /* Visible keyboard focus indicator (WCAG 2.4.7). */
 .basalio-grid-reveal__toggle:focus-visible {
-	outline: 3px solid var( --basalio-focus-color );
+	outline: 3px solid var( --basalio-focus, #202020 );
 	outline-offset: -3px;
 }
 

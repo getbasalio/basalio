@@ -9,6 +9,11 @@
    user-facing controls. No `threshold` claim exists for Grid Reveal anywhere in
    the repo or on the current live site.
 4. Extension points — DONE, must not change after submission
+5. Case Study Transition focus ring — live WCAG 1.4.11 failure on any page without
+   Grid Reveal: it read `--basalio-focus-color` (only defined by Grid Reveal) and
+   fell back to `#c6f135` (1.31:1). Fixed by consolidating all module focus rings
+   onto `--basalio-focus` with a `#202020` fallback. Must be verified across all
+   six modules before .org submission
 
 ## Motion pipeline
 - Vertical slice COMPLETE: schema-only param change renders on the front end,

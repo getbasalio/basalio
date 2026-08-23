@@ -17,7 +17,6 @@
 	--basalio-btn-bg: var( --basalio-fg, #17171a );
 	--basalio-btn-color: var( --basalio-bg, #f6f4ef );
 	--basalio-btn-radius: 2px;
-	--basalio-btn-focus: var( --basalio-focus, #c6f135 );
 	--basalio-btn-ease: cubic-bezier( 0.16, 1, 0.3, 1 );
 
 	display: inline-flex;
@@ -46,7 +45,7 @@
 /* Keyboard-focus equivalent (WCAG 2.4.7): magnetism is pointer-only, so keyboard
    users get a strong, obvious focus ring instead. */
 .basalio-magnetic-button:focus-visible {
-	outline: 2px solid var( --basalio-btn-focus );
+	outline: 2px solid var( --basalio-focus, #202020 );
 	outline-offset: 3px;
 }
 
