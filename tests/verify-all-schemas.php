@@ -71,4 +71,74 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 $total_blocks = $injected + $missing;
 echo "\n{$injected}/{$total_blocks} blocks have motionParams.\n";
 
-exit( $fail > 0 || $missing > 0 ? 1 : 0 );
+// Verify every schema parameter has a runtime consumer.
+function basalio_param_to_kebab( $name ) {
+	$name = str_replace( '_', '-', $name );
+	$name = preg_replace( '/([a-z])([A-Z])/', '$1-$2', $name );
+	$name = preg_replace( '/-+/', '-', $name );
+	return trim( strtolower( $name ), '-' );
+}
+
+$consumer_pass = 0;
+$consumer_fail = 0;
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as $path ) {
+	$module_name = basename( dirname( $path ) );
+	$schema      = json_decode( (string) file_get_contents( $path ), true );
+	$parameters  = isset( $schema['parameters'] ) && is_array( $schema['parameters'] ) ? $schema['parameters'] : array();
+	if ( empty( $parameters ) ) {
+		continue;
+	}
+
+	$runtime_files = array(
+		BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/render.php',
+		BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/index.js',
+		BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/style.css',
+	);
+	$core_path = BASALIO_TESTS_PLUGIN_DIR . '/assets/js/basalio-core.js';
+
+	$contents = '';
+	foreach ( $runtime_files as $f ) {
+		if ( file_exists( $f ) ) {
+			$contents .= "\n" . file_get_contents( $f );
+		}
+	}
+	$core_contents = file_exists( $core_path ) ? file_get_contents( $core_path ) : '';
+
+	foreach ( $parameters as $param_name => $param ) {
+		$kebab = basalio_param_to_kebab( $param_name );
+		$found = false;
+
+		// Explicit reference in module runtime.
+		if ( false !== strpos( $contents, $param_name ) || false !== strpos( $contents, $kebab ) ) {
+			$found = true;
+		}
+
+		// Reference in shared core (data attributes, computed styles, etc).
+		if ( ! $found && ( false !== strpos( $core_contents, $param_name ) || false !== strpos( $core_contents, $kebab ) ) ) {
+			$found = true;
+		}
+
+		// reducedMotionFallback is consumed by its emitted fallback class.
+		if ( ! $found && 'reducedMotionFallback' === $param_name ) {
+			$fallback = isset( $param['default'] ) ? (string) $param['default'] : '';
+			$slug     = preg_replace( '/[^a-z0-9]+/', '-', strtolower( $fallback ) );
+			$slug     = trim( $slug, '-' );
+			if ( '' !== $slug && false !== strpos( $contents, '--fallback-' . $slug ) ) {
+				$found = true;
+			}
+		}
+
+		if ( $found ) {
+			$consumer_pass++;
+			// echo "OK    {$module_name}::{$param_name}\n";
+		} else {
+			$consumer_fail++;
+			echo "FAIL  {$module_name}::{$param_name} has no runtime consumer\n";
+		}
+	}
+}
+
+$total_consumer = $consumer_pass + $consumer_fail;
+echo "\n{$consumer_pass}/{$total_consumer} schema params have runtime consumers.\n";
+
+exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 ? 1 : 0 );
