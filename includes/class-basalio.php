@@ -739,11 +739,21 @@ final class Basalio {
 				continue;
 			}
 
-			// Token parameters map to a CSS variable family, with the token default as fallback.
+			// Token parameters map to a CSS variable family when that token is
+			// actually registered (duration/easing/motion-*). Unknown tokens are
+			// emitted as plain values so arbitrary categorical tokens do not break.
 			if ( '' !== $token ) {
 				$token_key = $token . '-' . (string) $value;
-				$fallback  = isset( $tokens[ $token_key ] ) ? $tokens[ $token_key ] : ( isset( $param['default'] ) ? $param['default'] : $value );
-				$styles[]  = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+				if ( isset( $tokens[ $token_key ] ) ) {
+					$fallback = $tokens[ $token_key ];
+					$styles[] = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+				} elseif ( 'duration' === $token || 'easing' === $token ) {
+					// Known token family but unmapped value: fall back to the param default.
+					$fallback = isset( $param['default'] ) ? $param['default'] : $value;
+					$styles[] = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+				} else {
+					$styles[] = sprintf( '--basalio-tr-%s:%s;', self::param_name_to_kebab( $param_name ), esc_attr( (string) $value ) );
+				}
 				continue;
 			}
 
