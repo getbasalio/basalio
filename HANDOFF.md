@@ -25,9 +25,9 @@
 - Pricing: lifetime vs. bounded term. Blocked on Freemius support answer re:
   decoupling expiry from one-time payment
 - Licensing: unlimited-site confirmed as intent, not yet configured
-- Reduced motion is now a single fixed behavior, no user choice. Confirm intended
-- Pinned Scroll / Scroll Sequence / Filterable Grid: build the specced behavior
-  or cut it from the schemas
+- Reduced motion is a single fixed behavior, no user choice. Confirmed intended
+- Pinned Scroll / Scroll Sequence / Filterable Grid: unimplemented specced
+  behavior cut from schemas and logged in `docs/MOTION-ROADMAP.md`
 
 ## Patterns (Pro track — does NOT gate .org)
 - 72 patterns, all ship at launch, 12 categories x 6
