@@ -29,11 +29,17 @@
   separate decisions, tracked in `docs/MOTION-ROADMAP.md`
 
 ## Block editor control inventory (programmatic count)
-- CONTENT: 20 | LAYOUT: 11 | BEHAVIOR: 7 | MOTION: 24 | Total: 62
-- Pro configurator would expose the MOTION params: 24 schema params, of which
-  15 offer a real choice and 9 are single-option `reducedMotionFallback` enums
-- Pinned Scroll configurator would render 1 control (a single-option dropdown);
-  Scroll Sequence would render 2 controls (1 real choice + 1 single-option)
+- CONTENT: 20 | LAYOUT: 11 | BEHAVIOR: 7 | MOTION: 15 | Total: 53
+- Pro configurator now exposes the 15 MOTION params that offer a real choice;
+  the 9 single-option `reducedMotionFallback` enums stay in the schema but are
+  hidden from both the block editor and the Pro configurator
+- 72 → 62 delta: the earlier hand count over-included non-attribute UI:
+  - InnerBlocks placeholders and nested content regions (not registered attributes)
+  - Informational chrome (Basalio panel header, description, tip, preview,
+    motion-policy badge)
+  - WordPress native panels and their fields (Accessibility, Advanced)
+  - The Pro configurator "Variation name" field and single-option selects
+- 62 → 53 delta: hiding the 9 single-option `reducedMotionFallback` params
 
 ## Open decisions
 - Pricing: lifetime vs. bounded term. Blocked on Freemius support answer re:
