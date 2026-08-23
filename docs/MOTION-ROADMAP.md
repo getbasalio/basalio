@@ -4,43 +4,50 @@ These params were removed from `motion.schema.json` because they described behav
 not implemented in the runtime. The schemas must be a source of truth, not a
 wishlist. Each item below is a candidate post-launch feature release.
 
-## R1 — Quick wins (≤ 1 h each)
+## Current configurator state
 
-| Block | Param | What would be built | Est. |
+Eight of the nine blocks expose only `reducedMotionFallback` plus one real param
+(or zero). Grid Reveal has `revealStyle` plus `reducedMotionFallback`. A
+configurator with one dropdown is not a configurator, so this roadmap is
+re-sorted by what gives the Pro control center something worth paying for.
+
+## Tier 1 — Block-defining motion (highest Pro configurator value)
+
+These turn a thin block into a flagship motion control.
+
+| Block | Params | What it adds to the Pro configurator | Est. |
 |---|---|---|---|
-| Before / After | `duration` | Snap duration for keyboard/page-key jumps | 0.5 h |
-| Before / After | `easing` | Easing for the same snap transition | 0.5 h |
-| Case Study Transition | `transitionDuration` | Numeric view-transition duration (currently hardcoded 300 ms) | 1 h |
-| Case Study Transition | `easing` | View-transition easing | 1 h |
-| Custom Cursor | `lag` | Pointer-follow lag / trailing delay | 1 h |
-| Filterable Grid | `emptyState` | Custom "no results" message | 0.5 h |
-| Grid Reveal | `duration` | Reveal transition duration | 0.5 h |
-| Grid Reveal | `easing` | Reveal transition easing | 0.5 h |
-| Magnetic Button | `duration` | Return-to-center transition duration | 0.5 h |
-| Magnetic Button | `easing` | Return-to-center easing | 0.5 h |
-| Magnetic Button | `maxDistance` | Clamp magnetism to a max pixel radius | 1 h |
-| Scroll Sequence | `startFrame` | Trim sequence start to a frame other than the first | 1 h |
-| Scroll Sequence | `endFrame` | Trim sequence end to a frame other than the last | 1 h |
+| Pinned Scroll | `pinDuration`, `scrubSmoothness`, `easing` | Replaces pure CSS sticky with a cinematic scroll-scrub engine. Users get pin length, smoothness, and easing controls — the difference between a static sidebar and a story-driven sequence. | 8–12 h |
+| Filterable Grid | `layoutDuration`, `layoutEasing` | Animated layout reflow on filter change. This is the visible reason to choose this block over a plain WordPress query loop; it makes filtering feel intentional. | 3–4 h |
+| Grid Reveal | `duration`, `easing`, `stagger` | Gives portfolio tiles a signature reveal. Duration + easing tune the feel; stagger creates a cascading "wave" when multiple tiles enter together. | 3–4 h |
 
-**R1 total: ~10 h**
+**Tier 1 total: ~15–20 h**
 
-## R2 — Real work (2–4 h)
+## Tier 2 — Meaningful second control (medium value)
 
-| Block | Param | What would be built | Est. |
+These add a visible or tactile control that users will notice, but they do not redefine the block.
+
+| Block | Params | What it adds to the Pro configurator | Est. |
 |---|---|---|---|
-| Grid Reveal | `stagger` | Staggered reveal when multiple tiles enter together | 2–3 h |
-| Filterable Grid | `layoutDuration` / `layoutEasing` | Animated layout reflow on filter change (FLIP or equivalent) | 3–4 h |
-| Scroll Sequence | `scrubSmoothness` | Interpolated scroll-to-frame mapping instead of direct index | 2–3 h |
+| Magnetic Button | `maxDistance` | Clamps how far the button follows the pointer. Changes the effect from subtle to bold without touching strength. | 1 h |
+| Custom Cursor | `lag` | Adds trailing delay to the cursor accent. A small but distinctive brand-feel control. | 1 h |
+| Scroll Sequence | `scrubSmoothness` | Interpolates scroll position to frame index. The difference between a flipbook and a smooth cinematic scrub. | 2–3 h |
+| Before / After | `duration`, `easing` | Polishes the keyboard/page-key snap so the divider does not jump. | 1 h |
+| Magnetic Button | `duration`, `easing` | Refines the return-to-center motion after the pointer leaves. | 1 h |
+| Case Study Transition | `transitionDuration`, `easing` | Note: `transitionDuration` already exists as a block attribute. Re-introducing it as a motion param adds little unless the View Transitions API gains easing support. | 2 h |
 
-**R2 total: ~8 h**
+**Tier 2 total: ~8–9 h**
 
-## R3 — Architectural (8–12 h)
+## Tier 3 — Utility / niche (low configurator value)
 
-| Block | Param | What would be built | Est. |
+Useful for completeness, but not reasons to buy Pro.
+
+| Block | Params | What it adds to the Pro configurator | Est. |
 |---|---|---|---|
-| Pinned Scroll | `pinDuration` / `scrubSmoothness` / `easing` | Full scroll-scrub engine replacing pure CSS sticky | 8–12 h |
+| Filterable Grid | `emptyState` | A text field for the "no results" message. Accessibility copy, not motion. | 0.5 h |
+| Scroll Sequence | `startFrame`, `endFrame` | Trims the usable frame range. Handy for long sequences, minor differentiator. | 2 h |
 
-**R3 total: ~10 h**
+**Tier 3 total: ~2.5 h**
 
 ## Not planned
 
