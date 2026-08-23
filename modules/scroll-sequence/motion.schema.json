@@ -5,6 +5,16 @@
   "motionType": "schema-driven",
   "trigger": "Scroll",
   "parameters": {
+    "scrollScreens": {
+      "label": "Scroll length (screens)",
+      "type": "range",
+      "token": "duration",
+      "default": 3,
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "screens"
+    },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",
       "type": "select",
