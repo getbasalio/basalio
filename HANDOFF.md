@@ -17,9 +17,19 @@
 - Schema audit COMPLETE: unimplemented params removed, name mismatches fixed to
   match the runtime, and accessibility params (`reducedMotionFallback`,
   `dragStep`, `focusTarget`, `announceChange`, `resultCount`) wired and tested
+- Inverse-drift fix COMPLETE: `transitionDuration` and `scrollScreens` restored
+  to their schemas with types matching the runtime clamps; inverse test asserts
+  every editor motion attribute has a schema param
 - Migration (mechanical) and feature-building (Pinned Scroll scroll-scrub,
   Scroll Sequence frame subsetting, Filterable Grid layout animation) are
   separate decisions, tracked in `docs/MOTION-ROADMAP.md`
+
+## Block editor control inventory (programmatic count)
+- CONTENT: 20 | LAYOUT: 11 | BEHAVIOR: 7 | MOTION: 24 | Total: 62
+- Pro configurator would expose the MOTION params: 24 schema params, of which
+  15 offer a real choice and 9 are single-option `reducedMotionFallback` enums
+- Pinned Scroll configurator would render 1 control (a single-option dropdown);
+  Scroll Sequence would render 2 controls (1 real choice + 1 single-option)
 
 ## Open decisions
 - Pricing: lifetime vs. bounded term. Blocked on Freemius support answer re:
