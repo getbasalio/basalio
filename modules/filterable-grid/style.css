@@ -136,9 +136,10 @@
 }
 
 /* Reduced-motion fallback: items appear instantly when filtering.
-   Filtering is already instant; the selector documents the hook for future
-   motion additions. */
+   Filtering is already instant; the base selector guarantees this works for
+   any visitor with reduced motion enabled, fallback class or not. */
 @media (prefers-reduced-motion: reduce) {
+	.basalio-filterable-grid .basalio-grid-item,
 	.basalio-filterable-grid.basalio-filterable-grid--fallback-appear-instantly .basalio-grid-item {
 		transition: none;
 		opacity: 1;

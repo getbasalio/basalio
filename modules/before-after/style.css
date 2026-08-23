@@ -161,9 +161,11 @@
 }
 
 /* Reduced-motion fallback: the slider is direct-manipulation, so no motion
-   needs disabling beyond ensuring no transition leaks in. The selector documents
-   the hook for a future explicit class. */
+   needs disabling beyond ensuring no transition leaks in. The base selector
+   guarantees this works for any visitor with reduced motion enabled, fallback
+   class or not. */
 @media (prefers-reduced-motion: reduce) {
+	.basalio-before-after__handle,
 	.basalio-before-after.basalio-before-after--fallback-instant .basalio-before-after__handle {
 		transition: none;
 	}

@@ -79,9 +79,10 @@
 }
 
 /* Reduced-motion fallback: crossfade is the browser's default navigation.
-   No custom view-transition opt-in is applied. The selector documents the hook
-   for a future explicit class. */
+   No custom view-transition opt-in is applied. The base selector guarantees
+   this works for any visitor with reduced motion enabled, fallback class or not. */
 @media (prefers-reduced-motion: reduce) {
+	.basalio-cst,
 	.basalio-cst.basalio-cst--fallback-crossfade {
 		view-transition-name: none;
 	}

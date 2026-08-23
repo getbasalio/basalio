@@ -141,4 +141,122 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 $total_consumer = $consumer_pass + $consumer_fail;
 echo "\n{$consumer_pass}/{$total_consumer} schema params have runtime consumers.\n";
 
-exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 ? 1 : 0 );
+// Verify every motion block has a prefers-reduced-motion: reduce rule that does
+// NOT require the fallback class to apply. The fallback class is an authoring
+// override; reduced-motion suppression must work for any visitor who sets the
+// preference, whether or not the saved block happens to carry the class.
+function basalio_extract_reduce_media_blocks( $css ) {
+	$blocks   = array();
+	$len      = strlen( $css );
+	$i        = 0;
+	while ( $i < $len ) {
+		// Find the next @media.
+		$at = strpos( $css, '@media', $i );
+		if ( false === $at ) {
+			break;
+		}
+		// Parse the media query prelude up to the opening brace.
+		$brace = strpos( $css, '{', $at );
+		if ( false === $brace ) {
+			break;
+		}
+		$prelude = substr( $css, $at, $brace - $at );
+		// Match the value "reduce" as a standalone token, not as a substring of
+		// "reduced" (e.g. prefers-reduced-motion: no-preference must not match).
+		$is_reduce = (bool) preg_match( '/prefers-reduced-motion\s*:\s*reduce\b/i', $prelude );
+		if ( $is_reduce ) {
+			// Capture content until matching close brace.
+			$depth = 1;
+			$j     = $brace + 1;
+			while ( $j < $len && $depth > 0 ) {
+				if ( '{' === $css[ $j ] ) {
+					$depth++;
+				} elseif ( '}' === $css[ $j ] ) {
+					$depth--;
+				}
+				$j++;
+			}
+			$blocks[] = substr( $css, $brace + 1, $j - $brace - 2 );
+			$i        = $j;
+		} else {
+			$i = $brace + 1;
+		}
+	}
+	return $blocks;
+}
+
+function basalio_reduce_rule_requires_fallback_class_only( $css ) {
+	$blocks = basalio_extract_reduce_media_blocks( $css );
+	if ( empty( $blocks ) ) {
+		return true; // No reduce rule at all.
+	}
+
+	foreach ( $blocks as $block ) {
+		// Split the block into individual rule sets by top-level braces.
+		$depth    = 0;
+		$selector = '';
+		$len      = strlen( $block );
+		for ( $i = 0; $i < $len; $i++ ) {
+			$char = $block[ $i ];
+			if ( '{' === $char ) {
+				if ( 0 === $depth ) {
+					// $selector holds the selectors for this rule set.
+					$parts = explode( ',', $selector );
+					foreach ( $parts as $part ) {
+						$part = trim( $part );
+						if ( '' === $part ) {
+							continue;
+						}
+						// Ignore keyframes selectors and at-rules.
+						if ( preg_match( '/^(@|from|to|[0-9]+%)/i', $part ) ) {
+							continue;
+						}
+						// A selector that does not require the fallback class means
+						// the reduce rule applies regardless of the class.
+						if ( false === strpos( $part, '--fallback-' ) ) {
+							return false;
+						}
+					}
+				}
+				$depth++;
+				$selector = '';
+			} elseif ( '}' === $char ) {
+				$depth--;
+				$selector = '';
+			} else {
+				if ( 0 === $depth ) {
+					$selector .= $char;
+				}
+			}
+		}
+	}
+
+	return true; // Every reduce selector required a fallback class.
+}
+
+$trap_pass = 0;
+$trap_fail = 0;
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as $path ) {
+	$module_name = basename( dirname( $path ) );
+	$style_path  = BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/style.css';
+
+	if ( ! file_exists( $style_path ) ) {
+		echo "FAIL  {$module_name} has schema but no style.css\n";
+		$trap_fail++;
+		continue;
+	}
+
+	$css = file_get_contents( $style_path );
+	if ( basalio_reduce_rule_requires_fallback_class_only( $css ) ) {
+		$trap_fail++;
+		echo "FAIL  {$module_name}: prefers-reduced-motion: reduce rule requires fallback class or is missing\n";
+	} else {
+		$trap_pass++;
+		echo "PASS  {$module_name}: reduce rule applies without fallback class\n";
+	}
+}
+
+$total_trap = $trap_pass + $trap_fail;
+echo "\n{$trap_pass}/{$total_trap} blocks have reduce rules that work without the fallback class.\n";
+
+exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 || $trap_fail > 0 ? 1 : 0 );

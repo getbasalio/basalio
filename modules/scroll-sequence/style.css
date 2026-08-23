@@ -74,7 +74,9 @@
 	}
 
 	/* Reduced-motion fallback: show the last frame instantly.
-	   The selector documents the hook; the class is not applied by render.php yet. */
+	   The base selector guarantees this works for any visitor with reduced motion
+	   enabled, fallback class or not. */
+	.basalio-scroll-sequence__frame:last-of-type,
 	.basalio-scroll-sequence.basalio-scroll-sequence--fallback-last-frame .basalio-scroll-sequence__frame:last-of-type {
 		opacity: 1;
 		visibility: visible;
