@@ -60,6 +60,18 @@ require_once BASALIO_PATH . 'includes/helpers.php';
 function basalio_enqueue_core() {
 	wp_enqueue_script( 'basalio-core' );
 	wp_enqueue_style( 'basalio-core' );
+
+	// Emit the default design tokens as CSS custom properties whenever the core
+	// stylesheet loads. This keeps front-end rendering independent of Pro: even
+	// when the Pro add-on is inactive, every block can resolve --basalio-*
+	// variables. The CSS is inline so it always follows the core stylesheet and
+	// needs no physical file. The static guard prevents duplicate inline CSS on
+	// pages that contain more than one Basalio block.
+	static $tokens_inlined = false;
+	if ( ! $tokens_inlined && class_exists( 'Basalio_Tokens', false ) ) {
+		wp_add_inline_style( 'basalio-core', Basalio_Tokens::to_css() );
+		$tokens_inlined = true;
+	}
 }
 
 /**

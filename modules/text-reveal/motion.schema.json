@@ -8,7 +8,6 @@
     "splitUnit": {
       "label": "Split unit",
       "type": "select",
-      "token": "unit",
       "default": "word",
       "options": [
         { "value": "word", "label": "Word" },
@@ -42,7 +41,6 @@
     "triggerThreshold": {
       "label": "Trigger threshold",
       "type": "range",
-      "token": "threshold",
       "default": 50,
       "min": 0,
       "max": 100,
@@ -52,7 +50,6 @@
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",
       "type": "select",
-      "token": "fallback",
       "default": "appear instantly",
       "options": [
         { "value": "appear instantly", "label": "Appear instantly" },

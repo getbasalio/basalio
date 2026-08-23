@@ -22,6 +22,15 @@
 	var BasalioEd = ( window.BasalioEd = window.BasalioEd || {} );
 
 	/**
+	 * Expose the localized motion schemas under the shared BasalioEd namespace.
+	 *
+	 * Phase A localizes `window.BasalioSchemas` from PHP; Phase B will consume
+	 * this object to render parameter controls without hardcoding block-specific
+	 * field names.
+	 */
+	BasalioEd.Schemas = window.BasalioSchemas || {};
+
+	/**
 	 * Branded block wrapper: a header (mark + name + optional badge) and a
 	 * plain-English description, above the block's own fields.
 	 *

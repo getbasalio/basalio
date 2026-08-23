@@ -17,11 +17,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Basalio_Tokens {
 
 	/**
-	 * Default token map. Empty in Stage 1; populated in Stage 3.
+	 * Default motion and palette token map.
+	 *
+	 * Populated with the free plugin defaults. Pro and third-party code may
+	 * filter these via the `basalio_tokens` hook, but the front-end must always
+	 * emit at least these values so blocks render predictably when Pro is
+	 * inactive.
 	 *
 	 * @var array
 	 */
-	private static $defaults = array();
+	private static $defaults = array(
+		'duration-short'           => '200ms',
+		'duration-base'            => '600ms',
+		'duration-long'            => '1200ms',
+		'easing-glide'             => 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+		'easing-snap'              => 'cubic-bezier(0.16, 1, 0.3, 1)',
+		'easing-ease'              => 'ease',
+		'easing-linear'            => 'linear',
+		'motion-scroll-threshold'  => '0.5',
+		'motion-reveal-distance'   => '14px',
+	);
 
 	/**
 	 * Return the final token map after extensions have filtered it.

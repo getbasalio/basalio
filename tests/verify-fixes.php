@@ -461,6 +461,59 @@ foreach ( $css_files as $css_file ) {
 	);
 }
 
+echo "\n=== Motion schema pipeline (Task 1) ===\n";
+
+$token_css = Basalio_Tokens::to_css();
+bv_ok( 'token CSS contains --duration-base: 600ms', false !== strpos( $token_css, '--duration-base: 600ms' ) );
+bv_ok( 'token CSS contains --easing-glide:', false !== strpos( $token_css, '--easing-glide:' ) );
+
+$text_reveal_block = WP_Block_Type_Registry::get_instance()->get_registered( 'basalio/text-reveal' );
+bv_ok(
+	'text-reveal block type has motionParams attribute',
+	$text_reveal_block instanceof WP_Block_Type && isset( $text_reveal_block->attributes['motionParams'] )
+);
+
+$motion_params_attr = ( $text_reveal_block instanceof WP_Block_Type && isset( $text_reveal_block->attributes['motionParams'] ) )
+	? $text_reveal_block->attributes['motionParams']
+	: array();
+
+bv_ok(
+	'motionParams type is object',
+	isset( $motion_params_attr['type'] ) && 'object' === $motion_params_attr['type']
+);
+
+bv_ok(
+	'motionParams default contains duration',
+	isset( $motion_params_attr['default'] ) && is_array( $motion_params_attr['default'] ) && isset( $motion_params_attr['default']['duration'] )
+);
+
+bv_ok(
+	'motionParams default contains triggerThreshold',
+	isset( $motion_params_attr['default'] ) && is_array( $motion_params_attr['default'] ) && isset( $motion_params_attr['default']['triggerThreshold'] )
+);
+
+$text_reveal_schema = Basalio::get_block_schema( 'basalio/text-reveal' );
+bv_ok(
+	'text-reveal block schema is non-empty',
+	! empty( $text_reveal_schema )
+);
+bv_ok(
+	'text-reveal block schema contains parameters',
+	isset( $text_reveal_schema['parameters'] ) && is_array( $text_reveal_schema['parameters'] )
+);
+
+$validator = new ReflectionMethod( 'Basalio', 'validate_block_schema' );
+$validator->setAccessible( true );
+$malformed = array(
+	'trigger'    => 'scroll',
+	'parameters' => array(),
+);
+$validation_result = $validator->invoke( null, $malformed );
+bv_ok(
+	'schema validator rejects schema missing motionType',
+	$validation_result instanceof WP_Error
+);
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 

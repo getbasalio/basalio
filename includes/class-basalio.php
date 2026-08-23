@@ -213,6 +213,9 @@ final class Basalio {
 	 * The CSS only targets Basalio's own .basalio-ed-* editor chrome, so loading
 	 * it editor-wide is harmless.
 	 *
+	 * Also localizes the validated motion schemas so the editor panel can render
+	 * controls from motion.schema.json without hardcoding parameter names.
+	 *
 	 * @return void
 	 */
 	public function enqueue_editor_assets() {
@@ -221,6 +224,17 @@ final class Basalio {
 		wp_enqueue_script( 'basalio-editor' );
 		// The style is also enqueued for the outer frame as a fallback.
 		wp_enqueue_style( 'basalio-editor' );
+
+		$schemas = array();
+		foreach ( self::$block_schemas as $block_name => $schema ) {
+			if ( ! empty( $schema ) ) {
+				$schemas[ $block_name ] = $schema;
+			}
+		}
+
+		if ( ! empty( $schemas ) ) {
+			wp_localize_script( 'basalio-editor', 'BasalioSchemas', $schemas );
+		}
 	}
 
 	/**
@@ -256,6 +270,11 @@ final class Basalio {
 	 * editor script). register_block_type_from_metadata() reads that file, so
 	 * this loop is completely module-agnostic.
 	 *
+	 * After registration the module's motion.schema.json (if present and valid)
+	 * is used to inject a single `motionParams` object attribute with defaults
+	 * matching the schema. Invalid schemas are logged and skipped; the block
+	 * itself is still registered so the front end keeps working.
+	 *
 	 * @return void
 	 */
 	public function register_modules() {
@@ -277,6 +296,10 @@ final class Basalio {
 			$schema = $this->load_block_schema( $module_dir );
 			$schema = apply_filters( 'basalio_block_schema', $schema, $module_name );
 
+			// Modules without a motion.schema.json are not motion blocks; skip
+			// validation silently rather than logging an "empty schema" error.
+			$schema_valid = empty( $schema ) ? true : self::validate_block_schema( $schema );
+
 			$supports = apply_filters( 'basalio_block_supports', array(), $module_name );
 
 			$variations = apply_filters( 'basalio_block_variations', array(), $module_name );
@@ -288,7 +311,7 @@ final class Basalio {
 					$block_type->supports = array_merge( (array) $block_type->supports, $supports );
 				}
 
-				self::$block_schemas[ $block_type->name ] = $schema;
+				self::$block_schemas[ $block_type->name ] = true === $schema_valid ? $schema : array();
 
 				if ( ! empty( $variations ) ) {
 					foreach ( $variations as $variation ) {
@@ -296,6 +319,18 @@ final class Basalio {
 							register_block_variation( $block_type->name, $variation );
 						}
 					}
+				}
+
+				if ( true === $schema_valid && ! empty( $schema['parameters'] ) ) {
+					$motion_params = array();
+					foreach ( $schema['parameters'] as $param_name => $param ) {
+						$motion_params[ $param_name ] = self::get_param_default_value( $param );
+					}
+
+					$block_type->attributes['motionParams'] = array(
+						'type'    => 'object',
+						'default' => $motion_params,
+					);
 				}
 
 				if ( is_callable( $block_type->render_callback ) ) {
@@ -311,8 +346,263 @@ final class Basalio {
 				}
 			}
 
+			if ( true !== $schema_valid ) {
+				error_log(
+					'Basalio: invalid motion schema for ' . $module_name . ': ' .
+					implode( '; ', $schema_valid->get_error_messages() )
+				);
+			}
+
 			$this->module_names[] = $module_name;
 		}
+	}
+
+	/**
+	 * Validate a module's motion.schema.json.
+	 *
+	 * Returns true when the schema is well-formed, or a WP_Error describing
+	 * every problem found. Invalid schemas are logged by the caller and do not
+	 * block block registration; motion attribute injection is simply skipped.
+	 *
+	 * @param array $schema Parsed schema.
+	 * @return true|WP_Error
+	 */
+	private static function validate_block_schema( $schema ) {
+		$errors = new WP_Error();
+
+		if ( ! is_array( $schema ) || empty( $schema ) ) {
+			$errors->add( 'empty_schema', __( 'Schema is empty.', 'basalio' ) );
+			return $errors;
+		}
+
+		$required_top = array( 'motionType', 'trigger', 'parameters' );
+		foreach ( $required_top as $field ) {
+			if ( ! isset( $schema[ $field ] ) ) {
+				$errors->add(
+					'missing_top_level_field',
+					sprintf(
+						/* translators: %s: schema field name */
+						__( 'Schema missing required field: %s', 'basalio' ),
+						$field
+					)
+				);
+			}
+		}
+
+		if ( ! isset( $schema['parameters'] ) || ! is_array( $schema['parameters'] ) ) {
+			return $errors;
+		}
+
+		$valid_types      = array( 'select', 'range', 'toggle', 'text' );
+		$token_allow_list = self::get_token_allow_list();
+
+		foreach ( $schema['parameters'] as $param_name => $param ) {
+			if ( ! is_array( $param ) ) {
+				$errors->add(
+					'invalid_parameter',
+					sprintf(
+						/* translators: %s: parameter name */
+						__( 'Parameter %s must be an object.', 'basalio' ),
+						$param_name
+					)
+				);
+				continue;
+			}
+
+			$param_required = array( 'label', 'type', 'default' );
+			foreach ( $param_required as $field ) {
+				if ( ! isset( $param[ $field ] ) ) {
+					$errors->add(
+						'missing_parameter_field',
+						sprintf(
+							/* translators: 1: parameter name, 2: field name */
+							__( 'Parameter %1$s missing required field: %2$s', 'basalio' ),
+							$param_name,
+							$field
+						)
+					);
+				}
+			}
+
+			if ( ! isset( $param['type'] ) || ! in_array( $param['type'], $valid_types, true ) ) {
+				$errors->add(
+					'invalid_parameter_type',
+					sprintf(
+						/* translators: 1: parameter name, 2: parameter type */
+						__( 'Parameter %1$s has invalid type: %2$s', 'basalio' ),
+						$param_name,
+						isset( $param['type'] ) ? $param['type'] : __( 'missing', 'basalio' )
+					)
+				);
+				continue;
+			}
+
+			switch ( $param['type'] ) {
+				case 'select':
+					if ( ! isset( $param['options'] ) || ! is_array( $param['options'] ) ) {
+						$errors->add(
+							'missing_select_options',
+							sprintf(
+								/* translators: %s: parameter name */
+								__( 'Parameter %s of type select requires an options array.', 'basalio' ),
+								$param_name
+							)
+						);
+					} else {
+						foreach ( $param['options'] as $index => $option ) {
+							if ( ! is_array( $option ) || ! isset( $option['value'] ) || ! isset( $option['label'] ) ) {
+								$errors->add(
+									'invalid_select_option',
+									sprintf(
+										/* translators: 1: parameter name, 2: option index */
+										__( 'Parameter %1$s option %2$s must have value and label.', 'basalio' ),
+										$param_name,
+										$index
+									)
+								);
+							}
+						}
+					}
+					break;
+
+				case 'range':
+					foreach ( array( 'min', 'max', 'step' ) as $field ) {
+						if ( ! isset( $param[ $field ] ) ) {
+							$errors->add(
+								'missing_range_field',
+								sprintf(
+									/* translators: 1: parameter name, 2: field name */
+									__( 'Parameter %1$s of type range requires %2$s.', 'basalio' ),
+									$param_name,
+									$field
+								)
+							);
+						}
+					}
+					break;
+
+				case 'toggle':
+					// No extra required fields.
+					break;
+
+				case 'text':
+					// No extra required fields.
+					break;
+			}
+
+			if ( isset( $param['token'] ) && is_string( $param['token'] ) && '' !== $param['token'] ) {
+				if ( ! in_array( $param['token'], $token_allow_list, true ) ) {
+					$errors->add(
+						'invalid_token',
+						sprintf(
+							/* translators: 1: parameter name, 2: token name */
+							__( 'Parameter %1$s references unknown token: %2$s', 'basalio' ),
+							$param_name,
+							$param['token']
+						)
+					);
+				}
+			}
+		}
+
+		return $errors->has_errors() ? $errors : true;
+	}
+
+	/**
+	 * Build the token allow-list used by the schema validator.
+	 *
+	 * Includes every registered token name plus the token families derived from
+	 * them (the substring before the last hyphen). A schema parameter can
+	 * therefore reference either a specific token (`motion-scroll-threshold`) or
+	 * a token family (`duration`, `easing`) whose option values map to individual
+	 * tokens.
+	 *
+	 * A transitional hardcoded list of recognized semantic families is also
+	 * included. These families are used by existing module schemas but do not yet
+	 * have registered tokens. They are accepted so the validator can pass the
+	 * existing schemas without spamming production logs. This list should shrink
+	 * as modules register real tokens or are migrated.
+	 *
+	 * @return string[]
+	 */
+	private static function get_token_allow_list() {
+		$tokens     = Basalio_Tokens::get();
+		$allow_list = array_keys( $tokens );
+
+		foreach ( array_keys( $tokens ) as $name ) {
+			$family = self::get_token_family( $name );
+			if ( '' !== $family && ! in_array( $family, $allow_list, true ) ) {
+				$allow_list[] = $family;
+			}
+		}
+
+		// Transitional families used by existing motion.schema.json files.
+		// @todo Remove these as each module registers real tokens or migrates.
+		$transitional_families = array(
+			'duration',
+			'easing',
+			'threshold',
+			'fallback',
+			'percentage',
+			'step',
+			'focus',
+			'announcement',
+			'size',
+			'lag',
+			'blend',
+			'axis',
+			'delay',
+			'strength',
+			'distance',
+			'viewport',
+			'smoothing',
+			'count',
+			'frame',
+			'unit',
+			'message',
+		);
+
+		foreach ( $transitional_families as $family ) {
+			if ( ! in_array( $family, $allow_list, true ) ) {
+				$allow_list[] = $family;
+			}
+		}
+
+		return $allow_list;
+	}
+
+	/**
+	 * Extract the token family from a full token name.
+	 *
+	 * The family is everything before the last hyphen. Single-segment names have
+	 * no family.
+	 *
+	 * @param string $token_name Registered token name.
+	 * @return string
+	 */
+	private static function get_token_family( $token_name ) {
+		$pos = strrpos( $token_name, '-' );
+		if ( false === $pos ) {
+			return '';
+		}
+		return substr( $token_name, 0, $pos );
+	}
+
+	/**
+	 * Return the default value for a schema parameter, typed for block.json.
+	 *
+	 * @param array $param Schema parameter definition.
+	 * @return mixed
+	 */
+	private static function get_param_default_value( $param ) {
+		$type    = isset( $param['type'] ) ? $param['type'] : '';
+		$default = isset( $param['default'] ) ? $param['default'] : null;
+
+		if ( 'toggle' === $type ) {
+			return (bool) $default;
+		}
+
+		return $default;
 	}
 
 	/**
