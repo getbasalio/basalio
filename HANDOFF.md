@@ -4,10 +4,10 @@
 1. Recapture .wordpress-org screenshots — current three show old block UI
 2. "Tested up to" — verify all nine blocks against target WP version, then set
    readme.txt. Currently reverted to 7.0 pending real testing
-3. /blocks copy audit — Astro `src/data/blocks.ts` lists Grid Reveal controls
-   (`data-delay`, `data-duration`, `data-easing`) that the block does not have.
-   No `threshold` claim exists in the repo. Rewrite every block's `controls`
-   array as user-facing capability language, then update the live copy.
+3. /blocks copy audit — DONE in `basalio-astro/src/data/blocks.ts`. Remaining:
+   rebuild and deploy `basalio.com` so the live detail pages reflect the new
+   user-facing controls. No `threshold` claim exists for Grid Reveal anywhere in
+   the repo or on the current live site.
 4. Extension points — DONE, must not change after submission
 
 ## Motion pipeline
