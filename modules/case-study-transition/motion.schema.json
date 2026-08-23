@@ -26,6 +26,16 @@
         { "value": "off", "label": "Off" }
       ]
     },
+    "transitionDuration": {
+      "label": "Transition speed (ms)",
+      "type": "range",
+      "token": "duration",
+      "default": 300,
+      "min": 150,
+      "max": 600,
+      "step": 25,
+      "unit": "ms"
+    },
     "reducedMotionFallback": {
       "label": "Reduced-motion fallback",
       "type": "select",
