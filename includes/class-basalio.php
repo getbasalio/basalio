@@ -661,4 +661,110 @@ final class Basalio {
 	public static function get_block_schema( $block_name ) {
 		return isset( self::$block_schemas[ $block_name ] ) ? self::$block_schemas[ $block_name ] : array();
 	}
+
+	/**
+	 * Convert a camelCase/snake_case parameter name to a CSS-friendly kebab string.
+	 *
+	 * @param string $name Parameter name.
+	 * @return string
+	 */
+	private static function param_name_to_kebab( $name ) {
+		$name = str_replace( '_', '-', $name );
+		$name = preg_replace( '/([a-z])([A-Z])/', '$1-$2', $name );
+		return strtolower( $name );
+	}
+
+	/**
+	 * Convert a reduced-motion fallback value to a CSS-class-safe slug.
+	 *
+	 * @param string $value Fallback value.
+	 * @return string
+	 */
+	private static function fallback_value_to_slug( $value ) {
+		$value = strtolower( trim( (string) $value ) );
+		$value = preg_replace( '/[^a-z0-9]+/', '-', $value );
+		return trim( $value, '-' );
+	}
+
+	/**
+	 * Resolve motion parameters to CSS custom properties and fallback classes.
+	 *
+	 * Reads the block's motion.schema.json and emits one CSS custom property per
+	 * parameter, plus any reduced-motion fallback class the CSS expects. This is
+	 * the generic front-end half of the schema pipeline: adding a new typed
+	 * parameter to motion.schema.json makes it available on the front end without
+	 * touching the block's render.php.
+	 *
+	 * Special cases:
+	 *   - Token parameters (duration/easing) resolve to var(--basalio-<token>-<value>).
+	 *   - triggerThreshold is converted to a 0-1 fraction on --basalio-motion-scroll-threshold.
+	 *   - reducedMotionFallback emits a fallback class rather than a property.
+	 *
+	 * @param string $block_name   Registered block name, e.g. "basalio/text-reveal".
+	 * @param array  $motion_params Saved motionParams attribute value.
+	 * @return array { style: string, classes: string[] }
+	 */
+	public static function resolve_motion_params_to_css( $block_name, $motion_params ) {
+		$schema   = self::get_block_schema( $block_name );
+		$params   = isset( $schema['parameters'] ) && is_array( $schema['parameters'] ) ? $schema['parameters'] : array();
+		$tokens   = Basalio_Tokens::get();
+		$styles   = array();
+		$classes  = array();
+		$block_base = explode( '/', $block_name );
+		$block_base = isset( $block_base[1] ) ? $block_base[1] : sanitize_title( $block_name );
+
+		foreach ( $params as $param_name => $param ) {
+			if ( ! is_array( $param ) ) {
+				continue;
+			}
+
+			$type  = isset( $param['type'] ) ? $param['type'] : '';
+			$value = isset( $motion_params[ $param_name ] ) ? $motion_params[ $param_name ] : ( isset( $param['default'] ) ? $param['default'] : null );
+			$token = isset( $param['token'] ) ? $param['token'] : '';
+
+			// Reduced-motion fallback is exposed as a state class, not a property.
+			if ( 'reducedMotionFallback' === $param_name ) {
+				$slug = self::fallback_value_to_slug( (string) $value );
+				if ( '' !== $slug ) {
+					$classes[] = 'basalio-' . $block_base . '--fallback-' . $slug;
+				}
+				continue;
+			}
+
+			// triggerThreshold is a percentage stored as 0-100 but consumed as a fraction.
+			if ( 'triggerThreshold' === $param_name ) {
+				$threshold = is_numeric( $value ) ? (float) $value : 50;
+				$styles[]  = sprintf( '--basalio-motion-scroll-threshold:%s;', max( 0, min( 100, $threshold ) ) / 100 );
+				continue;
+			}
+
+			// Token parameters map to a CSS variable family, with the token default as fallback.
+			if ( '' !== $token ) {
+				$token_key = $token . '-' . (string) $value;
+				$fallback  = isset( $tokens[ $token_key ] ) ? $tokens[ $token_key ] : ( isset( $param['default'] ) ? $param['default'] : $value );
+				$styles[]  = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+				continue;
+			}
+
+			// Range parameters may carry a unit.
+			if ( 'range' === $type && isset( $param['unit'] ) && '' !== $param['unit'] ) {
+				$styles[] = sprintf( '--basalio-tr-%s:%s%s;', self::param_name_to_kebab( $param_name ), (float) $value, $param['unit'] );
+				continue;
+			}
+
+			// Toggle as a string boolean so the value is visible in markup.
+			if ( 'toggle' === $type ) {
+				$styles[] = sprintf( '--basalio-tr-%s:%s;', self::param_name_to_kebab( $param_name ), $value ? 'true' : 'false' );
+				continue;
+			}
+
+			// Everything else (select, text, plain range) is emitted as-is.
+			$styles[] = sprintf( '--basalio-tr-%s:%s;', self::param_name_to_kebab( $param_name ), esc_attr( (string) $value ) );
+		}
+
+		return array(
+			'style'   => implode( '', $styles ),
+			'classes' => $classes,
+		);
+	}
 }

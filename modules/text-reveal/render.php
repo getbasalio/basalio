@@ -168,48 +168,28 @@ if ( '' !== $basalio_cta_text ) {
 }
 
 // --- CSS variables ------------------------------------------------------
-
-$basalio_duration_var = "var(--basalio-duration-{$basalio_duration_token}, {$basalio_duration}ms)";
-
-$basalio_easing_map = array(
-	'glide'  => 'var(--basalio-easing-glide, cubic-bezier(0.2, 0.7, 0.2, 1))',
-	'snap'   => 'var(--basalio-easing-snap, cubic-bezier(0.16, 1, 0.3, 1))',
-	'ease'   => 'var(--basalio-easing-ease, ease)',
-	'linear' => 'var(--basalio-easing-linear, linear)',
-);
-$basalio_easing_var = isset( $basalio_easing_map[ $basalio_motion_params['easing'] ] )
-	? $basalio_easing_map[ $basalio_motion_params['easing'] ]
-	: $basalio_easing_map['glide'];
-
-$basalio_distance_var = 'var(--basalio-motion-reveal-distance, 14px)';
-
-$basalio_wrapper_style = sprintf(
-	'--basalio-tr-duration:%s;--basalio-tr-ease:%s;--basalio-tr-distance:%s;',
-	$basalio_duration_var,
-	$basalio_easing_var,
-	$basalio_distance_var
-);
-
-$basalio_wrapper_attrs = array(
-	'class' => 'basalio-text-reveal',
-	'style' => $basalio_wrapper_style,
-);
+// Resolve motion params generically from the schema. Adding a new typed param
+// to motion.schema.json now surfaces on the front end without editing this file.
 
 $basalio_schema = class_exists( 'Basalio', false ) ? Basalio::get_block_schema( 'basalio/text-reveal' ) : array();
 $basalio_trigger  = isset( $basalio_schema['trigger'] ) ? $basalio_schema['trigger'] : 'Scroll into view';
 
+$basalio_motion_css = class_exists( 'Basalio', false )
+	? Basalio::resolve_motion_params_to_css( 'basalio/text-reveal', $basalio_motion_params )
+	: array( 'style' => '', 'classes' => array() );
+
+$basalio_wrapper_class = 'basalio-text-reveal';
+if ( ! empty( $basalio_motion_css['classes'] ) ) {
+	$basalio_wrapper_class .= ' ' . implode( ' ', array_map( 'esc_attr', $basalio_motion_css['classes'] ) );
+}
+
+$basalio_wrapper_attrs = array(
+	'class' => $basalio_wrapper_class,
+	'style' => $basalio_motion_css['style'],
+);
+
 if ( 'Scroll into view' === $basalio_trigger ) {
 	$basalio_wrapper_attrs['data-basalio-motion-reveal'] = '';
-
-	$basalio_threshold = isset( $basalio_motion_params['triggerThreshold'] )
-		? (int) $basalio_motion_params['triggerThreshold']
-		: 50;
-	$basalio_threshold_fraction = max( 0, min( 100, $basalio_threshold ) ) / 100;
-	$basalio_wrapper_style     .= sprintf(
-		'--basalio-motion-scroll-threshold:%s;',
-		$basalio_threshold_fraction
-	);
-	$basalio_wrapper_attrs['style'] = $basalio_wrapper_style;
 }
 
 $basalio_wrapper = get_block_wrapper_attributes( $basalio_wrapper_attrs );
