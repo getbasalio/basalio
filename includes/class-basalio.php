@@ -65,6 +65,7 @@ final class Basalio {
 		add_action( 'init', array( $this, 'register_modules' ), 10 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_filter( 'block_editor_settings_all', array( $this, 'inject_editor_iframe_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_core_for_palette_content' ), 20 );
 	}
 
 	/**
@@ -144,6 +145,67 @@ final class Basalio {
 			array(),
 			BASALIO_VERSION
 		);
+	}
+
+	/**
+	 * Enqueue the shared front-end assets for content that carries Basalio palette
+	 * classes but no Basalio block.
+	 *
+	 * Block patterns are inserted as core blocks with Basalio color classes. The
+	 * free plugin's namespace-based detection misses them, so without this hook a
+	 * page containing only an expanded pattern would render with no Basalio palette.
+	 *
+	 * Pro token overrides are still loaded separately by the Pro add-on when active;
+	 * this hook only guarantees the default palette is present.
+	 *
+	 * @return void
+	 */
+	public function maybe_enqueue_core_for_palette_content() {
+		if ( ! function_exists( 'basalio_enqueue_core' ) ) {
+			return;
+		}
+
+		// A Basalio block already triggers enqueue_core() during render.
+		if ( function_exists( 'basalio_has_block' ) && basalio_has_block() ) {
+			return;
+		}
+
+		// Current post content. On the front end get_post() returns the queried
+		// post only on singular pages (the loop has not started this early), so
+		// this is effectively scoped to singular content without requiring
+		// is_singular(), which is not always available in test harnesses.
+		$post = get_post();
+		if ( $post && $this->content_has_basalio_palette( $post->post_content ) ) {
+			basalio_enqueue_core();
+			return;
+		}
+
+		// FSE block template.
+		if ( function_exists( 'get_block_template' ) ) {
+			$template = get_block_template( get_stylesheet() . '//' . basename( get_page_template() ), 'wp_template' );
+			if ( $template && $this->content_has_basalio_palette( $template->content ) ) {
+				basalio_enqueue_core();
+			}
+		}
+	}
+
+	/**
+	 * Check whether the given content references Basalio palette classes.
+	 *
+	 * Core blocks colored with the Basalio palette carry class names like
+	 * .has-basalio-surface-background-color, even when no Basalio block is present.
+	 * The block editor also stores palette choices as JSON attributes such as
+	 * "backgroundColor":"basalio-surface".
+	 *
+	 * @param string $content Post or template content.
+	 * @return bool
+	 */
+	private function content_has_basalio_palette( $content ) {
+		if ( false !== strpos( $content, 'has-basalio-' ) ) {
+			return true;
+		}
+
+		return 1 === preg_match( '/"(?:backgroundColor|textColor|color|gradient)"\s*:\s*"basalio-[^"]+"/', $content );
 	}
 
 	/**
