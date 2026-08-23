@@ -671,7 +671,8 @@ final class Basalio {
 	private static function param_name_to_kebab( $name ) {
 		$name = str_replace( '_', '-', $name );
 		$name = preg_replace( '/([a-z])([A-Z])/', '$1-$2', $name );
-		return strtolower( $name );
+		$name = preg_replace( '/-+/', '-', $name );
+		return trim( strtolower( $name ), '-' );
 	}
 
 	/**
