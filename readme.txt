@@ -2,7 +2,7 @@
 Contributors: chrowmdesigns
 Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
-Tested up to: 7.0
+Tested up to: 7.0.3
 Requires PHP: 7.4
 Stable tag: 0.6.0
 License: GPL-2.0-or-later
@@ -69,6 +69,18 @@ Basalio targets standard block themes and classic themes that support the block 
 
 == Changelog ==
 
+= 0.6.0 =
+* Accessibility audit debt release. All findings from the 0.5.1 audit are now resolved.
+* Scroll Sequence: Previous/Next buttons now advance frames authoritatively by scrolling to the matching position; they work under reduced motion even when controls are hidden.
+* Lightbox: rebuilt as a native `<dialog>` element opened with `.showModal()`, giving the browser-native focus trap, Escape-to-close, and inert background.
+* Pinned Scroll: fixed reading/focus order when the media is positioned on the right.
+* Image alt handling is now robust across every image block via a shared helper; author-entered alt always wins, including an intentional empty value.
+* Filterable Grid: uncategorised items now get their own "Uncategorized" filter button.
+* Before / After: improved mobile touch handling and more informative screen-reader value text.
+* Magnetic Button, Custom Cursor, and Scroll Sequence now respond live to a mid-session `prefers-reduced-motion` change.
+* Custom Cursor default color unified to the Basalio brand chartreuse (#DFFF00).
+* All editor asset versions and release tags aligned to 0.6.0.
+
 = 0.5.1 =
 * Accessibility fixes found in a full audit of every block. Details below.
 * Pinned Scroll: the "expand image" lightbox button did nothing when a Pinned Scroll block was the only Basalio block on a page, because the shared script was never loaded. Fixed, and fixed at the root so no future block can repeat it.
@@ -116,6 +128,9 @@ Basalio targets standard block themes and classic themes that support the block 
 * Redesigned the block editor chrome to match native Gutenberg styling.
 
 == Upgrade Notice ==
+
+= 0.6.0 =
+Accessibility audit debt release. Resolves all findings from the 0.5.1 audit, including a non-working Scroll Sequence button, a custom lightbox replaced with a native dialog, and a focus-order fix for right-positioned Pinned Scroll media. Recommended for all users.
 
 = 0.5.1 =
 Accessibility fix release. One block's lightbox button did not work at all; several blocks were not translatable. The Case Study Transition morph is now faster by default and capped at 600ms.
