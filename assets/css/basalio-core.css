@@ -1,10 +1,153 @@
 /**
  * Basalio, shared front-end styles.
  *
- * Loaded alongside the core script (only on pages that contain a Basalio
- * block). Currently this is the reusable lightbox used by the image blocks'
- * "expand" mode, plus the shared "clickable image" affordances.
+ * Loaded alongside the core script on pages that contain a Basalio block, or
+ * on pages whose content carries Basalio palette classes. Currently this is the
+ * reusable lightbox used by the image blocks' "expand" mode, the shared
+ * "clickable image" affordances, and the default Basalio palette utilities.
  */
+
+/* --- Default Basalio palette (degrades gracefully when Pro is inactive) --- */
+:root {
+	--basalio-surface: #fcfcfc;
+	--basalio-surface-raised: #f9f9f9;
+	--basalio-border: #d9d9d9;
+	--basalio-border-hover: #cecece;
+	--basalio-border-strong: #bbbbbb;
+	--basalio-text-muted: #838383;
+	--basalio-text: #202020;
+	--basalio-accent-subtle: #eff5cf;
+	--basalio-accent-solid: #dfff00;
+	--basalio-accent-hover: #d4f000;
+	--basalio-accent-on-solid: #171717;
+	--basalio-accent-text: #8fb300;
+	--basalio-focus: #202020;
+
+	/* v1 aliases kept for backward compatibility. */
+	--basalio-bg: var(--basalio-surface);
+	--basalio-bg-subtle: var(--basalio-surface-raised);
+	--basalio-fg: var(--basalio-text);
+	--basalio-fg-secondary: var(--basalio-text-muted);
+	--basalio-accent: var(--basalio-accent-solid);
+}
+
+/* Core blocks colored with the Basalio palette carry class names like
+ * .has-basalio-surface-background-color and .has-basalio-text-color. The free
+ * plugin provides the default rules so saved content does not lose its palette
+ * when the Pro add-on is inactive or its license expires. */
+.has-basalio-surface-color,
+.has-basalio-bg-color {
+	color: var(--basalio-surface);
+}
+
+.has-basalio-surface-background-color,
+.has-basalio-bg-background-color {
+	background-color: var(--basalio-surface);
+}
+
+.has-basalio-surface-raised-color,
+.has-basalio-bg-subtle-color {
+	color: var(--basalio-surface-raised);
+}
+
+.has-basalio-surface-raised-background-color,
+.has-basalio-bg-subtle-background-color {
+	background-color: var(--basalio-surface-raised);
+}
+
+.has-basalio-border-color {
+	color: var(--basalio-border);
+}
+
+.has-basalio-border-background-color {
+	background-color: var(--basalio-border);
+}
+
+.has-basalio-border-hover-color {
+	color: var(--basalio-border-hover);
+}
+
+.has-basalio-border-hover-background-color {
+	background-color: var(--basalio-border-hover);
+}
+
+.has-basalio-border-strong-color {
+	color: var(--basalio-border-strong);
+}
+
+.has-basalio-border-strong-background-color {
+	background-color: var(--basalio-border-strong);
+}
+
+.has-basalio-text-muted-color,
+.has-basalio-fg-secondary-color {
+	color: var(--basalio-text-muted);
+}
+
+.has-basalio-text-muted-background-color,
+.has-basalio-fg-secondary-background-color {
+	background-color: var(--basalio-text-muted);
+}
+
+.has-basalio-text-color,
+.has-basalio-fg-color {
+	color: var(--basalio-text);
+}
+
+.has-basalio-text-background-color,
+.has-basalio-fg-background-color {
+	background-color: var(--basalio-text);
+}
+
+.has-basalio-accent-subtle-color {
+	color: var(--basalio-accent-subtle);
+}
+
+.has-basalio-accent-subtle-background-color {
+	background-color: var(--basalio-accent-subtle);
+}
+
+.has-basalio-accent-solid-color,
+.has-basalio-accent-color {
+	color: var(--basalio-accent-solid);
+}
+
+.has-basalio-accent-solid-background-color,
+.has-basalio-accent-background-color {
+	background-color: var(--basalio-accent-solid);
+}
+
+.has-basalio-accent-hover-color {
+	color: var(--basalio-accent-hover);
+}
+
+.has-basalio-accent-hover-background-color {
+	background-color: var(--basalio-accent-hover);
+}
+
+.has-basalio-accent-on-solid-color {
+	color: var(--basalio-accent-on-solid);
+}
+
+.has-basalio-accent-on-solid-background-color {
+	background-color: var(--basalio-accent-on-solid);
+}
+
+.has-basalio-accent-text-color {
+	color: var(--basalio-accent-text);
+}
+
+.has-basalio-accent-text-background-color {
+	background-color: var(--basalio-accent-text);
+}
+
+.has-basalio-focus-color {
+	color: var(--basalio-focus);
+}
+
+.has-basalio-focus-background-color {
+	background-color: var(--basalio-focus);
+}
 
 /* --- Lightbox overlay (native <dialog>) --- */
 .basalio-lightbox {
