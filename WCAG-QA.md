@@ -338,15 +338,65 @@ Applies only to user-facing text. Enum-ish defaults (`revealStyle`,
 
 ---
 
+## Basalio Pro — Phase 8 acceptance
+
+Run the full Phase 8 suite from the Pro plugin:
+
+```bash
+cd ../basalio-pro
+./tests/run-phase8.sh
+```
+
+This runs `tests/verify-fixes.php` (static assertions) and the Playwright + axe-core browser tests in `tests/browser/`.
+
+### Pro static assertions
+
+| # | Requirement | Status | Evidence |
+|---|---|---|---|
+| S1 | Every `index.asset.php` version matches plugin version | ✔︎ | `verify-fixes.php` Phase 8 static harness |
+| S2 | No module/pattern CSS uses a hex outside `tokens/colors.json` | ✔︎ | `verify-fixes.php` token allowlist scan |
+| S3 | No `font-size` uses `px` or bare `vw` | ✔︎ | `verify-fixes.php` font-size scan |
+| S4 | Every type step `max <= 2.5 * min` | ✔︎ | `verify-fixes.php` type-scale regex |
+| S5 | Every selectable color pair is in `tokens/allowlist.json` | ✔︎ | Color system construction + sanitizer |
+| S6 | Focus-ring token >= 3:1 on default background | ✔︎ | `verify-fixes.php` relative-luminance check |
+| S7 | Pro options are `basalio_pro_*`; uninstall removes only those | ✔︎ | `verify-fixes.php` option/uninstall test |
+| S8 | Every `basalio-pro/v1` route requires auth | ✔︎ | `verify-fixes.php` REST auth check |
+| S9 | No Pro front-end asset enqueues on block-free pages | ✔︎ | `verify-fixes.php` conditional-loading test |
+| S10 | Free plugin `readme.txt` `Tested up to` <= installed WP | ✔︎ | `verify-fixes.php` readme assertion |
+| S11 | Free blocks render with Pro absent (Pro CSS/vars don't leak; free CSS has fallbacks) | ✔︎ | `verify-fixes.php` token-fallback + selector isolation checks |
+| S12 | Every Pro module follows the module contract | ✔︎ | `verify-fixes.php` module scan |
+
+### Pro browser + axe verification
+
+| # | Requirement | Status | Evidence |
+|---|---|---|---|
+| CC-A1 | Control center operable by keyboard | ✅ | `tests/browser/specs/admin-smoke.spec.ts` |
+| CC-A2–A10 | Control center accessibility tree | ✅ | `tests/browser/specs/axe-fixtures.spec.ts` control-center run: 0 critical/serious |
+| L.2–L.5 | Lightbox open/close focus behaviour | ✅ | `tests/browser/specs/lightbox.spec.ts` |
+| 5.6 / 5.8 | Scroll Sequence Previous/Next advances frame and announces once | ✅ | `tests/browser/specs/scroll-sequence.spec.ts` |
+| 7.6 | Pinned Scroll `mediaPosition:right` DOM order matches visual order | ✅ | `tests/browser/specs/pinned-scroll.spec.ts` |
+| S9 | Block-free page emits zero Pro assets | ✅ | `tests/browser/specs/tokens-conditional.spec.ts` |
+| Fixture pages | Four verification fixtures have no critical/serious axe violations | ✅ | `tests/browser/specs/axe-fixtures.spec.ts` |
+
+### Pro Hacks
+
+| # | Requirement | Status | Evidence |
+|---|---|---|---|
+| H-1.1 | Reduced-motion variants exist | ✔︎ | `@media (prefers-reduced-motion: reduce)` in every Hack CSS |
+| H-1.2 | Keyboard parity with pointer | ✔︎ | `:focus-visible` alongside `:hover` where relevant |
+| H-1.4 | Toggle off leaves zero markup residue | ✔︎ | Hacks are pure CSS, enqueued only when enabled |
+
+---
+
 ## Open items
 
 | Item | Kind | Blocking |
 |---|---|---|
 | 2.3 Case Study Transition duration | ✔︎ Resolved | No |
-| 5.6, 5.8 screen-reader confirmation | 🔬 | Promoting two fixes from Asserted to Verified |
-| L.2–L.5 lightbox focus behaviour | 🔬 | Highest-risk untested surface |
+| 5.6, 5.8 screen-reader confirmation | ✅ Verified | No |
+| L.2–L.5 lightbox focus behaviour | ✅ Verified | No |
 | 6.8, 4.6, L.10 | 🔬 | Three stylesheets still unread |
-| 7.6 Pinned Scroll DOM order | ✔︎ Resolved | No |
+| 7.6 Pinned Scroll DOM order | ✅ Verified | No |
 | 4.7 new-tab indication | ✔︎ Resolved | No |
 | CC-2, CC-3, CC-4 | ✔︎ Resolved | No |
 | `example.com` in the plugin header | Hygiene | Release |
