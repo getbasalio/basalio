@@ -4,9 +4,10 @@
 1. Recapture .wordpress-org screenshots — current three show old block UI
 2. "Tested up to" — verify all nine blocks against target WP version, then set
    readme.txt. Currently reverted to 7.0 pending real testing
-3. /blocks copy audit — Grid Reveal listed with threshold/stagger. ROOT CAUSE
-   FOUND: the schema declares them and the runtime does not implement them. Fix
-   the schema first, then the copy
+3. /blocks copy audit — Astro `src/data/blocks.ts` lists Grid Reveal controls
+   (`data-delay`, `data-duration`, `data-easing`) that the block does not have.
+   No `threshold` claim exists in the repo. Rewrite every block's `controls`
+   array as user-facing capability language, then update the live copy.
 4. Extension points — DONE, must not change after submission
 
 ## Motion pipeline
