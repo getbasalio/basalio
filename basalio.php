@@ -75,6 +75,39 @@ function basalio_enqueue_core() {
 }
 
 /**
+ * Check whether a string of block markup contains any Basalio block.
+ *
+ * WordPress' has_block() does not accept a namespace prefix such as "basalio/";
+ * it expects an exact block name. We therefore parse the content and look for
+ * any block whose name starts with "basalio/".
+ *
+ * @param string $content Block markup.
+ * @return bool
+ */
+function basalio_content_has_basalio_block( $content ) {
+	if ( ! function_exists( 'parse_blocks' ) ) {
+		return false;
+	}
+
+	$blocks = parse_blocks( (string) $content );
+	$stack  = $blocks;
+
+	while ( ! empty( $stack ) ) {
+		$block = array_shift( $stack );
+
+		if ( ! empty( $block['blockName'] ) && 0 === strpos( $block['blockName'], 'basalio/' ) ) {
+			return true;
+		}
+
+		if ( ! empty( $block['innerBlocks'] ) ) {
+			$stack = array_merge( $stack, $block['innerBlocks'] );
+		}
+	}
+
+	return false;
+}
+
+/**
  * Determine whether the current page contains a Basalio block.
  *
  * Used by the Pro add-on (and any future extension) to decide whether to load
@@ -95,7 +128,7 @@ function basalio_has_block() {
 	// Current post content.
 	if ( is_singular() ) {
 		$post = get_post();
-		if ( $post && has_block( 'basalio/', $post->post_content ) ) {
+		if ( $post && basalio_content_has_basalio_block( $post->post_content ) ) {
 			$has_block = true;
 		}
 	}
@@ -103,7 +136,7 @@ function basalio_has_block() {
 	// FSE block template.
 	if ( ! $has_block && function_exists( 'get_block_template' ) ) {
 		$template = get_block_template( get_stylesheet() . '//' . basename( get_page_template() ), 'wp_template' );
-		if ( $template && has_block( 'basalio/', $template->content ) ) {
+		if ( $template && basalio_content_has_basalio_block( $template->content ) ) {
 			$has_block = true;
 		}
 	}
