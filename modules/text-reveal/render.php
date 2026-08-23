@@ -2,25 +2,28 @@
 /**
  * Server-side render for the Basalio: Text Reveal block.
  *
- * This module has NO front-end JavaScript. The staged / word-by-word entrance
- * is pure CSS, and the word wrapping is done here in PHP. Consequently:
+ * The real text is emitted into the initial HTML response, so it is in the DOM
+ * and exposed to assistive technology immediately; the reveal is never
+ * "JS-only" (1.3.1, 4.1.2). The hidden state exists ONLY as a keyframe
+ * start-frame plus animation-fill-mode, never as a standalone rule.
  *
- *   - The real text is emitted into the initial HTML response, so it is in the
- *     DOM and exposed to assistive technology immediately, the reveal is never
- *     "JS-only" (1.3.1, 4.1.2). See style.css for the invariant that the hidden
- *     state exists ONLY as a keyframe start-frame, never as a standalone rule.
- *   - Because there is no JS, render.php does NOT enqueue basalio-core.js.
+ * The scroll-into-view trigger is enhanced by the shared Basalio core JS.
+ * Calling basalio_enqueue_core() here guarantees the core loads for any page
+ * that contains this block.
  *
  * @package Basalio
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Inner block content (unused).
- * @var WP_Block $block      Block instance (unused).
+ * @var WP_Block $block      Block instance, used to read raw saved attributes for legacy migration.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// The scroll trigger lives in the shared core.
+basalio_enqueue_core();
 
 $basalio_headline = isset( $attributes['headline'] ) ? trim( $attributes['headline'] ) : '';
 $basalio_subhead  = isset( $attributes['subhead'] ) ? trim( $attributes['subhead'] ) : '';
@@ -37,19 +40,65 @@ if ( ! in_array( $basalio_level, array( 'h1', 'h2', 'h3', 'h4' ), true ) ) {
 	$basalio_level = 'h2';
 }
 
-$basalio_word_by_word = ! empty( $attributes['wordByWord'] );
+// ---------------------------------------------------------------------------
+// Motion parameters
+// ---------------------------------------------------------------------------
 
-// Per-element fade duration (ms), user-controllable. The stagger between words
-// and stages scales with it so a slower duration also spreads the entrance out,
-// which is what makes the reveal actually noticeable.
-$basalio_duration = isset( $attributes['duration'] ) ? max( 200, min( 4000, absint( $attributes['duration'] ) ) ) : 600;
+$basalio_motion_defaults = array(
+	'splitUnit'              => 'line',
+	'duration'               => 'base',
+	'easing'                 => 'glide',
+	'triggerThreshold'       => 50,
+	'reducedMotionFallback'  => 'appear instantly',
+);
 
-// Timing (ms). Delays are computed here so the CSS stays trivial. A single
-// monotonic fade per element/word, nothing loops, so there is no flashing
-// (2.3.1).
+$basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
+	? $block->parsed_block['attrs']
+	: $attributes;
+
+$basalio_motion_params = isset( $basalio_raw_attrs['motionParams'] ) && is_array( $basalio_raw_attrs['motionParams'] )
+	? $basalio_raw_attrs['motionParams']
+	: array();
+
+if ( empty( $basalio_motion_params ) ) {
+	// Legacy migration path: the block predates the motionParams object.
+	$basalio_motion_params = array(
+		'splitUnit'              => ! empty( $basalio_raw_attrs['wordByWord'] ) ? 'word' : 'line',
+		'easing'                 => 'glide',
+		'triggerThreshold'       => 50,
+		'reducedMotionFallback'  => 'appear instantly',
+	);
+
+	$basalio_legacy_duration = isset( $basalio_raw_attrs['duration'] ) ? (int) $basalio_raw_attrs['duration'] : 600;
+	if ( $basalio_legacy_duration <= 350 ) {
+		$basalio_motion_params['duration'] = 'short';
+	} elseif ( $basalio_legacy_duration > 900 ) {
+		$basalio_motion_params['duration'] = 'long';
+	} else {
+		$basalio_motion_params['duration'] = 'base';
+	}
+}
+
+$basalio_motion_params = wp_parse_args( $basalio_motion_params, $basalio_motion_defaults );
+
+// Word-by-word is now driven by splitUnit.
+$basalio_word_by_word = ( 'word' === $basalio_motion_params['splitUnit'] );
+
+// Resolve the duration token to a numeric ms value for stagger math.
+$basalio_duration_token = $basalio_motion_params['duration'];
+if ( 'short' === $basalio_duration_token ) {
+	$basalio_duration = 200;
+} elseif ( 'long' === $basalio_duration_token ) {
+	$basalio_duration = 1200;
+} else {
+	$basalio_duration = 600;
+}
+
+// Per-element fade duration (ms). The stagger between words and stages scales
+// with it so a slower duration also spreads the entrance out.
 $basalio_word_step  = max( 20, (int) round( $basalio_duration * 0.09 ) );
 $basalio_stage_step = max( 60, (int) round( $basalio_duration * 0.23 ) );
-$basalio_cursor     = 0; // running delay in ms
+$basalio_cursor     = 0; // running delay in ms.
 
 $basalio_parts = '';
 
@@ -118,12 +167,52 @@ if ( '' !== $basalio_cta_text ) {
 	}
 }
 
-$basalio_wrapper = get_block_wrapper_attributes(
-	array(
-		'class' => 'basalio-text-reveal',
-		'style' => '--basalio-tr-duration:' . $basalio_duration . 'ms',
-	)
+// --- CSS variables ------------------------------------------------------
+
+$basalio_duration_var = "var(--basalio-duration-{$basalio_duration_token}, {$basalio_duration}ms)";
+
+$basalio_easing_map = array(
+	'glide'  => 'var(--basalio-easing-glide, cubic-bezier(0.2, 0.7, 0.2, 1))',
+	'snap'   => 'var(--basalio-easing-snap, cubic-bezier(0.16, 1, 0.3, 1))',
+	'ease'   => 'var(--basalio-easing-ease, ease)',
+	'linear' => 'var(--basalio-easing-linear, linear)',
 );
+$basalio_easing_var = isset( $basalio_easing_map[ $basalio_motion_params['easing'] ] )
+	? $basalio_easing_map[ $basalio_motion_params['easing'] ]
+	: $basalio_easing_map['glide'];
+
+$basalio_distance_var = 'var(--basalio-motion-reveal-distance, 14px)';
+
+$basalio_wrapper_style = sprintf(
+	'--basalio-tr-duration:%s;--basalio-tr-ease:%s;--basalio-tr-distance:%s;',
+	$basalio_duration_var,
+	$basalio_easing_var,
+	$basalio_distance_var
+);
+
+$basalio_wrapper_attrs = array(
+	'class' => 'basalio-text-reveal',
+	'style' => $basalio_wrapper_style,
+);
+
+$basalio_schema = class_exists( 'Basalio', false ) ? Basalio::get_block_schema( 'basalio/text-reveal' ) : array();
+$basalio_trigger  = isset( $basalio_schema['trigger'] ) ? $basalio_schema['trigger'] : 'Scroll into view';
+
+if ( 'Scroll into view' === $basalio_trigger ) {
+	$basalio_wrapper_attrs['data-basalio-motion-reveal'] = '';
+
+	$basalio_threshold = isset( $basalio_motion_params['triggerThreshold'] )
+		? (int) $basalio_motion_params['triggerThreshold']
+		: 50;
+	$basalio_threshold_fraction = max( 0, min( 100, $basalio_threshold ) ) / 100;
+	$basalio_wrapper_style     .= sprintf(
+		'--basalio-motion-scroll-threshold:%s;',
+		$basalio_threshold_fraction
+	);
+	$basalio_wrapper_attrs['style'] = $basalio_wrapper_style;
+}
+
+$basalio_wrapper = get_block_wrapper_attributes( $basalio_wrapper_attrs );
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-text-reveal>
 	<?php echo $basalio_parts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_html / esc_url / esc_attr above. ?>

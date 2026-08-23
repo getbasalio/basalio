@@ -282,10 +282,29 @@ $page_empty_alt = bv_page(
 	) . ' /-->'
 );
 
+$page_text_reveal = bv_page(
+	'verify-text-reveal',
+	'Verify: Text Reveal motion params',
+	'<!-- wp:basalio/text-reveal ' . wp_json_encode(
+		array(
+			'headline' => 'Scroll into view headline',
+			'subhead'  => 'Subhead line',
+		)
+	) . ' /-->' . "\n" .
+	'<!-- wp:basalio/text-reveal ' . wp_json_encode(
+		array(
+			'headline'    => 'Word by word legacy',
+			'wordByWord'  => true,
+			'duration'    => 600,
+		)
+	) . ' /-->'
+);
+
 $base = home_url();
 echo "\nFixtures ready.\n\n";
 printf( "1. Pinned Scroll lightbox        %s/?page_id=%d\n", $base, $page_pinned );
 printf( "2. Pinned Scroll media-right     %s/?page_id=%d\n", $base, $page_pinned_right );
 printf( "3. Scroll Sequence               %s/?page_id=%d\n", $base, $page_seq );
 printf( "4. Filterable Grid               %s/?page_id=%d\n", $base, $page_grid );
+printf( "5. Text Reveal                   %s/?page_id=%d\n", $base, $page_text_reveal );
 echo "\n";

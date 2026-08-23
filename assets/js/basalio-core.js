@@ -795,6 +795,70 @@
 	 * e.g. Basalio.register( 'text-reveal', function ( root ) { ... } );
 	 * ------------------------------------------------------------------- */
 
+	/* -------------------------------------------------------------------
+	 * Text Reveal scroll trigger
+	 *
+	 * CSS handles the actual motion; JS only decides WHEN the motion starts.
+	 * Under reduced motion, or when IntersectionObserver is unavailable, the
+	 * block is made visible immediately so content is never trapped invisible.
+	 * ------------------------------------------------------------------- */
+	Basalio.register( 'motion-reveal', function ( root ) {
+		var items = root.querySelectorAll(
+			'[data-basalio-motion-reveal]:not([data-basalio-ready])'
+		);
+
+		if ( ! items.length ) {
+			return;
+		}
+
+		var reduce = window.matchMedia &&
+			window.matchMedia( '(prefers-reduced-motion: reduce)' );
+
+		var makeVisible = function ( el ) {
+			el.classList.add( 'is-visible' );
+			el.setAttribute( 'data-basalio-ready', '' );
+		};
+
+		forEach( items, function ( item ) {
+			if ( reduce && reduce.matches ) {
+				makeVisible( item );
+				return;
+			}
+
+			if ( ! ( 'IntersectionObserver' in window ) ) {
+				makeVisible( item );
+				return;
+			}
+
+			var threshold = 0.5;
+			if ( window.getComputedStyle ) {
+				var raw = window.getComputedStyle( item )
+					.getPropertyValue( '--basalio-motion-scroll-threshold' );
+				if ( raw ) {
+					var parsed = parseFloat( raw );
+					if ( ! isNaN( parsed ) ) {
+						threshold = parsed;
+					}
+				}
+			}
+			threshold = Math.max( 0, Math.min( 1, threshold ) );
+
+			var observer = new IntersectionObserver(
+				function ( entries ) {
+					forEach( entries, function ( entry ) {
+						if ( entry.isIntersecting ) {
+							makeVisible( entry.target );
+							observer.unobserve( entry.target );
+						}
+					} );
+				},
+				{ threshold: threshold }
+			);
+
+			observer.observe( item );
+		} );
+	} );
+
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', function () {
 			Basalio.boot();

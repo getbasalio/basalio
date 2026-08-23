@@ -1,27 +1,7 @@
-/**
- * Basalio: Text Reveal, front-end + editor styles.
- *
- * ACCESSIBILITY INVARIANTS (do not break these):
- *
- * 1. The hidden state exists ONLY as the @keyframes start-frame plus
- *    animation-fill-mode. There is deliberately NO standalone `opacity: 0` rule.
- *    So if CSS animations are unsupported, or the animation is removed, or JS is
- *    off, every element renders at its natural, fully-visible resting state.
- *    Content can never get "stuck" invisible.
- *
- * 2. Only `opacity` and `transform` are animated. We never touch `display`,
- *    `visibility`, or `aria-*`, so the accessibility tree is identical before,
- *    during, and after the animation. A screen reader reads the full text
- *    immediately and perceives no change.
- *
- * 3. The animation runs exactly once (no iteration/infinite), a single monotonic
- *    fade, so there is no flashing (2.3.1).
- */
-
 .basalio-text-reveal {
-	--basalio-tr-duration: 600ms;
-	--basalio-tr-distance: 14px;
-	--basalio-tr-ease: cubic-bezier( 0.2, 0.7, 0.2, 1 );
+	--basalio-tr-duration: var(--basalio-duration-base, 600ms);
+	--basalio-tr-distance: var(--basalio-motion-reveal-distance, 14px);
+	--basalio-tr-ease: var(--basalio-easing-glide, cubic-bezier(0.2, 0.7, 0.2, 1));
 
 	display: flex;
 	flex-direction: column;
@@ -54,28 +34,36 @@
    prefers-reduced-motion (and on browsers without this media feature that
    default to reduce) the media query does not match, so every element stays at
    its natural visible state, immediately, with no delay. */
-@media ( prefers-reduced-motion: no-preference ) {
+@media (prefers-reduced-motion: no-preference) {
 	.basalio-text-reveal__item {
 		animation-name: basalio-tr-in;
-		animation-duration: var( --basalio-tr-duration );
-		animation-timing-function: var( --basalio-tr-ease );
-		animation-delay: var( --basalio-tr-delay, 0ms );
+		animation-duration: var(--basalio-tr-duration);
+		animation-timing-function: var(--basalio-tr-ease);
+		animation-delay: var(--basalio-tr-delay, 0ms);
 		animation-iteration-count: 1;
 		/* `both` holds the start-frame during the delay (no pre-flash) and the
 		   end-frame afterwards (stays visible). This is the ONLY place the
 		   hidden state is expressed. */
 		animation-fill-mode: both;
 	}
+
+	/* Scroll-triggered blocks render at their natural visible state until JS
+	   adds .is-visible, then they run the entrance. Using animation-name: none
+	   (instead of animation-play-state) keeps the text visible even when JS is
+	   disabled or when @media (scripting) is unsupported. */
+	[data-basalio-motion-reveal]:not(.is-visible) .basalio-text-reveal__item {
+		animation-name: none;
+	}
 }
 
 @keyframes basalio-tr-in {
 	from {
 		opacity: 0;
-		transform: translateY( var( --basalio-tr-distance ) );
+		transform: translateY(var(--basalio-tr-distance));
 	}
 	to {
 		opacity: 1;
-		transform: translateY( 0 );
+		transform: translateY(0);
 	}
 }
 

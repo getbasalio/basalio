@@ -461,7 +461,7 @@ foreach ( $css_files as $css_file ) {
 	);
 }
 
-echo "\n=== Motion schema pipeline (Task 1) ===\n";
+echo "\n=== Motion schema pipeline (Tasks 1-3) ===\n";
 
 $token_css = Basalio_Tokens::to_css();
 bv_ok( 'token CSS contains --duration-base: 600ms', false !== strpos( $token_css, '--duration-base: 600ms' ) );
@@ -512,6 +512,24 @@ $validation_result = $validator->invoke( null, $malformed );
 bv_ok(
 	'schema validator rejects schema missing motionType',
 	$validation_result instanceof WP_Error
+);
+
+$text_reveal_html = bv_render( 'verify-text-reveal' );
+bv_ok(
+	'Text Reveal front end resolves --basalio-tr-duration',
+	(bool) preg_match( '/--basalio-tr-duration:\s*var\(--basalio-duration-(?:short|base|long),\s*\d+ms\)/', $text_reveal_html )
+);
+bv_ok(
+	'Text Reveal front end includes scroll-trigger marker',
+	false !== strpos( $text_reveal_html, 'data-basalio-motion-reveal' )
+);
+bv_ok(
+	'legacy wordByWord block renders word spans',
+	false !== strpos( $text_reveal_html, 'basalio-text-reveal__word' )
+);
+bv_ok(
+	'legacy wordByWord block renders visible text',
+	false !== strpos( wp_strip_all_tags( $text_reveal_html ), 'Word by word legacy' )
 );
 
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];

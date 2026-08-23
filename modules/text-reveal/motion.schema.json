@@ -8,7 +8,7 @@
     "splitUnit": {
       "label": "Split unit",
       "type": "select",
-      "default": "word",
+      "default": "line",
       "options": [
         { "value": "word", "label": "Word" },
         { "value": "line", "label": "Line" },
