@@ -14,11 +14,12 @@
 - Vertical slice COMPLETE: schema-only param change renders on the front end,
   proven via __pipeline_test_param
 - 1 of 9 blocks migrated (Text Reveal). Eight hardcoded
-- BLOCKER: schemas describe unimplemented behavior across most of the eight.
-  Audit every param for a runtime consumer before migrating anything
+- Schema audit COMPLETE: unimplemented params removed, name mismatches fixed to
+  match the runtime, and accessibility params (`reducedMotionFallback`,
+  `dragStep`, `focusTarget`, `announceChange`, `resultCount`) wired and tested
 - Migration (mechanical) and feature-building (Pinned Scroll scroll-scrub,
   Scroll Sequence frame subsetting, Filterable Grid layout animation) are
-  separate decisions
+  separate decisions, tracked in `docs/MOTION-ROADMAP.md`
 
 ## Open decisions
 - Pricing: lifetime vs. bounded term. Blocked on Freemius support answer re:
