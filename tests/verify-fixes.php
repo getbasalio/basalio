@@ -532,6 +532,37 @@ bv_ok(
 	false !== strpos( wp_strip_all_tags( $text_reveal_html ), 'Word by word legacy' )
 );
 
+$inject_dummy_param = function( $schema, $module_name ) {
+	if ( 'text-reveal' === $module_name && isset( $schema['parameters'] ) ) {
+		$schema['parameters']['__bv_test_param'] = array(
+			'label'   => 'Test parameter',
+			'type'    => 'toggle',
+			'default' => true,
+		);
+	}
+	return $schema;
+};
+add_filter( 'basalio_block_schema', $inject_dummy_param, 10, 2 );
+
+$registry = WP_Block_Type_Registry::get_instance();
+foreach ( $registry->get_all_registered() as $name => $block ) {
+	if ( 0 === strpos( $name, 'basalio/' ) ) {
+		$registry->unregister( $name );
+	}
+}
+Basalio::instance()->register_modules();
+
+$text_reveal_reregistered = $registry->get_registered( 'basalio/text-reveal' );
+bv_ok(
+	'dummy schema parameter appears in motionParams default after re-registration',
+	$text_reveal_reregistered instanceof WP_Block_Type
+		&& isset( $text_reveal_reregistered->attributes['motionParams']['default']['__bv_test_param'] )
+		&& true === $text_reveal_reregistered->attributes['motionParams']['default']['__bv_test_param'],
+	'A parameter added only to motion.schema.json must reach the registered block type.'
+);
+
+remove_filter( 'basalio_block_schema', $inject_dummy_param, 10 );
+
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
 printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
 

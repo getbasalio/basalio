@@ -13,6 +13,10 @@ Phase 7 = licensing + distribution via Freemius. Real Freemius product keys are 
 3. The Freemius secret key must never be committed. Not in a file, not in history.
 4. No hardcoded motion parameter names anywhere in Pro. The Pro panel renders from `motion.schema.json`. If adding a parameter to the schema requires editing any other file, the implementation is wrong.
 
+## Motion schema pipeline
+
+The free plugin owns the default motion tokens and the `motion.schema.json` loader/validator. Pro consumes motion schemas through the `basalio_block_schema` filter and overrides tokens through the `basalio_tokens` filter. No Pro code may gate, modify, or replace the free plugin's schema loader, validator, or token resolver. Front-end rendering must remain identical whether Pro is active or inactive.
+
 ## Task 7A — do now (no Freemius keys required)
 
 Build the licensing seam so real keys drop in later without refactoring.

@@ -217,6 +217,73 @@ $html = apply_filters( 'basalio_block_render', $html, $attributes, $module_name 
 
 ---
 
+## Motion Pipeline
+
+The motion system is driven by per-module `motion.schema.json` files. The free plugin loads, validates, and converts those schemas into block attributes and front-end CSS variables. Pro and third-party code can extend motion without editing module files through the hooks below.
+
+### `basalio_tokens`
+
+Filters the registered design token map before it is finalized. The free plugin registers default motion tokens (`duration-*`, `easing-*`, `motion-scroll-threshold`, `motion-reveal-distance`) that schemas resolve to CSS variables. Pro overrides these defaults through this filter.
+
+```php
+add_filter(
+	'basalio_tokens',
+	function( $tokens ) {
+		$tokens['duration-base'] = '500ms';
+		return $tokens;
+	}
+);
+```
+
+---
+
+### `basalio_block_schema`
+
+Filters the motion schema read from a module's `motion.schema.json` file. Modules that ship with a schema expose their parameters through this filter, and Pro's configurator UI renders controls from the filtered schema. Adding a parameter here requires no changes to `block.json`, `render.php`, or the editor script.
+
+```php
+add_filter(
+	'basalio_block_schema',
+	function( $schema, $module_name ) {
+		if ( 'text-reveal' === $module_name ) {
+			$schema['parameters']['stagger'] = array(
+				'label'   => 'Stagger',
+				'type'    => 'range',
+				'default' => 50,
+				'min'     => 0,
+				'max'     => 200,
+				'step'    => 10,
+			);
+		}
+		return $schema;
+	},
+	10,
+	2
+);
+```
+
+---
+
+### `basalio_block_render`
+
+Filters the final HTML rendered by a Basalio block, including any motion CSS variables injected from `motionParams`.
+
+```php
+add_filter(
+	'basalio_block_render',
+	function( $html, $attributes, $module_name ) {
+		if ( 'text-reveal' === $module_name ) {
+			$html = str_replace( 'data-basalio-motion-reveal', 'data-basalio-motion-reveal data-basalio-motion-custom', $html );
+		}
+		return $html;
+	},
+	10,
+	3
+);
+```
+
+---
+
 ## Public Helpers
 
 ### `basalio_has_block()`
