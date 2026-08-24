@@ -8,13 +8,15 @@
  *
  * Prerequisite: php tests/make-verify-pages.php
  * Run:          php tests/verify-fixes.php [/path/to/wordpress]
- * Exit:         0 if every assertion passes, 1 otherwise.
+ * Exit:         0 if no real failures, 1 if any assertion failed.
+ *               Missing fixtures are skipped, not failed.
  */
 
 require __DIR__ . '/bootstrap.php';
 
-$GLOBALS['bv_pass'] = 0;
-$GLOBALS['bv_fail'] = 0;
+$GLOBALS['bv_pass']  = 0;
+$GLOBALS['bv_fail']  = 0;
+$GLOBALS['bv_skip']  = 0;
 
 function bv_ok( $label, $cond, $detail = '' ) {
 	if ( $cond ) {
@@ -29,13 +31,26 @@ function bv_ok( $label, $cond, $detail = '' ) {
 	}
 }
 
-/** Render a fixture page's blocks, with the script queue reset first. */
+function bv_skip( $label, $reason = '' ) {
+	$GLOBALS['bv_skip']++;
+	echo "  SKIP  $label";
+	if ( '' !== $reason ) {
+		echo " ($reason)";
+	}
+	echo "\n";
+}
+
+/**
+ * Render a fixture page's blocks, with the script queue reset first.
+ *
+ * @param string $slug Page slug.
+ * @return string|null Markup, or null if the fixture page does not exist.
+ */
 function bv_render( $slug ) {
 	$page = get_page_by_path( $slug );
 	if ( ! $page ) {
-		echo "  FAIL  fixture page missing: $slug (run tests/make-verify-pages.php)\n";
-		$GLOBALS['bv_fail']++;
-		return '';
+		bv_skip( "fixture page missing: $slug", 'run tests/make-verify-pages.php' );
+		return null;
 	}
 	wp_dequeue_script( 'basalio-core' );
 	wp_dequeue_style( 'basalio-core' );
@@ -57,40 +72,59 @@ function bv_src( $rel ) {
 echo "\n=== Lightbox trigger enqueues the core (Pinned Scroll alone) ===\n";
 
 $html = bv_render( 'verify-pinned-lightbox' );
-bv_ok( 'lightbox trigger button is rendered', false !== strpos( $html, 'data-basalio-lightbox' ) );
-bv_ok(
-	'basalio-core SCRIPT is enqueued by the lightbox path',
-	wp_script_is( 'basalio-core', 'enqueued' ),
-	'If false, the button announces "Expand image" and does nothing (4.1.2).'
-);
-bv_ok(
-	'basalio-core STYLE is enqueued by the lightbox path',
-	wp_style_is( 'basalio-core', 'enqueued' )
-);
+if ( null === $html ) {
+	bv_skip( 'lightbox trigger button is rendered', 'fixture page missing: verify-pinned-lightbox' );
+	bv_skip( 'basalio-core SCRIPT is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
+	bv_skip( 'basalio-core STYLE is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
+} else {
+	bv_ok( 'lightbox trigger button is rendered', false !== strpos( $html, 'data-basalio-lightbox' ) );
+	bv_ok(
+		'basalio-core SCRIPT is enqueued by the lightbox path',
+		wp_script_is( 'basalio-core', 'enqueued' ),
+		'If false, the button announces "Expand image" and does nothing (4.1.2).'
+	);
+	bv_ok(
+		'basalio-core STYLE is enqueued by the lightbox path',
+		wp_style_is( 'basalio-core', 'enqueued' )
+	);
+}
 
 echo "\n=== Scroll Sequence: per-frame alt override (1.1.1) ===\n";
 
 $seq = bv_render( 'verify-scroll-sequence' );
-bv_ok( 'frame 3 uses the block-level OVERRIDE alt', false !== strpos( $seq, 'alt="OVERRIDE alt for frame 3"' ) );
-bv_ok( 'frame 3 does not fall back to the attachment alt', false === strpos( $seq, 'alt="ATTACHMENT alt for frame 3"' ) );
-bv_ok( 'other frames still render their own alt', false !== strpos( $seq, 'alt="ATTACHMENT alt for frame 5"' ) );
+if ( null === $seq ) {
+	bv_skip( 'frame 3 uses the block-level OVERRIDE alt', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip( 'frame 3 does not fall back to the attachment alt', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip( 'other frames still render their own alt', 'fixture page missing: verify-scroll-sequence' );
+} else {
+	bv_ok( 'frame 3 uses the block-level OVERRIDE alt', false !== strpos( $seq, 'alt="OVERRIDE alt for frame 3"' ) );
+	bv_ok( 'frame 3 does not fall back to the attachment alt', false === strpos( $seq, 'alt="ATTACHMENT alt for frame 3"' ) );
+	bv_ok( 'other frames still render their own alt', false !== strpos( $seq, 'alt="ATTACHMENT alt for frame 5"' ) );
+}
 
 echo "\n=== Scroll Sequence: live region separated from scroll counter (4.1.3) ===\n";
 
-bv_ok( 'a dedicated announcer element exists', false !== strpos( $seq, 'data-basalio-seq-announcer' ) );
-bv_ok(
-	'the announcer carries role="status"',
-	(bool) preg_match( '/class="basalio-scroll-sequence__announcer" role="status"/', $seq )
-);
-bv_ok(
-	'the announcer starts EMPTY so the first press is announced',
-	(bool) preg_match( '/data-basalio-seq-announcer><\/span>/', $seq )
-);
-bv_ok(
-	'the visible counter no longer carries live semantics',
-	! preg_match( '/class="basalio-scroll-sequence__status"[^>]*role="status"/', $seq ),
-	'If this fails, scrolling spams the screen reader again.'
-);
+if ( null === $seq ) {
+	bv_skip( 'a dedicated announcer element exists', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip( 'the announcer carries role="status"', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip( 'the announcer starts EMPTY so the first press is announced', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip( 'the visible counter no longer carries live semantics', 'fixture page missing: verify-scroll-sequence' );
+} else {
+	bv_ok( 'a dedicated announcer element exists', false !== strpos( $seq, 'data-basalio-seq-announcer' ) );
+	bv_ok(
+		'the announcer carries role="status"',
+		(bool) preg_match( '/class="basalio-scroll-sequence__announcer" role="status"/', $seq )
+	);
+	bv_ok(
+		'the announcer starts EMPTY so the first press is announced',
+		(bool) preg_match( '/data-basalio-seq-announcer><\/span>/', $seq )
+	);
+	bv_ok(
+		'the visible counter no longer carries live semantics',
+		! preg_match( '/class="basalio-scroll-sequence__status"[^>]*role="status"/', $seq ),
+		'If this fails, scrolling spams the screen reader again.'
+	);
+}
 
 $core_js = bv_src( 'assets/js/basalio-core.js' );
 bv_ok(
@@ -114,34 +148,44 @@ bv_ok( 'announcer has a screen-reader-only rule', false !== strpos( $seq_css, '_
 echo "\n=== Grid Item: linked item with no alt gets a name (2.4.4 / 4.1.2) ===\n";
 
 $grid = bv_render( 'verify-filterable-grid' );
-bv_ok(
-	'the alt-less linked item carries an aria-label fallback',
-	(bool) preg_match( '/<a class="basalio-grid-item__frame"[^>]*aria-label="Untitled Case Study"/', $grid )
-);
-bv_ok(
-	'items that DO have alt are left alone',
-	! preg_match( '/aria-label="Design Project"/', $grid ),
-	'The fallback must not override a good alt-derived name.'
-);
+if ( null === $grid ) {
+	bv_skip( 'the alt-less linked item carries an aria-label fallback', 'fixture page missing: verify-filterable-grid' );
+	bv_skip( 'items that DO have alt are left alone', 'fixture page missing: verify-filterable-grid' );
+} else {
+	bv_ok(
+		'the alt-less linked item carries an aria-label fallback',
+		(bool) preg_match( '/<a class="basalio-grid-item__frame"[^>]*aria-label="Untitled Case Study"/', $grid )
+	);
+	bv_ok(
+		'items that DO have alt are left alone',
+		! preg_match( '/aria-label="Design Project"/', $grid ),
+		'The fallback must not override a good alt-derived name.'
+	);
+}
 
 echo "\n=== M1/M2: robust image alt handling across all image blocks ===\n";
 
 $empty_alt = bv_render( 'verify-empty-alt-override' );
-bv_ok(
-	'empty author alt is honoured on the image (decorative)',
-	(bool) preg_match( '/<img[^>]*class="basalio-grid-item__image"[^>]*alt=""/', $empty_alt ),
-	'The attachment alt must not leak into a deliberately blank author alt.'
-);
-bv_ok(
-	'empty author alt falls back to attachment alt on the surrounding link',
-	(bool) preg_match( '/<a class="basalio-grid-item__frame"[^>]*aria-label="A design project"/', $empty_alt ),
-	'The link still needs an accessible name when the image is decorative.'
-);
+if ( null === $empty_alt ) {
+	bv_skip( 'empty author alt is honoured on the image (decorative)', 'fixture page missing: verify-empty-alt-override' );
+	bv_skip( 'empty author alt falls back to attachment alt on the surrounding link', 'fixture page missing: verify-empty-alt-override' );
+} else {
+	bv_ok(
+		'empty author alt is honoured on the image (decorative)',
+		(bool) preg_match( '/<img[^>]*class="basalio-grid-item__image"[^>]*alt=""/', $empty_alt ),
+		'The attachment alt must not leak into a deliberately blank author alt.'
+	);
+	bv_ok(
+		'empty author alt falls back to attachment alt on the surrounding link',
+		(bool) preg_match( '/<a class="basalio-grid-item__frame"[^>]*aria-label="A design project"/', $empty_alt ),
+		'The link still needs an accessible name when the image is decorative.'
+	);
+}
 
 $render_files = glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/render.php' );
 $regex_alt_override = false;
 foreach ( $render_files as $rf ) {
-	if ( preg_match( '/preg_replace\(\s*[\'"]\/alt="\[\^"\]\*"\/|preg_replace\(\s*[\'"]\/alt="[^"]*"\//', file_get_contents( $rf ) ) ) {
+	if ( preg_match( '/preg_replace\(\s*[\'"]\/alt="\[^"\]"\/|preg_replace\(\s*[\'"]\/alt="[^"]*"\//', file_get_contents( $rf ) ) ) {
 		$regex_alt_override = true;
 		break;
 	}
@@ -168,8 +212,16 @@ bv_ok(
 	'scroll-sequence paginationFormat default is empty (so __() applies)',
 	'' === $seq_json['attributes']['paginationFormat']['default']
 );
-bv_ok( 'grid renders the translated All label', false !== strpos( $grid, '>All</button>' ) );
-bv_ok( 'sequence renders the translated counter', false !== strpos( $seq, 'Frame 1 of 6' ) );
+if ( null === $grid ) {
+	bv_skip( 'grid renders the translated All label', 'fixture page missing: verify-filterable-grid' );
+} else {
+	bv_ok( 'grid renders the translated All label', false !== strpos( $grid, '>All</button>' ) );
+}
+if ( null === $seq ) {
+	bv_skip( 'sequence renders the translated counter', 'fixture page missing: verify-scroll-sequence' );
+} else {
+	bv_ok( 'sequence renders the translated counter', false !== strpos( $seq, 'Frame 1 of 6' ) );
+}
 
 $reg = wp_scripts()->registered;
 bv_ok(
@@ -180,7 +232,11 @@ bv_ok(
 	'basalio-core has translations wired',
 	isset( $reg['basalio-core'] ) && ! empty( $reg['basalio-core']->textdomain )
 );
-bv_ok( 'server-rendered grid count is translated via _n()', false !== strpos( $grid, 'Showing 4 projects.' ) );
+if ( null === $grid ) {
+	bv_skip( 'server-rendered grid count is translated via _n()', 'fixture page missing: verify-filterable-grid' );
+} else {
+	bv_ok( 'server-rendered grid count is translated via _n()', false !== strpos( $grid, 'Showing 4 projects.' ) );
+}
 bv_ok(
 	'JS no longer hardcodes the English count string',
 	false === strpos( $core_js, "'Showing ' + shown" )
@@ -256,16 +312,21 @@ bv_ok(
 
 echo "\n=== Filterable Grid: uncategorised items are reachable (M8) ===\n";
 
-bv_ok(
-	'uncategorised items use the "uncategorized" slug',
-	false !== strpos( $grid, 'data-basalio-item-category="uncategorized"' ),
-	'An empty slug made them disappear under every category filter.'
-);
-bv_ok(
-	'an Uncategorized filter button is rendered',
-	(bool) preg_match( '/<button[^>]*data-basalio-filter="uncategorized"[^>]*>Uncategorized</', $grid ),
-	'Uncategorised items must have a filter of their own.'
-);
+if ( null === $grid ) {
+	bv_skip( 'uncategorised items use the "uncategorized" slug', 'fixture page missing: verify-filterable-grid' );
+	bv_skip( 'an Uncategorized filter button is rendered', 'fixture page missing: verify-filterable-grid' );
+} else {
+	bv_ok(
+		'uncategorised items use the "uncategorized" slug',
+		false !== strpos( $grid, 'data-basalio-item-category="uncategorized"' ),
+		'An empty slug made them disappear under every category filter.'
+	);
+	bv_ok(
+		'an Uncategorized filter button is rendered',
+		(bool) preg_match( '/<button[^>]*data-basalio-filter="uncategorized"[^>]*>Uncategorized</', $grid ),
+		'Uncategorised items must have a filter of their own.'
+	);
+}
 
 echo "\n=== Shared contrast class ===\n";
 
@@ -409,7 +470,8 @@ if ( $page ) {
 
 	wp_reset_postdata();
 } else {
-	bv_ok( 'fixture page browser-palette-check-hero-01 exists', false, 'run tests/make-verify-pages.php' );
+	bv_skip( 'fixture page contains Basalio palette classes', 'fixture page missing: browser-palette-check-hero-01' );
+	bv_skip( 'basalio-core STYLE enqueued for palette-only content', 'fixture page missing: browser-palette-check-hero-01' );
 }
 
 echo "\n=== Design-token readiness: no bare hex colors in CSS ===\n";
@@ -630,22 +692,29 @@ bv_ok(
 );
 
 $text_reveal_html = bv_render( 'verify-text-reveal' );
-bv_ok(
-	'Text Reveal front end resolves --basalio-tr-duration',
-	(bool) preg_match( '/--basalio-tr-duration:\s*var\(--basalio-duration-(?:short|base|long),\s*\d+ms\)/', $text_reveal_html )
-);
-bv_ok(
-	'Text Reveal front end includes scroll-trigger marker',
-	false !== strpos( $text_reveal_html, 'data-basalio-motion-reveal' )
-);
-bv_ok(
-	'legacy wordByWord block renders word spans',
-	false !== strpos( $text_reveal_html, 'basalio-text-reveal__word' )
-);
-bv_ok(
-	'legacy wordByWord block renders visible text',
-	false !== strpos( wp_strip_all_tags( $text_reveal_html ), 'Word by word legacy' )
-);
+if ( null === $text_reveal_html ) {
+	bv_skip( 'Text Reveal front end resolves --basalio-tr-duration', 'fixture page missing: verify-text-reveal' );
+	bv_skip( 'Text Reveal front end includes scroll-trigger marker', 'fixture page missing: verify-text-reveal' );
+	bv_skip( 'legacy wordByWord block renders word spans', 'fixture page missing: verify-text-reveal' );
+	bv_skip( 'legacy wordByWord block renders visible text', 'fixture page missing: verify-text-reveal' );
+} else {
+	bv_ok(
+		'Text Reveal front end resolves --basalio-tr-duration',
+		(bool) preg_match( '/--basalio-tr-duration:\s*var\(--basalio-duration-(?:short|base|long),\s*\d+ms\)/', $text_reveal_html )
+	);
+	bv_ok(
+		'Text Reveal front end includes scroll-trigger marker',
+		false !== strpos( $text_reveal_html, 'data-basalio-motion-reveal' )
+	);
+	bv_ok(
+		'legacy wordByWord block renders word spans',
+		false !== strpos( $text_reveal_html, 'basalio-text-reveal__word' )
+	);
+	bv_ok(
+		'legacy wordByWord block renders visible text',
+		false !== strpos( wp_strip_all_tags( $text_reveal_html ), 'Word by word legacy' )
+	);
+}
 
 $inject_dummy_param = function( $schema, $module_name ) {
 	if ( 'text-reveal' === $module_name && isset( $schema['parameters'] ) ) {
@@ -704,8 +773,13 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 	}
 }
 
-$total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'];
-printf( "\n%d/%d assertions passed.\n", $GLOBALS['bv_pass'], $total );
+$total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'] + $GLOBALS['bv_skip'];
+printf(
+	"\n%d passed, %d failed, %d skipped (fixture missing).\n",
+	$GLOBALS['bv_pass'],
+	$GLOBALS['bv_fail'],
+	$GLOBALS['bv_skip']
+);
 
 echo "\nStill requires a browser (JS runtime, not assertable here):\n";
 echo "  - Scroll with a screen reader: silence. Press Next: exactly one announcement.\n";

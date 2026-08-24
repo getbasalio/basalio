@@ -300,6 +300,16 @@ $page_text_reveal = bv_page(
 	) . ' /-->'
 );
 
+// A page with NO basalio/ block but with Basalio palette classes on core blocks.
+// Tests that the free plugin still enqueues its core stylesheet for pattern-only content.
+$page_palette = bv_page(
+	'browser-palette-check-hero-01',
+	'Verify: palette-only content enqueues basalio-core',
+	'<!-- wp:paragraph {"className":"has-basalio-surface-background-color"} -->' . "\n" .
+	'<p class="has-basalio-surface-background-color">A core paragraph styled with the Basalio palette.</p>' . "\n" .
+	'<!-- /wp:paragraph -->'
+);
+
 $base = home_url();
 echo "\nFixtures ready.\n\n";
 printf( "1. Pinned Scroll lightbox        %s/?page_id=%d\n", $base, $page_pinned );
