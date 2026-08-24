@@ -9,7 +9,11 @@
 .tmp/
 .wordpress-org/
 
+# Repository metadata and workflows — not part of the distributable plugin.
+.github/
+
 # Documentation and planning artifacts not required at runtime.
+HANDOFF.md
 AUDIT-REPORT.md
 basalio-open-items-issue.md
 CLAUDE.md
