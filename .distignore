@@ -1,6 +1,7 @@
 .git/
 .gitattributes
 .gitignore
+.distignore
 .impeccable/
 .netlify/
 .superpowers/

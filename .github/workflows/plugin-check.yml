@@ -84,13 +84,12 @@ jobs:
 
       - name: Run verify-fixes.php
         run: |
-          cd /tmp/wordpress/wp-content/plugins/basalio
-          php tests/verify-fixes.php /tmp/wordpress | tee /tmp/verify-fixes-${{ matrix.php }}.log
+          # Tests are excluded from the distributable ZIP; run them from the checkout.
+          php ${{ github.workspace }}/tests/verify-fixes.php /tmp/wordpress | tee /tmp/verify-fixes-${{ matrix.php }}.log
 
       - name: Run verify-all-schemas.php
         run: |
-          cd /tmp/wordpress/wp-content/plugins/basalio
-          php tests/verify-all-schemas.php /tmp/wordpress | tee /tmp/verify-all-schemas-${{ matrix.php }}.log
+          php ${{ github.workspace }}/tests/verify-all-schemas.php /tmp/wordpress | tee /tmp/verify-all-schemas-${{ matrix.php }}.log
 
       - name: Run Plugin Check against built ZIP
         id: pcp
@@ -104,16 +103,42 @@ jobs:
         run: |
           echo "Checking Plugin Check CSV for errors..."
           python3 << 'PYEOF'
-          import csv, sys
-          with open('/tmp/plugin-check-${{ matrix.php }}.csv', newline='', encoding='utf-8') as f:
-              reader = csv.DictReader(f)
-              rows = list(reader)
-          errors = [r for r in rows if r.get('type', '').upper() == 'ERROR']
-          warnings = [r for r in rows if r.get('type', '').upper() == 'WARNING']
+          import sys
+
+          errors = []
+          warnings = []
+          current_file = None
+
+          with open('/tmp/plugin-check-${{ matrix.php }}.csv', encoding='utf-8') as f:
+              for raw in f:
+                  line = raw.rstrip('\n')
+                  if not line.strip():
+                      continue
+                  if line.startswith('FILE:'):
+                      current_file = line.split(':', 1)[1].strip()
+                      continue
+                  # Skip the repeated header rows inside each file section.
+                  if line.startswith('line\t') or line.startswith('line,'):
+                      continue
+                  # PCP --format=csv emits tab-separated rows.
+                  cols = line.split('\t')
+                  if len(cols) < 5:
+                      continue
+                  row_type = cols[2].upper()
+                  code = cols[3]
+                  message = cols[4]
+                  entry = {'file': current_file, 'code': code, 'message': message}
+                  if row_type == 'ERROR':
+                      errors.append(entry)
+                  elif row_type == 'WARNING':
+                      warnings.append(entry)
+
           print(f'Plugin Check results: {len(errors)} error(s), {len(warnings)} warning(s).')
+          for w in warnings:
+              print(f"WARNING: {w['code']} - {w['message']} ({w['file']})")
           if errors:
               for e in errors[:20]:
-                  print('ERROR:', e.get('code'), '-', e.get('message'), f"({e.get('file', '?')})")
+                  print(f"ERROR: {e['code']} - {e['message']} ({e['file']})")
               sys.exit(1)
           PYEOF
           echo "No Plugin Check Errors."
