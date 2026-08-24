@@ -62,9 +62,13 @@ Basalio targets standard block themes and classic themes that support the block 
 
 == Screenshots ==
 
-1. Grid Reveal, a caption sliding up over a portfolio tile.
-2. Before / After, a wireframe resolving into the finished site.
-3. The block editor view, with Basalio's labeled fields and inline guidance.
+1. The Basalio block collection in the WordPress editor.
+2. Basalio blocks ship with high-contrast keyboard focus indicators.
+3. Text Reveal lets you choose word, line, or character reveals, plus duration, easing, and trigger threshold.
+4. A draggable before/after image comparison slider, operable by mouse, touch, or keyboard arrows.
+5. Filterable Grid sorts portfolio items by category with keyboard-operable filter buttons.
+6. Portfolio tiles reveal captions on hover, keyboard focus, or tap. They never autoplay.
+7. Case Study Transition sets transition speed and the post-navigation focus target.
 
 == Changelog ==
 
