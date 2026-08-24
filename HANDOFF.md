@@ -48,6 +48,11 @@
 - Reduced motion is a single fixed behavior, no user choice. Confirmed intended
 - Pinned Scroll / Scroll Sequence / Filterable Grid: unimplemented specced
   behavior cut from schemas and logged in `docs/MOTION-ROADMAP.md`
+- Pro tokens editor: focus role lacks auto-resolution against its 3:1 minimum.
+  The editor allows selecting focus = red-9 (3.91:1 on white), which passes but
+  only just; lighter steps would fail. The contrast engine already auto-resolves
+  text and accent-text against surface; focus should get the same treatment.
+  Not a blocker for launch; log for a future token-polish pass.
 
 ## Patterns (Pro track — does NOT gate .org)
 - 72 patterns, all ship at launch, 12 categories x 6
