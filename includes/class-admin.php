@@ -105,7 +105,7 @@ class Basalio_Admin {
 		echo '<p>' . esc_html__( 'Basalio blocks active on this site:', 'basalio' ) . '</p>';
 
 		if ( empty( $modules ) ) {
-			echo '<p>' . esc_html__( 'No Basalio blocks are active yet.', 'basalio' ) . '</p>';
+			echo '<p>' . esc_html__( 'No Basalio blocks are active.', 'basalio' ) . '</p>';
 		} else {
 			echo '<ul>';
 			foreach ( $modules as $name ) {
@@ -117,7 +117,7 @@ class Basalio_Admin {
 		echo '<div class="basalio-upgrade-row" style="margin-top:24px;padding:16px;border:1px solid #c3c4c7;background:#fff;">';
 		echo '<p><strong>' . esc_html__( 'Basalio Pro', 'basalio' ) . '</strong></p>';
 		echo '<p>' . esc_html__( 'Unlock design tokens, patterns, and compliance tools with Basalio Pro.', 'basalio' ) . '</p>';
-		echo '<a class="button" href="https://basalio.com/pro" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Learn more', 'basalio' ) . '</a>';
+		echo '<a class="button" href="https://basalio.com/pro" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Explore Basalio Pro', 'basalio' ) . '</a>';
 		echo '</div>';
 
 		echo '</div>';
