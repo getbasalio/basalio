@@ -58,7 +58,6 @@ final class Basalio {
 	 * Wire up hooks.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
 		add_action( 'init', array( 'Basalio_Admin', 'instance' ), 1 );
 		add_action( 'init', array( 'Basalio_Tokens', 'get' ), 1 );
 		add_action( 'init', array( $this, 'register_assets' ), 5 );
@@ -66,23 +65,6 @@ final class Basalio {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_filter( 'block_editor_settings_all', array( $this, 'inject_editor_iframe_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_core_for_palette_content' ), 20 );
-	}
-
-	/**
-	 * Load translations for the PHP side of the plugin.
-	 *
-	 * Hooked on init (never earlier) so it plays well with the just-in-time
-	 * translation loading in current WordPress. Editor-script (JS) strings are
-	 * wired separately in register_modules() via wp_set_script_translations().
-	 *
-	 * @return void
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain(
-			'basalio',
-			false,
-			dirname( plugin_basename( BASALIO_FILE ) ) . '/languages'
-		);
 	}
 
 	/**
