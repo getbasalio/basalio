@@ -52,6 +52,7 @@ Do not stub, mock, or simulate any of the following. Stop and tell the user if y
 
 Every verification rule below assumes git. If a repo is not under version control, stop and report it before writing code.
 
+- **Never write directly to the database as a workaround.** If an install step, activation, or fix requires writing to the WordPress database outside the normal plugin/theme/runtime APIs, stop and ask. Direct database edits can corrupt the option table, invalidate every prior verification run against that install, and leave the environment in an unrecoverable state.
 - Paste raw terminal output. Summary lines like "all tests pass" are not evidence.
 - For parent dependency guard and degraded states: prove each branch by forcing the state and pasting the resulting console/PHP output. A screenshot of the admin notice for each state.
 - For invariant 1: render a post containing a Text Reveal block with non-default overrides under all three license states. Paste the rendered front-end markup for each. Diff them. The diff must be empty. If the diff is not empty, stop and report — do not adjust the test to pass.
