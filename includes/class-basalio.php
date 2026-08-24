@@ -328,13 +328,6 @@ final class Basalio {
 				}
 			}
 
-			if ( true !== $schema_valid && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log(
-					'Basalio: invalid motion schema for ' . $module_name . ': ' .
-					implode( '; ', $schema_valid->get_error_messages() )
-				);
-			}
-
 			$this->module_names[] = $module_name;
 		}
 	}
