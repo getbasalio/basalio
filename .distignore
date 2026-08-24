@@ -24,5 +24,8 @@ WCAG-QA.md
 WCAG-QA-draft-modules-4-9.md
 WCAG-QA-draft-modules-4-9-rev2.md
 
+# Motion roadmap documents future animation work, not runtime code.
+docs/MOTION-ROADMAP.md
+
 # Tests and test fixtures.
 tests/
