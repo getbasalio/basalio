@@ -8,18 +8,18 @@ Stable tag: 0.6.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A narrow, accessibility-first interaction toolkit of native Gutenberg blocks for portfolio and case-study sites.
+Accessible interaction blocks for portfolio and case-study sites, built for the WordPress block editor.
 
 == Description ==
 
-Basalio is a small, opinionated set of interaction blocks for people who build portfolio and case-study sites in the WordPress block editor. It is not a page builder and not a general animation engine. It does one category of thing, the tasteful motion that makes creative work feel considered, and it tries to do it well.
+Basalio is a focused set of interaction blocks for people who build portfolio and case-study sites in the WordPress block editor. It is not a page builder or a general animation engine. It adds the motion that makes creative work feel considered, and nothing else.
 
-Every block is a native Gutenberg block. There is no separate canvas, no shortcode, and no page-builder lock-in. You add a Basalio block the same way you add a paragraph, fill in a couple of clearly labeled fields, and the effect renders on the front end.
+Every block is a native Gutenberg block. There is no separate canvas, no shortcode, and no page-builder lock-in. Add a Basalio block the same way you add a paragraph, set its options in the block sidebar, and the effect renders on the front end.
 
 **What is in the box**
 
 * **Grid Reveal**, a portfolio tile that reveals its caption on hover, focus, or tap.
-* **Case Study Transition**, a shared-element morph from a grid tile to its case-study page.
+* **Case Study Transition**, a cross-page shared-element transition from a grid tile to its case-study page.
 * **Text Reveal**, a choreographed entrance for a headline, subhead, and optional button.
 * **Magnetic Button**, a call-to-action that gently pulls toward the visitor's cursor.
 * **Before / After**, a draggable, keyboard-operable image comparison slider.
@@ -30,7 +30,6 @@ Every block is a native Gutenberg block. There is no separate canvas, no shortco
 
 **Built for restraint and access**
 
-* Every interaction is keyboard operable and screen-reader labeled.
 * Motion respects the visitor's "reduce motion" system setting.
 * Pointer effects are disabled on touch, where they would only get in the way.
 * The shared front-end script loads only on pages that actually contain a Basalio block, never site-wide.
@@ -70,7 +69,7 @@ Basalio targets standard block themes and classic themes that support the block 
 == Changelog ==
 
 = 0.6.0 =
-* Accessibility audit debt release. All findings from the 0.5.1 audit are now resolved.
+* Accessibility audit debt release. Resolves the findings from the 0.5.1 audit.
 * Scroll Sequence: Previous/Next buttons now advance frames authoritatively by scrolling to the matching position; they work under reduced motion even when controls are hidden.
 * Lightbox: rebuilt as a native `<dialog>` element opened with `.showModal()`, giving the browser-native focus trap, Escape-to-close, and inert background.
 * Pinned Scroll: fixed reading/focus order when the media is positioned on the right.
@@ -79,7 +78,7 @@ Basalio targets standard block themes and classic themes that support the block 
 * Before / After: improved mobile touch handling and more informative screen-reader value text.
 * Magnetic Button, Custom Cursor, and Scroll Sequence now respond live to a mid-session `prefers-reduced-motion` change.
 * Custom Cursor default color unified to the Basalio brand chartreuse (#DFFF00).
-* All editor asset versions and release tags aligned to 0.6.0.
+* Editor asset versions and release tags aligned to 0.6.0.
 
 = 0.5.1 =
 * Accessibility fixes found in a full audit of every block. Details below.
