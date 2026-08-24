@@ -50,6 +50,10 @@
             "type": "string",
             "default": ""
         },
+        "linkLabel": {
+            "type": "string",
+            "default": ""
+        },
         "pairId": {
             "type": "string",
             "default": ""

@@ -119,6 +119,15 @@
 					help: __( 'The case-study page this tile opens.', 'basalio' )
 				} ) );
 
+				body.push( el( TextControl, {
+					key: 'linkLabel',
+					label: __( 'Link label (accessible name)', 'basalio' ),
+					value: a.linkLabel || '',
+					onChange: function ( v ) { setA( { linkLabel: v } ); },
+					placeholder: __( 'Auto-filled from linked page title', 'basalio' ),
+					help: __( 'Used by screen readers. Leave blank to use the linked page title.', 'basalio' )
+				} ) );
+
 				// Auto-pairing relies on PHP's url_to_postid(), which can fail for
 				// custom post types with non-standard permalinks or external URLs.
 				// Surface the risk so authors set a Pair ID when auto-matching is

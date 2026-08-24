@@ -175,10 +175,25 @@ if ( $basalio_lightbox && $basalio_full_url ) {
 	return;
 }
 
+$basalio_link_label = '';
+if ( '' !== $basalio_link_url ) {
+	if ( isset( $attributes['linkLabel'] ) && '' !== trim( $attributes['linkLabel'] ) ) {
+		$basalio_link_label = trim( $attributes['linkLabel'] );
+	} else {
+		$basalio_linked_post_id = url_to_postid( $basalio_link_url );
+		if ( $basalio_linked_post_id ) {
+			$basalio_link_label = get_the_title( $basalio_linked_post_id );
+		}
+	}
+	if ( '' === $basalio_link_label ) {
+		$basalio_link_label = __( 'View case study', 'basalio' );
+	}
+}
+
 if ( '' !== $basalio_link_url ) {
 	echo $basalio_dur_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static markup with sanitized custom-ident + int.
 	?>
-	<a <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> href="<?php echo esc_url( $basalio_link_url ); ?>" data-basalio-cst-source <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?>>
+	<a <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> href="<?php echo esc_url( $basalio_link_url ); ?>" data-basalio-cst-source <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?> aria-label="<?php echo esc_attr( $basalio_link_label ); ?>">
 		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
 	</a>
 	<?php
