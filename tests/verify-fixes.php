@@ -14,9 +14,10 @@
 
 require __DIR__ . '/bootstrap.php';
 
-$GLOBALS['bv_pass']  = 0;
-$GLOBALS['bv_fail']  = 0;
-$GLOBALS['bv_skip']  = 0;
+$GLOBALS['bv_pass']           = 0;
+$GLOBALS['bv_fail']           = 0;
+$GLOBALS['bv_skip']           = 0;
+$GLOBALS['bv_missing_fixtures'] = array();
 
 function bv_ok( $label, $cond, $detail = '' ) {
 	if ( $cond ) {
@@ -40,6 +41,10 @@ function bv_skip( $label, $reason = '' ) {
 	echo "\n";
 }
 
+function bv_skip_fixture( $label, $reason = '' ) {
+	bv_skip( $label, $reason );
+}
+
 /**
  * Render a fixture page's blocks, with the script queue reset first.
  *
@@ -49,7 +54,8 @@ function bv_skip( $label, $reason = '' ) {
 function bv_render( $slug ) {
 	$page = get_page_by_path( $slug );
 	if ( ! $page ) {
-		bv_skip( "fixture page missing: $slug", 'run tests/make-verify-pages.php' );
+		echo "  SKIP  fixture page missing: $slug (run tests/make-verify-pages.php)\n";
+		$GLOBALS['bv_missing_fixtures'][] = $slug;
 		return null;
 	}
 	wp_dequeue_script( 'basalio-core' );
@@ -73,9 +79,9 @@ echo "\n=== Lightbox trigger enqueues the core (Pinned Scroll alone) ===\n";
 
 $html = bv_render( 'verify-pinned-lightbox' );
 if ( null === $html ) {
-	bv_skip( 'lightbox trigger button is rendered', 'fixture page missing: verify-pinned-lightbox' );
-	bv_skip( 'basalio-core SCRIPT is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
-	bv_skip( 'basalio-core STYLE is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
+	bv_skip_fixture( 'lightbox trigger button is rendered', 'fixture page missing: verify-pinned-lightbox' );
+	bv_skip_fixture( 'basalio-core SCRIPT is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
+	bv_skip_fixture( 'basalio-core STYLE is enqueued by the lightbox path', 'fixture page missing: verify-pinned-lightbox' );
 } else {
 	bv_ok( 'lightbox trigger button is rendered', false !== strpos( $html, 'data-basalio-lightbox' ) );
 	bv_ok(
@@ -93,9 +99,9 @@ echo "\n=== Scroll Sequence: per-frame alt override (1.1.1) ===\n";
 
 $seq = bv_render( 'verify-scroll-sequence' );
 if ( null === $seq ) {
-	bv_skip( 'frame 3 uses the block-level OVERRIDE alt', 'fixture page missing: verify-scroll-sequence' );
-	bv_skip( 'frame 3 does not fall back to the attachment alt', 'fixture page missing: verify-scroll-sequence' );
-	bv_skip( 'other frames still render their own alt', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'frame 3 uses the block-level OVERRIDE alt', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'frame 3 does not fall back to the attachment alt', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'other frames still render their own alt', 'fixture page missing: verify-scroll-sequence' );
 } else {
 	bv_ok( 'frame 3 uses the block-level OVERRIDE alt', false !== strpos( $seq, 'alt="OVERRIDE alt for frame 3"' ) );
 	bv_ok( 'frame 3 does not fall back to the attachment alt', false === strpos( $seq, 'alt="ATTACHMENT alt for frame 3"' ) );
@@ -105,10 +111,10 @@ if ( null === $seq ) {
 echo "\n=== Scroll Sequence: live region separated from scroll counter (4.1.3) ===\n";
 
 if ( null === $seq ) {
-	bv_skip( 'a dedicated announcer element exists', 'fixture page missing: verify-scroll-sequence' );
-	bv_skip( 'the announcer carries role="status"', 'fixture page missing: verify-scroll-sequence' );
-	bv_skip( 'the announcer starts EMPTY so the first press is announced', 'fixture page missing: verify-scroll-sequence' );
-	bv_skip( 'the visible counter no longer carries live semantics', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'a dedicated announcer element exists', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'the announcer carries role="status"', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'the announcer starts EMPTY so the first press is announced', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'the visible counter no longer carries live semantics', 'fixture page missing: verify-scroll-sequence' );
 } else {
 	bv_ok( 'a dedicated announcer element exists', false !== strpos( $seq, 'data-basalio-seq-announcer' ) );
 	bv_ok(
@@ -149,8 +155,8 @@ echo "\n=== Grid Item: linked item with no alt gets a name (2.4.4 / 4.1.2) ===\n
 
 $grid = bv_render( 'verify-filterable-grid' );
 if ( null === $grid ) {
-	bv_skip( 'the alt-less linked item carries an aria-label fallback', 'fixture page missing: verify-filterable-grid' );
-	bv_skip( 'items that DO have alt are left alone', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'the alt-less linked item carries an aria-label fallback', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'items that DO have alt are left alone', 'fixture page missing: verify-filterable-grid' );
 } else {
 	bv_ok(
 		'the alt-less linked item carries an aria-label fallback',
@@ -167,8 +173,8 @@ echo "\n=== M1/M2: robust image alt handling across all image blocks ===\n";
 
 $empty_alt = bv_render( 'verify-empty-alt-override' );
 if ( null === $empty_alt ) {
-	bv_skip( 'empty author alt is honoured on the image (decorative)', 'fixture page missing: verify-empty-alt-override' );
-	bv_skip( 'empty author alt falls back to attachment alt on the surrounding link', 'fixture page missing: verify-empty-alt-override' );
+	bv_skip_fixture( 'empty author alt is honoured on the image (decorative)', 'fixture page missing: verify-empty-alt-override' );
+	bv_skip_fixture( 'empty author alt falls back to attachment alt on the surrounding link', 'fixture page missing: verify-empty-alt-override' );
 } else {
 	bv_ok(
 		'empty author alt is honoured on the image (decorative)',
@@ -213,12 +219,12 @@ bv_ok(
 	'' === $seq_json['attributes']['paginationFormat']['default']
 );
 if ( null === $grid ) {
-	bv_skip( 'grid renders the translated All label', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'grid renders the translated All label', 'fixture page missing: verify-filterable-grid' );
 } else {
 	bv_ok( 'grid renders the translated All label', false !== strpos( $grid, '>All</button>' ) );
 }
 if ( null === $seq ) {
-	bv_skip( 'sequence renders the translated counter', 'fixture page missing: verify-scroll-sequence' );
+	bv_skip_fixture( 'sequence renders the translated counter', 'fixture page missing: verify-scroll-sequence' );
 } else {
 	bv_ok( 'sequence renders the translated counter', false !== strpos( $seq, 'Frame 1 of 6' ) );
 }
@@ -233,7 +239,7 @@ bv_ok(
 	isset( $reg['basalio-core'] ) && ! empty( $reg['basalio-core']->textdomain )
 );
 if ( null === $grid ) {
-	bv_skip( 'server-rendered grid count is translated via _n()', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'server-rendered grid count is translated via _n()', 'fixture page missing: verify-filterable-grid' );
 } else {
 	bv_ok( 'server-rendered grid count is translated via _n()', false !== strpos( $grid, 'Showing 4 projects.' ) );
 }
@@ -313,8 +319,8 @@ bv_ok(
 echo "\n=== Filterable Grid: uncategorised items are reachable (M8) ===\n";
 
 if ( null === $grid ) {
-	bv_skip( 'uncategorised items use the "uncategorized" slug', 'fixture page missing: verify-filterable-grid' );
-	bv_skip( 'an Uncategorized filter button is rendered', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'uncategorised items use the "uncategorized" slug', 'fixture page missing: verify-filterable-grid' );
+	bv_skip_fixture( 'an Uncategorized filter button is rendered', 'fixture page missing: verify-filterable-grid' );
 } else {
 	bv_ok(
 		'uncategorised items use the "uncategorized" slug',
@@ -470,8 +476,10 @@ if ( $page ) {
 
 	wp_reset_postdata();
 } else {
-	bv_skip( 'fixture page contains Basalio palette classes', 'fixture page missing: browser-palette-check-hero-01' );
-	bv_skip( 'basalio-core STYLE enqueued for palette-only content', 'fixture page missing: browser-palette-check-hero-01' );
+	echo "  SKIP  fixture page missing: browser-palette-check-hero-01 (run tests/make-verify-pages.php)\n";
+	$GLOBALS['bv_missing_fixtures'][] = 'browser-palette-check-hero-01';
+	bv_skip_fixture( 'fixture page contains Basalio palette classes', 'fixture page missing: browser-palette-check-hero-01' );
+	bv_skip_fixture( 'basalio-core STYLE enqueued for palette-only content', 'fixture page missing: browser-palette-check-hero-01' );
 }
 
 echo "\n=== Design-token readiness: no bare hex colors in CSS ===\n";
@@ -693,10 +701,10 @@ bv_ok(
 
 $text_reveal_html = bv_render( 'verify-text-reveal' );
 if ( null === $text_reveal_html ) {
-	bv_skip( 'Text Reveal front end resolves --basalio-tr-duration', 'fixture page missing: verify-text-reveal' );
-	bv_skip( 'Text Reveal front end includes scroll-trigger marker', 'fixture page missing: verify-text-reveal' );
-	bv_skip( 'legacy wordByWord block renders word spans', 'fixture page missing: verify-text-reveal' );
-	bv_skip( 'legacy wordByWord block renders visible text', 'fixture page missing: verify-text-reveal' );
+	bv_skip_fixture( 'Text Reveal front end resolves --basalio-tr-duration', 'fixture page missing: verify-text-reveal' );
+	bv_skip_fixture( 'Text Reveal front end includes scroll-trigger marker', 'fixture page missing: verify-text-reveal' );
+	bv_skip_fixture( 'legacy wordByWord block renders word spans', 'fixture page missing: verify-text-reveal' );
+	bv_skip_fixture( 'legacy wordByWord block renders visible text', 'fixture page missing: verify-text-reveal' );
 } else {
 	bv_ok(
 		'Text Reveal front end resolves --basalio-tr-duration',
@@ -774,11 +782,13 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 }
 
 $total = $GLOBALS['bv_pass'] + $GLOBALS['bv_fail'] + $GLOBALS['bv_skip'];
+$fixture_count = count( array_unique( $GLOBALS['bv_missing_fixtures'] ) );
 printf(
-	"\n%d passed, %d failed, %d skipped (fixture missing).\n",
+	"\n%d passed, %d failed, %d skipped (%d fixtures missing).\n",
 	$GLOBALS['bv_pass'],
 	$GLOBALS['bv_fail'],
-	$GLOBALS['bv_skip']
+	$GLOBALS['bv_skip'],
+	$fixture_count
 );
 
 echo "\nStill requires a browser (JS runtime, not assertable here):\n";
@@ -787,4 +797,4 @@ echo "  - Accessibility tree: one image in the sequence, not six.\n";
 echo "  - Click the pinned image: the lightbox actually opens.\n";
 echo "  - Translated JS strings need make-json plus a test locale.\n\n";
 
-exit( $GLOBALS['bv_fail'] > 0 ? 1 : 0 );
+exit( ( $GLOBALS['bv_fail'] > 0 || ! empty( $GLOBALS['bv_missing_fixtures'] ) ) ? 1 : 0 );
