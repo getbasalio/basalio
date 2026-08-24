@@ -171,7 +171,7 @@ if ( ! function_exists( 'register_block_variation' ) ) {
 	 * @param array                $variation  Variation definition.
 	 * @return bool True on success, false on failure.
 	 */
-	function register_block_variation( $block_type, $variation ) {
+	function basalio_register_block_variation( $block_type, $variation ) {
 		$registry = WP_Block_Type_Registry::get_instance();
 
 		if ( is_string( $block_type ) ) {

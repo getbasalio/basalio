@@ -316,7 +316,7 @@ final class Basalio {
 				if ( ! empty( $variations ) ) {
 					foreach ( $variations as $variation ) {
 						if ( isset( $variation['name'] ) ) {
-							register_block_variation( $block_type->name, $variation );
+							basalio_register_block_variation( $block_type->name, $variation );
 						}
 					}
 				}
