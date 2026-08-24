@@ -54,7 +54,7 @@ The shared script is small and loads only on pages that contain a Basalio block.
 
 = Are the blocks accessible? =
 
-Yes. Every interaction is operable by keyboard, exposes the right ARIA state to assistive technology, and honors the "reduce motion" preference.
+Yes. Every interactive element is keyboard operable and screen-reader labeled. Pointer effects like Custom Cursor have no keyboard equivalent by design — they are decorative and never carry information or function.
 
 = Does it work with my theme? =
 
