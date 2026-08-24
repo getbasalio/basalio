@@ -107,8 +107,8 @@ if ( '' !== $basalio_headline ) {
 	if ( $basalio_word_by_word ) {
 		$basalio_words = preg_split( '/\s+/u', $basalio_headline, -1, PREG_SPLIT_NO_EMPTY );
 		$basalio_spans = array();
-		foreach ( $basalio_words as $i => $basalio_word ) {
-			$basalio_delay   = $basalio_cursor + ( $i * $basalio_word_step );
+		foreach ( $basalio_words as $basalio_i => $basalio_word ) {
+			$basalio_delay   = $basalio_cursor + ( $basalio_i * $basalio_word_step );
 			$basalio_spans[] = basalio_tr_item(
 				'span',
 				esc_html( $basalio_word ),
