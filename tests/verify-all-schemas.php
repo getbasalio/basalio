@@ -294,4 +294,72 @@ foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as 
 $total_trap = $trap_pass + $trap_fail;
 echo "\n{$trap_pass}/{$total_trap} blocks have reduce rules that work without the fallback class.\n";
 
-exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 || $inverse_fail > 0 || $trap_fail > 0 ? 1 : 0 );
+// JS-control assertion: module JS must not create focusable or interactive
+// controls. The keyboard audit scans rendered front-end markup; controls built
+// by JS at runtime would be invisible to it.
+$js_control_pass = 0;
+$js_control_fail = 0;
+
+$interactive_create_tags = array(
+	'button', 'a', 'input', 'select', 'textarea', 'option',
+	'details', 'summary', 'dialog',
+);
+$interactive_roles = array(
+	'button', 'link', 'menu', 'menuitem', 'tab', 'switch',
+	'checkbox', 'radio', 'slider', 'spinbutton', 'textbox',
+	'combobox', 'listbox', 'option', 'searchbox', 'gridcell',
+	'rowheader', 'columnheader',
+);
+
+foreach ( glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/motion.schema.json' ) as $path ) {
+	$module_name = basename( dirname( $path ) );
+	$js_path     = BASALIO_TESTS_PLUGIN_DIR . '/modules/' . $module_name . '/index.js';
+
+	if ( ! file_exists( $js_path ) ) {
+		continue;
+	}
+
+	$js         = file_get_contents( $js_path );
+	$violations = array();
+
+	foreach ( $interactive_create_tags as $tag ) {
+		$pattern = '/createElement\s*\(\s*[\'"]' . preg_quote( $tag, '/' ) . '[\'"]\s*\)/i';
+		if ( preg_match( $pattern, $js ) ) {
+			$violations[] = "createElement('{$tag}')";
+		}
+	}
+
+	if ( preg_match( '/setAttribute\s*\(\s*[\'"]tabindex[\'"]/i', $js ) ) {
+		$violations[] = "setAttribute('tabindex', ...)";
+	}
+
+	if ( preg_match( '/\.tabIndex\s*=/i', $js ) ) {
+		$violations[] = '.tabIndex = ...';
+	}
+
+	$role_pattern = '/setAttribute\s*\(\s*[\'"]role[\'"]\s*,\s*[\'"](' . implode( '|', $interactive_roles ) . ')[\'"]\s*\)/i';
+	if ( preg_match( $role_pattern, $js ) ) {
+		$violations[] = "setAttribute('role', interactive)";
+	}
+
+	if ( preg_match( '/\.focus\s*\(/i', $js ) ) {
+		$violations[] = '.focus()';
+	}
+
+	if ( preg_match( '/contenteditable/i', $js ) ) {
+		$violations[] = 'contenteditable';
+	}
+
+	if ( empty( $violations ) ) {
+		$js_control_pass++;
+		echo "PASS  {$module_name}: module JS does not create interactive controls\n";
+	} else {
+		$js_control_fail++;
+		echo "FAIL  {$module_name}: module JS creates interactive controls: " . implode( ', ', $violations ) . "\n";
+	}
+}
+
+$total_js_control = $js_control_pass + $js_control_fail;
+echo "\n{$js_control_pass}/{$total_js_control} modules pass the JS-control assertion.\n";
+
+exit( $fail > 0 || $missing > 0 || $consumer_fail > 0 || $inverse_fail > 0 || $trap_fail > 0 || $js_control_fail > 0 ? 1 : 0 );
