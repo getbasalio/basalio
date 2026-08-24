@@ -158,7 +158,7 @@ if ( ! function_exists( 'basalio_get_audit_checks' ) ) {
 	}
 }
 
-if ( ! function_exists( 'register_block_variation' ) ) {
+if ( ! function_exists( 'basalio_register_block_variation' ) ) {
 	/**
 	 * Register a block variation for a block type.
 	 *
