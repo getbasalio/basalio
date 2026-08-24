@@ -1,18 +1,21 @@
 # Basalio — Handoff
 
 ## WordPress.org submission blockers
-1. Recapture .wordpress-org screenshots — current three show old block UI
-2. "Tested up to" — verify all nine blocks against target WP version, then set
-   readme.txt. Currently reverted to 7.0 pending real testing
-3. /blocks copy audit — DONE in `basalio-astro/src/data/blocks.ts`. Remaining:
-   rebuild and deploy `basalio.com` so the live detail pages reflect the new
-   user-facing controls. No `threshold` claim exists for Grid Reveal anywhere in
-   the repo or on the current live site.
+1. Recapture .wordpress-org screenshots — DONE. Seven 1200×900 PNGs compressed
+   with oxipng and committed to `.wordpress-org/`.
+2. "Tested up to" — DONE. Local install updated to WordPress 7.1; all nine
+   blocks verified in the editor and on the front end. `readme.txt` set to 7.1.
+3. /blocks copy audit — DONE in `basalio-astro/src/data/blocks.ts`. No
+   `threshold` claim exists for Grid Reveal anywhere in the repo or on the
+   current live site. Rebuilding/deploying `basalio.com` is a marketing-site
+   task, not a plugin .org blocker.
 4. Extension points — DONE, must not change after submission
 5. Focus-ring contrast — DONE. Consolidated all module focus rings onto
    `--basalio-focus` with a `#202020` fallback, added a dual-tone ring for the
    lightbox close button, and added an assertion in `tests/verify-fixes.php`
    that every `:focus-visible` ring meets 3:1 against its adjacent surface.
+
+**Remaining .org blockers: NONE**
 
 ## Motion pipeline
 - Vertical slice COMPLETE: schema-only param change renders on the front end,
