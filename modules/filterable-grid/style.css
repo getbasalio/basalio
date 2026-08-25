@@ -52,7 +52,8 @@
 	border-color: var( --basalio-fg-ink ) !important;
 }
 
-.basalio-filterable-grid__filter:focus-visible {
+.basalio-filterable-grid__filter:focus-visible,
+.basalio-filterable-grid__filter:focus {
 	outline: 2px solid var( --basalio-focus, #202020 );
 	outline-offset: 2px;
 }

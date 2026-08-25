@@ -256,7 +256,9 @@
 }
 
 .basalio-media-expand:focus-visible,
-.basalio-media-link:focus-visible {
+.basalio-media-expand:focus,
+.basalio-media-link:focus-visible,
+.basalio-media-link:focus {
 	outline: 3px solid var( --basalio-focus, #202020 );
 	outline-offset: 3px;
 }

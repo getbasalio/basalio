@@ -95,7 +95,8 @@
 	touch-action: none;
 }
 
-.basalio-before-after__handle:focus-visible {
+.basalio-before-after__handle:focus-visible,
+.basalio-before-after__handle:focus {
 	outline: 3px solid var( --basalio-focus, #202020 );
 	outline-offset: 3px;
 }
