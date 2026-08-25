@@ -116,7 +116,7 @@ class Basalio_Admin {
 
 		echo '<div class="basalio-upgrade-row" style="margin-top:24px;padding:16px;border:1px solid #c3c4c7;background:#fff;">';
 		echo '<p><strong>' . esc_html__( 'Basalio Pro', 'basalio' ) . '</strong></p>';
-		echo '<p>' . esc_html__( 'Unlock design tokens, patterns, and compliance tools with Basalio Pro.', 'basalio' ) . '</p>';
+		echo '<p>' . esc_html__( 'Basalio Pro adds site-wide design tokens, a pattern library, and compliance reporting.', 'basalio' ) . '</p>';
 		echo '<a class="button" href="https://basalio.com/pro" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Explore Basalio Pro', 'basalio' ) . '</a>';
 		echo '</div>';
 
