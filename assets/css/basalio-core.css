@@ -20,7 +20,7 @@
 	--basalio-accent-solid: #dfff00;
 	--basalio-accent-hover: #d4f000;
 	--basalio-accent-on-solid: #171717;
-	--basalio-accent-text: #8fb300;
+	--basalio-accent-text: #5a7000;
 	--basalio-focus: #202020;
 	--basalio-ink: #0a0a0a;
 	--basalio-paper: #ffffff;
@@ -226,7 +226,8 @@
 	appearance: none;
 }
 
-.basalio-lightbox__close:focus-visible {
+.basalio-lightbox__close:focus-visible,
+.basalio-lightbox__close:focus {
 	outline: 3px solid var( --basalio-ink );
 	outline-offset: 0;
 	box-shadow: 0 0 0 6px var( --basalio-paper ) !important;
