@@ -1,5 +1,7 @@
 # Basalio — Handoff
 
+Current version: 0.6.1
+
 ## WordPress.org submission blockers
 1. Recapture .wordpress-org screenshots — DONE. Seven 1200×900 PNGs compressed
    with oxipng and committed to `.wordpress-org/`.
