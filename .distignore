@@ -27,5 +27,13 @@ WCAG-QA-draft-modules-4-9-rev2.md
 # Motion roadmap documents future animation work, not runtime code.
 docs/
 
+# Build tooling and local artifacts.
+*.phar
+*.zip
+*.log
+.DS_Store
+node_modules/
+scripts/
+
 # Tests and test fixtures.
 tests/
