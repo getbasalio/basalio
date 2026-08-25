@@ -3,7 +3,7 @@
  * Plugin Name:       Basalio
  * Plugin URI:        https://basalio.com
  * Description:        A narrow, opinionated interaction toolkit for portfolio and case-study sites. Framer-quality, accessibility-first Gutenberg blocks. Not a page builder, not a general animation engine.
- * Version:           0.6.1
+ * Version:           0.6.2
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            ChrowmDesigns
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version constant. Also used as the asset cache-busting version for every
  * enqueued script/style so bumping this here busts caches everywhere.
  */
-define( 'BASALIO_VERSION', '0.6.1' );
+define( 'BASALIO_VERSION', '0.6.2' );
 
 /** Absolute path to the plugin root, with trailing slash. */
 define( 'BASALIO_PATH', plugin_dir_path( __FILE__ ) );
