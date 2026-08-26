@@ -132,13 +132,17 @@ if ( $basalio_radius ) {
 }
 
 // Scoped duration for the cross-page morph (only when it differs from the default).
-// The CSS is attached to the block's registered view-style handle so it is
-// enqueued and printed with the block stylesheet, not emitted as a literal
-// style element in the rendered markup.
+// The CSS is registered and enqueued here, inside render(), so it is never
+// attached to a stylesheet that may have already printed during wp_head().
+// WordPress prints this late-enqueued handle after the content is known; on
+// WordPress 6.9+ it is hoisted back to the <head>, and on older versions it
+// falls back to the footer, but in either case it is part of the enqueued
+// output and not a literal <style> element inside the block markup.
 if ( '' !== $basalio_vt_name && 300 !== $basalio_dur ) {
 	$basalio_dur_css = '::view-transition-group(' . $basalio_vt_name . '),::view-transition-image-pair(' . $basalio_vt_name . '){animation-duration:' . $basalio_dur . 'ms}';
-	wp_enqueue_style( 'basalio-case-study-transition-style' );
-	wp_add_inline_style( 'basalio-case-study-transition-style', $basalio_dur_css );
+	wp_register_style( 'basalio-cst-duration', false );
+	wp_enqueue_style( 'basalio-cst-duration' );
+	wp_add_inline_style( 'basalio-cst-duration', $basalio_dur_css );
 }
 
 if ( 'hero' === $basalio_role ) {
