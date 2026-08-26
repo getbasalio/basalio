@@ -62,6 +62,21 @@ Useful for completeness, but not reasons to buy Pro.
 3. Ensure `tests/verify-all-schemas.php` and the runtime-consumer test pass.
 4. Update this roadmap.
 
+## Logged follow-up: unimplemented Text Reveal "Character" splitUnit
+
+`modules/text-reveal/motion.schema.json` previously advertised a `character`
+value for `splitUnit`, but `modules/text-reveal/render.php` only implements
+`line` (default) and `word`. Selecting `character` silently fell through to the
+line-by-line reveal. The enum value was removed from the schema for the 0.6.3
+release.
+
+To reintroduce it:
+1. Implement per-character splitting in `render.php` (respecting Unicode
+   grapheme clusters, e.g., with `mb_str_split()` or `IntlBreakIterator` with a
+   polyfill).
+2. Add per-character CSS so each character animates independently.
+3. Update the schema and verify the editor panel shows the option.
+
 ## Logged follow-up: CSS-value-context hardening
 
 These locations in the motion-schema pipeline emit CSS values that can be
