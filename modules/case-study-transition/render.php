@@ -124,9 +124,13 @@ if ( $basalio_radius ) {
 }
 
 // Scoped duration for the cross-page morph (only when it differs from the default).
-$basalio_dur_style = '';
+// The CSS is attached to the block's registered view-style handle so it is
+// enqueued and printed with the block stylesheet, not emitted as a literal
+// style element in the rendered markup.
 if ( '' !== $basalio_vt_name && 300 !== $basalio_dur ) {
-	$basalio_dur_style = '<style>::view-transition-group(' . $basalio_vt_name . '),::view-transition-image-pair(' . $basalio_vt_name . '){animation-duration:' . $basalio_dur . 'ms}</style>';
+	$basalio_dur_css = '::view-transition-group(' . $basalio_vt_name . '),::view-transition-image-pair(' . $basalio_vt_name . '){animation-duration:' . $basalio_dur . 'ms}';
+	wp_enqueue_style( 'basalio-case-study-transition-style' );
+	wp_add_inline_style( 'basalio-case-study-transition-style', $basalio_dur_css );
 }
 
 if ( 'hero' === $basalio_role ) {
@@ -142,7 +146,6 @@ if ( 'hero' === $basalio_role ) {
 		$basalio_extra
 	);
 	$basalio_wrapper = get_block_wrapper_attributes( $basalio_hero_attrs );
-	echo $basalio_dur_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static markup with sanitized custom-ident + int.
 	?>
 	<figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-cst-hero <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?>>
 		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
@@ -191,7 +194,6 @@ if ( '' !== $basalio_link_url ) {
 }
 
 if ( '' !== $basalio_link_url ) {
-	echo $basalio_dur_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static markup with sanitized custom-ident + int.
 	?>
 	<a <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> href="<?php echo esc_url( $basalio_link_url ); ?>" data-basalio-cst-source <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?> aria-label="<?php echo esc_attr( $basalio_link_label ); ?>">
 		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
