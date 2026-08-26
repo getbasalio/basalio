@@ -140,7 +140,7 @@ if ( $basalio_radius ) {
 // output and not a literal <style> element inside the block markup.
 if ( '' !== $basalio_vt_name && 300 !== $basalio_dur ) {
 	$basalio_dur_css = '::view-transition-group(' . $basalio_vt_name . '),::view-transition-image-pair(' . $basalio_vt_name . '){animation-duration:' . $basalio_dur . 'ms}';
-	wp_register_style( 'basalio-cst-duration', false );
+	wp_register_style( 'basalio-cst-duration', false, array(), BASALIO_VERSION );
 	wp_enqueue_style( 'basalio-cst-duration' );
 	wp_add_inline_style( 'basalio-cst-duration', $basalio_dur_css );
 }
