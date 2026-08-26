@@ -91,30 +91,35 @@ jobs:
         run: |
           echo "Checking Plugin Check CSV for errors..."
           python3 << 'PYEOF'
+          import csv
           import sys
 
           errors = []
           warnings = []
           current_file = None
 
-          with open('/tmp/plugin-check-${{ matrix.php }}.csv', encoding='utf-8') as f:
-              for raw in f:
-                  line = raw.rstrip('\n')
-                  if not line.strip():
+          with open('/tmp/plugin-check-${{ matrix.php }}.csv', encoding='utf-8', newline='') as f:
+              reader = csv.reader(f)
+              for row in reader:
+                  if not row:
                       continue
-                  if line.startswith('FILE:'):
-                      current_file = line.split(':', 1)[1].strip()
+
+                  # FILE: prefix lines introduce a new file section.
+                  if len(row) == 1 and row[0].startswith('FILE:'):
+                      current_file = row[0].split(':', 1)[1].strip()
                       continue
+
                   # Skip the repeated header rows inside each file section.
-                  if line.startswith('line\t') or line.startswith('line,'):
+                  if row[0] == 'line':
                       continue
-                  # PCP --format=csv emits tab-separated rows.
-                  cols = line.split('\t')
-                  if len(cols) < 5:
+
+                  # Skip any non-data rows that do not have enough columns.
+                  if len(row) < 5:
                       continue
-                  row_type = cols[2].upper()
-                  code = cols[3]
-                  message = cols[4]
+
+                  row_type = row[2].upper()
+                  code = row[3]
+                  message = row[4]
                   entry = {'file': current_file, 'code': code, 'message': message}
                   if row_type == 'ERROR':
                       errors.append(entry)
