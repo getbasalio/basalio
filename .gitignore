@@ -4,3 +4,4 @@
 
 # Temporary scratch / build output
 .tmp/
+*.zip

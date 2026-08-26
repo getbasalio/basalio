@@ -4,7 +4,7 @@ Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,13 +64,18 @@ Basalio targets standard block themes and classic themes that support the block 
 
 1. The Basalio block collection in the WordPress editor.
 2. Basalio blocks ship with high-contrast keyboard focus indicators.
-3. Text Reveal lets you choose word, line, or character reveals, plus duration, easing, and trigger threshold.
+3. Text Reveal lets you choose word or line reveals, plus duration, easing, and trigger threshold.
 4. A draggable before/after image comparison slider, operable by mouse, touch, or keyboard arrows.
 5. Filterable Grid sorts portfolio items by category with keyboard-operable filter buttons.
 6. Portfolio tiles reveal captions on hover, keyboard focus, or tap. They never autoplay.
 7. Case Study Transition sets transition speed and the post-navigation focus target.
 
 == Changelog ==
+
+= 0.6.4 =
+* Move per-instance transition CSS to the stylesheet instead of an inline <style> element.
+* Harden output escaping and validate the view-transition name as a CSS custom-ident.
+* Remove an unimplemented Character split option from Text Reveal.
 
 = 0.6.0 =
 * Accessibility audit debt release. Resolves the findings from the 0.5.1 audit.
