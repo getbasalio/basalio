@@ -47,7 +47,16 @@ if ( ! $basalio_image_id && '' === $basalio_image_url ) {
 }
 
 // Resolve the shared transition name.
-$basalio_pair = isset( $attributes['pairId'] ) ? preg_replace( '/[^a-z0-9\-]/', '', strtolower( $attributes['pairId'] ) ) : '';
+// A valid CSS custom-ident must start with a letter and contain only letters,
+// digits, underscores, and hyphens. Invalid or empty values fall back to the
+// auto-derived ID so the transition still works.
+$basalio_pair = '';
+if ( isset( $attributes['pairId'] ) && is_string( $attributes['pairId'] ) ) {
+	$basalio_pair_candidate = trim( $attributes['pairId'] );
+	if ( '' !== $basalio_pair_candidate && preg_match( '/^[a-zA-Z][a-zA-Z0-9_-]*$/', $basalio_pair_candidate ) ) {
+		$basalio_pair = $basalio_pair_candidate;
+	}
+}
 if ( '' === $basalio_pair ) {
 	if ( 'hero' === $basalio_role ) {
 		$basalio_auto_id = get_the_ID();
@@ -58,7 +67,6 @@ if ( '' === $basalio_pair ) {
 		$basalio_pair = 'p' . $basalio_auto_id;
 	}
 }
-// Prefix guarantees the value is a valid CSS custom-ident (starts with a letter).
 $basalio_vt_name = ( '' !== $basalio_pair ) ? 'basalio-cst-' . $basalio_pair : '';
 
 // Build image attributes. The hero is typically the LCP element, so it loads
