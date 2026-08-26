@@ -61,3 +61,26 @@ Useful for completeness, but not reasons to buy Pro.
 2. Add the param back to the block's `motion.schema.json`.
 3. Ensure `tests/verify-all-schemas.php` and the runtime-consumer test pass.
 4. Update this roadmap.
+
+## Logged follow-up: CSS-value-context hardening
+
+These locations in the motion-schema pipeline emit CSS values that can be
+filtered or admin-supplied, but they are not currently sanitized in a
+CSS-value-specific way. They were not reported by the WordPress.org review and
+the pipeline was verified end-to-end immediately before this note, so they are
+intentionally out of scope for the current round.
+
+- `includes/class-tokens.php:69` — `Basalio_Tokens::to_css()` injects token
+  values into inline CSS. Token values may come from the `basalio_tokens`
+  filter. Should be escaped/sanitized as CSS values, not HTML attributes.
+- `includes/class-basalio.php:724, 728` — token fallback values in
+  `resolve_motion_params_to_css()` are emitted into CSS `var(..., <fallback>)`.
+- `includes/class-basalio.php:730, 748` — generic parameter values are emitted
+  into CSS custom properties using `esc_attr()`. CSS values need
+  CSS-context sanitization.
+- `includes/class-basalio.php:737` — `param['unit']` is concatenated raw into a
+  CSS length value; should be whitelisted.
+
+Recommended fix later: introduce a small CSS-value sanitizer/escaper (e.g.,
+`wp_strip_all_tags()` plus unit whitelist) and apply it consistently in
+`resolve_motion_params_to_css()` and `Basalio_Tokens::to_css()`.
