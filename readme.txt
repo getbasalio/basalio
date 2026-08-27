@@ -1,5 +1,5 @@
 === Basalio ===
-Contributors: chrowmdesigns
+Contributors: basalio
 Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
 Tested up to: 7.1
