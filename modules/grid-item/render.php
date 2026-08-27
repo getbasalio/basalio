@@ -32,25 +32,35 @@ if ( ! $basalio_image_id && '' === $basalio_image_url ) {
 	return '';
 }
 
+$basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 0;
+$basalio_lightbox = ! empty( $attributes['lightbox'] );
+$basalio_full     = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
+
+// Linked or lightboxed Grid Items use the M1/M2 pattern: the image is
+// decorative because the wrapper carries the accessible name. A plain item
+// must fall back to attachment / title / category alt.
+$basalio_is_decorative = ( $basalio_lightbox && $basalio_full ) || '' !== $basalio_url;
+$basalio_image_alt_final = $basalio_is_decorative
+	? $basalio_image_alt
+	: basalio_resolve_image_name( $basalio_image_id, $basalio_image_alt, $basalio_title, $basalio_category );
+
 $basalio_img_html = basalio_get_image_html(
 	$basalio_image_id,
 	$basalio_image_url,
-	$basalio_image_alt,
+	$basalio_image_alt_final,
 	array(
 		'class'    => 'basalio-grid-item__image',
 		'loading'  => 'lazy',
 		'decoding' => 'async',
-	)
+	),
+	$basalio_is_decorative
 );
 
-$basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attributes['borderRadius'] ) ) : 0;
-$basalio_lightbox = ! empty( $attributes['lightbox'] );
-$basalio_full     = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
 $basalio_frame_style = $basalio_radius ? ' style="border-radius:' . $basalio_radius . 'px;overflow:hidden"' : '';
 
 // The image frame is a lightbox trigger, a link, or a plain container.
 if ( $basalio_lightbox && $basalio_full ) {
-	$basalio_frame_open  = '<button type="button" class="basalio-grid-item__frame basalio-media-expand" data-basalio-lightbox="' . esc_url( $basalio_full ) . '" data-basalio-lightbox-alt="' . esc_attr( $basalio_image_alt ) . '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '"' . $basalio_frame_style . '>';
+	$basalio_frame_open  = '<button type="button" class="basalio-grid-item__frame basalio-media-expand" data-basalio-lightbox="' . esc_url( $basalio_full ) . '" data-basalio-lightbox-alt="' . esc_attr( $basalio_image_alt_final ) . '" aria-label="' . esc_attr__( 'Expand image', 'basalio' ) . '"' . $basalio_frame_style . '>';
 	$basalio_frame_close = '</button>';
 } elseif ( '' !== $basalio_url ) {
 	// The <figcaption> deliberately sits OUTSIDE the link, so the link's only

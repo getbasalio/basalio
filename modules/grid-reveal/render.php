@@ -75,12 +75,21 @@ $basalio_ratios    = array(
 $basalio_ratio_key = isset( $attributes['aspectRatio'] ) ? (string) $attributes['aspectRatio'] : 'auto';
 $basalio_ratio_css = isset( $basalio_ratios[ $basalio_ratio_key ] ) ? $basalio_ratios[ $basalio_ratio_key ] : '';
 
+// The reveal toggle is a named sibling control; the image itself is not inside
+// it, so an empty author alt must fall back to attachment/title/tag text.
+$basalio_image_alt_final = basalio_resolve_image_name(
+	$basalio_image_id,
+	$basalio_image_alt,
+	$basalio_title,
+	$basalio_tag
+);
+
 // Build the image markup: prefer the attachment (responsive srcset + alt),
 // fall back to a bare URL if only that was stored.
 $basalio_img_html = basalio_get_image_html(
 	$basalio_image_id,
 	$basalio_image_url,
-	$basalio_image_alt,
+	$basalio_image_alt_final,
 	array(
 		'class'    => 'basalio-grid-reveal__image',
 		'loading'  => 'lazy',

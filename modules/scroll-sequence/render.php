@@ -44,10 +44,13 @@ foreach ( $basalio_frames as $basalio_i => $basalio_frame ) {
 	$basalio_alt = isset( $basalio_frame['alt'] ) ? $basalio_frame['alt'] : '';
 	$basalio_cls = 'basalio-scroll-sequence__frame' . ( 0 === $basalio_i ? ' is-active' : '' );
 
+	// Frame images sit in the stage, not inside the named Previous/Next buttons.
+	$basalio_alt_final = basalio_resolve_image_name( $basalio_id, $basalio_alt );
+
 	$basalio_img = basalio_get_image_html(
 		$basalio_id,
 		$basalio_url,
-		$basalio_alt,
+		$basalio_alt_final,
 		array(
 			'class'    => $basalio_cls,
 			'decoding' => 'async',

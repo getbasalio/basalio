@@ -23,10 +23,20 @@ if ( function_exists( 'basalio_enqueue_core' ) ) {
 	basalio_enqueue_core();
 }
 
+$basalio_before_id  = isset( $attributes['beforeImageId'] ) ? absint( $attributes['beforeImageId'] ) : 0;
+$basalio_before_alt = isset( $attributes['beforeImageAlt'] ) ? $attributes['beforeImageAlt'] : '';
+$basalio_after_id   = isset( $attributes['afterImageId'] ) ? absint( $attributes['afterImageId'] ) : 0;
+$basalio_after_alt  = isset( $attributes['afterImageAlt'] ) ? $attributes['afterImageAlt'] : '';
+
+// The before/after labels describe the slider, not the photographs, so they are
+// not used as image alt fallbacks.
+$basalio_before_alt_final = basalio_resolve_image_name( $basalio_before_id, $basalio_before_alt );
+$basalio_after_alt_final  = basalio_resolve_image_name( $basalio_after_id, $basalio_after_alt );
+
 $basalio_before = basalio_get_image_html(
-	isset( $attributes['beforeImageId'] ) ? absint( $attributes['beforeImageId'] ) : 0,
+	$basalio_before_id,
 	isset( $attributes['beforeImageUrl'] ) ? $attributes['beforeImageUrl'] : '',
-	isset( $attributes['beforeImageAlt'] ) ? $attributes['beforeImageAlt'] : '',
+	$basalio_before_alt_final,
 	array(
 		'class'    => 'basalio-before-after__img basalio-before-after__img--before',
 		'loading'  => 'lazy',
@@ -34,9 +44,9 @@ $basalio_before = basalio_get_image_html(
 	)
 );
 $basalio_after = basalio_get_image_html(
-	isset( $attributes['afterImageId'] ) ? absint( $attributes['afterImageId'] ) : 0,
+	$basalio_after_id,
 	isset( $attributes['afterImageUrl'] ) ? $attributes['afterImageUrl'] : '',
-	isset( $attributes['afterImageAlt'] ) ? $attributes['afterImageAlt'] : '',
+	$basalio_after_alt_final,
 	array(
 		'class'    => 'basalio-before-after__img basalio-before-after__img--after',
 		'loading'  => 'lazy',

@@ -46,18 +46,26 @@ $basalio_link   = isset( $attributes['linkUrl'] ) ? $attributes['linkUrl'] : '';
 $basalio_lb     = ! empty( $attributes['lightbox'] );
 $basalio_full   = $basalio_id ? wp_get_attachment_image_url( $basalio_id, 'full' ) : $basalio_url;
 
+// The lightbox trigger is a named button, so the image is decorative there.
+// A plain link or a standalone image must fall back to attachment alt.
+$basalio_is_decorative = $basalio_lb;
+$basalio_alt_final     = $basalio_is_decorative
+	? $basalio_alt
+	: basalio_resolve_image_name( $basalio_id, $basalio_alt );
+
 $basalio_img = basalio_get_image_html(
 	$basalio_id,
 	$basalio_url,
-	$basalio_alt,
+	$basalio_alt_final,
 	array(
 		'class'    => 'basalio-pinned-scroll__image',
 		'decoding' => 'async',
 		'loading'  => 'eager',
-	)
+	),
+	$basalio_is_decorative
 );
 
-$basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt );
+$basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt_final );
 
 $basalio_style   = '--basalio-ps-cols:' . $basalio_mw . 'fr ' . ( 100 - $basalio_mw ) . 'fr;--basalio-ps-radius:' . $basalio_radius . 'px';
 

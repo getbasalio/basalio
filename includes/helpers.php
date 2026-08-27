@@ -33,21 +33,29 @@ if ( ! function_exists( 'basalio_get_attachment_alt' ) ) {
 if ( ! function_exists( 'basalio_get_image_html' ) ) {
 	/**
 	 * Build an <img> tag, preferring the WordPress attachment API for srcset and
-	 * falling back to a bare URL. The author's block-level alt is always honoured,
-	 * including an intentional empty value (decorative image). This removes the
-	 * fragile preg_replace() pattern used in earlier versions.
+	 * falling back to a bare URL.
 	 *
-	 * @param int    $attachment_id Attachment ID, or 0 to use the URL.
-	 * @param string $url           Image URL when no attachment is selected.
-	 * @param string $alt           Author-provided alt text.
-	 * @param array  $attr          Additional attributes (class, loading, decoding, etc.).
+	 * The caller is responsible for resolving the final alt text (author override,
+	 * attachment alt, title, category) via basalio_resolve_image_name(). The
+	 * $is_decorative flag tells the helper that an empty $alt is intentional: the
+	 * image sits inside a named focusable control and the wrapper carries the
+	 * accessible name. When $is_decorative is false and $alt is empty, the helper
+	 * does not override the attachment API's own alt fallback.
+	 *
+	 * @param int    $attachment_id  Attachment ID, or 0 to use the URL.
+	 * @param string $url            Image URL when no attachment is selected.
+	 * @param string $alt            Final resolved alt text.
+	 * @param array  $attr           Additional attributes (class, loading, decoding, etc.).
+	 * @param bool   $is_decorative  True when the image is inside a named control.
 	 * @return string
 	 */
-	function basalio_get_image_html( $attachment_id, $url, $alt, $attr = array() ) {
+	function basalio_get_image_html( $attachment_id, $url, $alt, $attr = array(), $is_decorative = false ) {
 		$attr = (array) $attr;
 
 		if ( $attachment_id ) {
-			$attr['alt'] = $alt;
+			if ( $is_decorative || '' !== $alt ) {
+				$attr['alt'] = $alt;
+			}
 			$html = wp_get_attachment_image( $attachment_id, 'large', false, $attr );
 			if ( $html ) {
 				return $html;

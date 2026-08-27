@@ -85,13 +85,6 @@ if ( '' !== $basalio_vt_name ) {
 	$basalio_img_attr['style'] = 'view-transition-name:' . $basalio_vt_name . ';';
 }
 
-$basalio_img_html = basalio_get_image_html(
-	$basalio_image_id,
-	$basalio_image_url,
-	$basalio_image_alt,
-	$basalio_img_attr
-);
-
 // Corner radius, lightbox, and morph-duration options.
 // Duration: WCAG sets no threshold for interaction-triggered motion (2.3.3
 // requires it be disableable, which prefers-reduced-motion handles). The
@@ -104,6 +97,22 @@ $basalio_radius   = isset( $attributes['borderRadius'] ) ? max( 0, absint( $attr
 $basalio_lightbox = ! empty( $attributes['lightbox'] );
 $basalio_full_url = $basalio_image_id ? wp_get_attachment_image_url( $basalio_image_id, 'full' ) : $basalio_image_url;
 $basalio_dur      = isset( $attributes['transitionDuration'] ) ? max( 150, min( 600, absint( $attributes['transitionDuration'] ) ) ) : 300;
+
+// Images inside a named source link or lightbox trigger are decorative: the
+// wrapper carries the accessible name. The hero and an unlinked source are
+// standalone, so the alt falls back to the attachment's media-library text.
+$basalio_is_decorative = ( 'source' === $basalio_role && ( ( $basalio_lightbox && $basalio_full_url ) || '' !== $basalio_link_url ) );
+$basalio_image_alt_final = $basalio_is_decorative
+	? $basalio_image_alt
+	: basalio_resolve_image_name( $basalio_image_id, $basalio_image_alt );
+
+$basalio_img_html = basalio_get_image_html(
+	$basalio_image_id,
+	$basalio_image_url,
+	$basalio_image_alt_final,
+	$basalio_img_attr,
+	$basalio_is_decorative
+);
 
 // Motion parameters.
 $basalio_raw_attrs = ( $block instanceof WP_Block && isset( $block->parsed_block['attrs'] ) && is_array( $block->parsed_block['attrs'] ) )
