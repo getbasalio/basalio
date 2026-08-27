@@ -162,10 +162,11 @@ function basalio_has_block() {
  * @param string $link_url  Optional link target.
  * @param bool   $lightbox  Whether to open the full image in the lightbox.
  * @param string $full_url  Full-size image URL for the lightbox.
- * @param string $alt       Resolved alt text for the image (used for the lightbox and link fallback).
+ * @param string $alt          Resolved alt text for the image (used for the lightbox and link fallback).
+ * @param string $link_label   Optional accessible name for the link path.
  * @return string
  */
-function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = '' ) {
+function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = '', $link_label = '' ) {
 	if ( $lightbox && $full_url ) {
 		// A lightbox trigger is inert without the core script that binds it, and
 		// unstyled without the core stylesheet. Enqueue here rather than trusting
@@ -186,7 +187,8 @@ function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = 
 		// otherwise aria-label would override the more specific description.
 		$aria_label = '';
 		if ( '' === $alt ) {
-			$aria_label = ' aria-label="' . esc_attr__( 'View image', 'basalio' ) . '"';
+			$fallback   = '' !== $link_label ? $link_label : __( 'Open link', 'basalio' );
+			$aria_label = ' aria-label="' . esc_attr( $fallback ) . '"';
 		}
 		return '<a class="basalio-media-link" href="' . $link_url . '"' . $aria_label . '>' . $img_html . '</a>';
 	}

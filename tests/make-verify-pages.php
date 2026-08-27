@@ -401,6 +401,29 @@ $page_grid_item_plain = bv_page(
 	) . ' /-->'
 );
 
+// Draft post used to verify that link labels do not leak unpublished titles.
+$draft_post_id = wp_insert_post(
+	array(
+		'post_title'   => 'SECRET DRAFT TITLE',
+		'post_content' => 'Draft content.',
+		'post_status'  => 'draft',
+		'post_type'    => 'page',
+	)
+);
+$draft_permalink = get_permalink( $draft_post_id );
+
+$page_pinned_draft_link = bv_page(
+	'verify-pinned-scroll-draft-link',
+	'Verify: Pinned Scroll link to draft does not expose draft title',
+	'<!-- wp:basalio/pinned-scroll ' . wp_json_encode(
+		array(
+			'pinnedImageId'  => $grid_blank,
+			'pinnedImageAlt' => '',
+			'linkUrl'        => $draft_permalink,
+		)
+	) . ' /-->'
+);
+
 $base = home_url();
 echo "\nFixtures ready.\n\n";
 printf( "1. Pinned Scroll lightbox        %s/?page_id=%d\n", $base, $page_pinned );

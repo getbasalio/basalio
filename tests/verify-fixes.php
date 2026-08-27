@@ -226,7 +226,7 @@ bv_ok(
 $pinned_link_empty = bv_render( 'verify-pinned-scroll-link-empty-alt' );
 bv_ok(
 	'pinned-scroll link adds aria-label when image alt is empty',
-	null !== $pinned_link_empty && (bool) preg_match( '/<a class="basalio-media-link"[^>]*aria-label="View image"/', $pinned_link_empty ),
+	null !== $pinned_link_empty && (bool) preg_match( '/<a class="basalio-media-link"[^>]*aria-label="Open link"/', $pinned_link_empty ),
 	null === $pinned_link_empty ? 'fixture page missing: verify-pinned-scroll-link-empty-alt' : 'Rendered: ' . substr( $pinned_link_empty, 0, 200 )
 );
 
@@ -237,6 +237,15 @@ bv_ok(
 		&& false !== strpos( $pinned_link_with_alt, 'alt="Custom pinned alt"' )
 		&& ! preg_match( '/<a class="basalio-media-link"[^>]*aria-label/', $pinned_link_with_alt ),
 	null === $pinned_link_with_alt ? 'fixture page missing: verify-pinned-scroll-link-with-alt' : 'Rendered: ' . substr( $pinned_link_with_alt, 0, 200 )
+);
+
+$pinned_draft_link = bv_render( 'verify-pinned-scroll-draft-link' );
+bv_ok(
+	'pinned-scroll link to draft does not expose the draft title',
+	null !== $pinned_draft_link
+		&& false === strpos( $pinned_draft_link, 'SECRET DRAFT TITLE' )
+		&& (bool) preg_match( '/<a class="basalio-media-link"[^>]*aria-label="Open link"/', $pinned_draft_link ),
+	null === $pinned_draft_link ? 'fixture page missing: verify-pinned-scroll-draft-link' : 'Rendered: ' . substr( $pinned_draft_link, 0, 200 )
 );
 
 $grid_item_plain = bv_render( 'verify-grid-item-plain-alt-fallback' );

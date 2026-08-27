@@ -205,7 +205,7 @@ if ( '' !== $basalio_link_url ) {
 		$basalio_link_label = trim( $attributes['linkLabel'] );
 	} else {
 		$basalio_linked_post_id = url_to_postid( $basalio_link_url );
-		if ( $basalio_linked_post_id ) {
+		if ( $basalio_linked_post_id && 'publish' === get_post_status( $basalio_linked_post_id ) ) {
 			$basalio_link_label = get_the_title( $basalio_linked_post_id );
 		}
 	}

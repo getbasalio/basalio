@@ -53,6 +53,16 @@ $basalio_alt_final     = $basalio_is_decorative
 	? $basalio_alt
 	: basalio_resolve_image_name( $basalio_id, $basalio_alt );
 
+// Build a readable link name from a published internal destination, but never
+// leak the title of an unpublished or password-protected post.
+$basalio_link_label = '';
+if ( '' !== $basalio_link ) {
+	$basalio_linked_post_id = url_to_postid( $basalio_link );
+	if ( $basalio_linked_post_id && 'publish' === get_post_status( $basalio_linked_post_id ) ) {
+		$basalio_link_label = get_the_title( $basalio_linked_post_id );
+	}
+}
+
 $basalio_img = basalio_get_image_html(
 	$basalio_id,
 	$basalio_url,
@@ -65,7 +75,7 @@ $basalio_img = basalio_get_image_html(
 	$basalio_is_decorative
 );
 
-$basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt_final );
+$basalio_img = basalio_media_wrap( $basalio_img, $basalio_link, $basalio_lb, $basalio_full, $basalio_alt_final, $basalio_link_label );
 
 $basalio_style   = '--basalio-ps-cols:' . $basalio_mw . 'fr ' . ( 100 - $basalio_mw ) . 'fr;--basalio-ps-radius:' . $basalio_radius . 'px';
 
