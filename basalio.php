@@ -162,7 +162,7 @@ function basalio_has_block() {
  * @param string $link_url  Optional link target.
  * @param bool   $lightbox  Whether to open the full image in the lightbox.
  * @param string $full_url  Full-size image URL for the lightbox.
- * @param string $alt       Alt/caption text for the lightbox.
+ * @param string $alt       Resolved alt text for the image (used for the lightbox and link fallback).
  * @return string
  */
 function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = '' ) {
@@ -181,7 +181,14 @@ function basalio_media_wrap( $img_html, $link_url, $lightbox, $full_url, $alt = 
 	}
 	$link_url = esc_url( (string) $link_url );
 	if ( '' !== $link_url ) {
-		return '<a class="basalio-media-link" href="' . $link_url . '">' . $img_html . '</a>';
+		// An <a> containing an <img> with non-empty alt already has an accessible
+		// name (the image alt). Only add aria-label when the image alt is empty,
+		// otherwise aria-label would override the more specific description.
+		$aria_label = '';
+		if ( '' === $alt ) {
+			$aria_label = ' aria-label="' . esc_attr__( 'View image', 'basalio' ) . '"';
+		}
+		return '<a class="basalio-media-link" href="' . $link_url . '"' . $aria_label . '>' . $img_html . '</a>';
 	}
 	return $img_html;
 }
