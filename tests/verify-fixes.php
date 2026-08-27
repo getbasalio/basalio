@@ -188,6 +188,64 @@ if ( null === $empty_alt ) {
 	);
 }
 
+echo "\n=== Alt fallback for images outside named controls ===\n";
+
+$cst_hero_alt = bv_render( 'verify-cst-hero-alt-fallback' );
+bv_ok(
+	'case-study-transition hero falls back to attachment alt',
+	null !== $cst_hero_alt && false !== strpos( $cst_hero_alt, 'alt="A pinned hero image"' ),
+	null === $cst_hero_alt ? 'fixture page missing: verify-cst-hero-alt-fallback' : 'Rendered: ' . substr( $cst_hero_alt, 0, 200 )
+);
+
+$grid_reveal_alt = bv_render( 'verify-grid-reveal-alt-fallback' );
+bv_ok(
+	'grid-reveal falls back to attachment alt',
+	null !== $grid_reveal_alt && false !== strpos( $grid_reveal_alt, 'alt="A pinned hero image"' ),
+	null === $grid_reveal_alt ? 'fixture page missing: verify-grid-reveal-alt-fallback' : 'Rendered: ' . substr( $grid_reveal_alt, 0, 200 )
+);
+
+$before_after_alt = bv_render( 'verify-before-after-alt-fallback' );
+bv_ok(
+	'before-after before image falls back to attachment alt',
+	null !== $before_after_alt && false !== strpos( $before_after_alt, 'class="basalio-before-after__img basalio-before-after__img--before"' ) && false !== strpos( $before_after_alt, 'alt="A pinned hero image"' ),
+	null === $before_after_alt ? 'fixture page missing: verify-before-after-alt-fallback' : 'Rendered: ' . substr( $before_after_alt, 0, 200 )
+);
+bv_ok(
+	'before-after after image falls back to attachment alt',
+	null !== $before_after_alt && false !== strpos( $before_after_alt, 'class="basalio-before-after__img basalio-before-after__img--after"' ) && false !== strpos( $before_after_alt, 'alt="A design project"' ),
+	null === $before_after_alt ? 'fixture page missing: verify-before-after-alt-fallback' : 'Rendered: ' . substr( $before_after_alt, 0, 200 )
+);
+
+$seq_alt = bv_render( 'verify-scroll-sequence-alt-fallback' );
+bv_ok(
+	'scroll-sequence frame falls back to attachment alt',
+	null !== $seq_alt && false !== strpos( $seq_alt, 'alt="ATTACHMENT alt for frame 1"' ),
+	null === $seq_alt ? 'fixture page missing: verify-scroll-sequence-alt-fallback' : 'Rendered: ' . substr( $seq_alt, 0, 200 )
+);
+
+$pinned_link_empty = bv_render( 'verify-pinned-scroll-link-empty-alt' );
+bv_ok(
+	'pinned-scroll link adds aria-label when image alt is empty',
+	null !== $pinned_link_empty && (bool) preg_match( '/<a class="basalio-media-link"[^>]*aria-label="View image"/', $pinned_link_empty ),
+	null === $pinned_link_empty ? 'fixture page missing: verify-pinned-scroll-link-empty-alt' : 'Rendered: ' . substr( $pinned_link_empty, 0, 200 )
+);
+
+$pinned_link_with_alt = bv_render( 'verify-pinned-scroll-link-with-alt' );
+bv_ok(
+	'pinned-scroll link keeps image alt and does not add overriding aria-label',
+	null !== $pinned_link_with_alt
+		&& false !== strpos( $pinned_link_with_alt, 'alt="Custom pinned alt"' )
+		&& ! preg_match( '/<a class="basalio-media-link"[^>]*aria-label/', $pinned_link_with_alt ),
+	null === $pinned_link_with_alt ? 'fixture page missing: verify-pinned-scroll-link-with-alt' : 'Rendered: ' . substr( $pinned_link_with_alt, 0, 200 )
+);
+
+$grid_item_plain = bv_render( 'verify-grid-item-plain-alt-fallback' );
+bv_ok(
+	'plain grid-item falls back to title/category alt',
+	null !== $grid_item_plain && false !== strpos( $grid_item_plain, 'alt="Plain item title"' ),
+	null === $grid_item_plain ? 'fixture page missing: verify-grid-item-plain-alt-fallback' : 'Rendered: ' . substr( $grid_item_plain, 0, 200 )
+);
+
 $render_files = glob( BASALIO_TESTS_PLUGIN_DIR . '/modules/*/render.php' );
 $regex_alt_override = false;
 foreach ( $render_files as $rf ) {

@@ -310,6 +310,97 @@ $page_palette = bv_page(
 	'<!-- /wp:paragraph -->'
 );
 
+// Alt-fallback fixtures: empty block-level alt with an attachment that HAS
+// media-library alt text. The rendered image must use the attachment alt.
+$page_cst_hero_alt = bv_page(
+	'verify-cst-hero-alt-fallback',
+	'Verify: Case Study Transition hero falls back to attachment alt',
+	'<!-- wp:basalio/case-study-transition ' . wp_json_encode(
+		array(
+			'imageId'  => $img_pinned,
+			'imageAlt' => '',
+			'role'     => 'hero',
+		)
+	) . ' /-->'
+);
+
+$page_grid_reveal_alt = bv_page(
+	'verify-grid-reveal-alt-fallback',
+	'Verify: Grid Reveal falls back to attachment alt',
+	'<!-- wp:basalio/grid-reveal ' . wp_json_encode(
+		array(
+			'imageId'  => $img_pinned,
+			'imageAlt' => '',
+		)
+	) . ' /-->'
+);
+
+$page_before_after_alt = bv_page(
+	'verify-before-after-alt-fallback',
+	'Verify: Before/After falls back to attachment alt',
+	'<!-- wp:basalio/before-after ' . wp_json_encode(
+		array(
+			'beforeImageId'  => $img_pinned,
+			'beforeImageAlt' => '',
+			'afterImageId'   => $grid_design,
+			'afterImageAlt'  => '',
+		)
+	) . ' /-->'
+);
+
+$page_seq_alt = bv_page(
+	'verify-scroll-sequence-alt-fallback',
+	'Verify: Scroll Sequence frame falls back to attachment alt',
+	'<!-- wp:basalio/scroll-sequence ' . wp_json_encode(
+		array(
+			'frames' => array(
+				array(
+					'id'  => $seq[1],
+					'url' => wp_get_attachment_image_url( $seq[1], 'full' ),
+					'alt' => '',
+				),
+			),
+		)
+	) . ' /-->'
+);
+
+$page_pinned_link_empty = bv_page(
+	'verify-pinned-scroll-link-empty-alt',
+	'Verify: Pinned Scroll link gets aria-label when image alt is empty',
+	'<!-- wp:basalio/pinned-scroll ' . wp_json_encode(
+		array(
+			'pinnedImageId'  => $grid_blank,
+			'pinnedImageAlt' => '',
+			'linkUrl'        => '#pinned-link-empty',
+		)
+	) . ' /-->'
+);
+
+$page_pinned_link_with_alt = bv_page(
+	'verify-pinned-scroll-link-with-alt',
+	'Verify: Pinned Scroll link uses image alt, no overriding aria-label',
+	'<!-- wp:basalio/pinned-scroll ' . wp_json_encode(
+		array(
+			'pinnedImageId'  => $img_pinned,
+			'pinnedImageAlt' => 'Custom pinned alt',
+			'linkUrl'        => '#pinned-link-with-alt',
+		)
+	) . ' /-->'
+);
+
+$page_grid_item_plain = bv_page(
+	'verify-grid-item-plain-alt-fallback',
+	'Verify: plain Grid Item falls back to title/category alt',
+	'<!-- wp:basalio/grid-item ' . wp_json_encode(
+		array(
+			'imageId'  => $grid_blank,
+			'imageAlt' => '',
+			'title'    => 'Plain item title',
+			'category' => 'Design',
+		)
+	) . ' /-->'
+);
+
 $base = home_url();
 echo "\nFixtures ready.\n\n";
 printf( "1. Pinned Scroll lightbox        %s/?page_id=%d\n", $base, $page_pinned );
