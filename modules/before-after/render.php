@@ -145,7 +145,7 @@ if ( '' !== $basalio_ratio_css ) {
 			aria-valuemin="0"
 			aria-valuemax="100"
 			aria-valuenow="<?php echo (int) $basalio_start; ?>"
-			aria-valuetext="<?php echo esc_attr( sprintf( /* translators: 1: percentage, 2: before label, 3: after label */ __( '%1$s%% — Before: %2$s, After: %3$s', 'basalio' ), (int) $basalio_start, $basalio_before_label, $basalio_after_label ) ); ?>"
+			aria-valuetext="<?php echo esc_attr( sprintf( /* translators: 1: percentage, 2: before label, 3: after label */ __( '%1$s%%: Before: %2$s, After: %3$s', 'basalio' ), (int) $basalio_start, $basalio_before_label, $basalio_after_label ) ); ?>"
 			data-basalio-step="<?php echo (int) $basalio_step; ?>"
 			data-basalio-before-label="<?php echo esc_attr( $basalio_before_label ); ?>"
 			data-basalio-after-label="<?php echo esc_attr( $basalio_after_label ); ?>"

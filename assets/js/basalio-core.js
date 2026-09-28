@@ -466,7 +466,7 @@
 				handle.setAttribute( 'aria-valuenow', rounded );
 				var text = rounded + '%';
 				if ( beforeLabel || afterLabel ) {
-					text = rounded + '% — ' + ( i18n ? i18n.__( 'Before:', 'basalio' ) : 'Before:' ) + ' ' + beforeLabel + ', ' + ( i18n ? i18n.__( 'After:', 'basalio' ) : 'After:' ) + ' ' + afterLabel;
+					text = rounded + '%: ' + ( i18n ? i18n.__( 'Before:', 'basalio' ) : 'Before:' ) + ' ' + beforeLabel + ', ' + ( i18n ? i18n.__( 'After:', 'basalio' ) : 'After:' ) + ' ' + afterLabel;
 				}
 				handle.setAttribute( 'aria-valuetext', text );
 			};
