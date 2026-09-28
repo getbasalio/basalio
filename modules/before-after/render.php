@@ -128,8 +128,8 @@ if ( '' !== $basalio_ratio_css ) {
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-before-after style="<?php echo esc_attr( $basalio_style ); ?>">
 	<div class="basalio-before-after__frame">
-		<?php echo $basalio_after; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>
-		<?php echo $basalio_before; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>
+		<?php echo wp_kses( $basalio_after, basalio_allowed_html() ); ?>
+		<?php echo wp_kses( $basalio_before, basalio_allowed_html() ); ?>
 
 		<span class="basalio-before-after__label basalio-before-after__label--before"><?php echo esc_html( $basalio_before_label ); ?></span>
 		<span class="basalio-before-after__label basalio-before-after__label--after"><?php echo esc_html( $basalio_after_label ); ?></span>

@@ -195,5 +195,5 @@ if ( 'Scroll into view' === $basalio_trigger ) {
 $basalio_wrapper = get_block_wrapper_attributes( $basalio_wrapper_attrs );
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-text-reveal>
-	<?php echo $basalio_parts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_html / esc_url / esc_attr above. ?>
+	<?php echo wp_kses( $basalio_parts, basalio_allowed_html() ); ?>
 </div>

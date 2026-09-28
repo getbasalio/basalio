@@ -80,6 +80,8 @@ do_action( 'basalio_tokens_registered', $tokens );
 
 Filters the CSS custom-property block generated from the token map.
 
+Since 0.6.6, the result is validated after this filter. Return one `:root { ... }` block containing custom properties only. Names must use ASCII letters, digits, underscores and hyphens (starting with a letter or underscore after `--`). Values support scalar keywords, numbers, dimensions, colors, and numeric/color functions such as `var()`, `calc()`, `clamp()` and `cubic-bezier()`. URLs, quoted strings, escapes, comments, other rules and HTML are rejected. Invalid declarations are omitted; an invalid stylesheet envelope produces no token stylesheet. The same value validation applies to `basalio_tokens` output and motion parameter fallbacks.
+
 ```php
 $css = apply_filters( 'basalio_token_css', $css, $tokens );
 ```

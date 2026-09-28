@@ -114,10 +114,10 @@ $basalio_story_html = '<div class="basalio-pinned-scroll__story">' . $content . 
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
 	<?php if ( 'right' === $basalio_pos ) : ?>
-		<?php echo $basalio_story_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from core-rendered inner blocks / escaped image parts. ?>
-		<?php echo $basalio_media_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from escaped image parts. ?>
+		<?php echo wp_kses( $basalio_story_html, basalio_allowed_html() ); ?>
+		<?php echo wp_kses( $basalio_media_html, basalio_allowed_html() ); ?>
 	<?php else : ?>
-		<?php echo $basalio_media_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from escaped image parts. ?>
-		<?php echo $basalio_story_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built above from core-rendered inner blocks. ?>
+		<?php echo wp_kses( $basalio_media_html, basalio_allowed_html() ); ?>
+		<?php echo wp_kses( $basalio_story_html, basalio_allowed_html() ); ?>
 	<?php endif; ?>
 </div>

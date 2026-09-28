@@ -70,6 +70,12 @@ jobs:
           cd /tmp/wordpress
           wp plugin install plugin-check --activate
 
+      - name: Create verification fixtures
+        run: php ${{ github.workspace }}/tests/make-verify-pages.php /tmp/wordpress
+
+      - name: Verify output safety
+        run: php ${{ github.workspace }}/tests/verify-output-safety.php /tmp/wordpress | tee /tmp/output-safety-${{ matrix.php }}.log
+
       - name: Run verify-fixes.php
         run: |
           # Tests are excluded from the distributable ZIP; run them from the checkout.
@@ -146,3 +152,4 @@ jobs:
             /tmp/plugin-check-${{ matrix.php }}.err
             /tmp/verify-fixes-${{ matrix.php }}.log
             /tmp/verify-all-schemas-${{ matrix.php }}.log
+            /tmp/output-safety-${{ matrix.php }}.log

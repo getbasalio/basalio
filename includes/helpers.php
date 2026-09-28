@@ -197,3 +197,21 @@ if ( ! function_exists( 'basalio_register_block_variation' ) ) {
 		return true;
 	}
 }
+
+/**
+ * Allowed markup for Basalio's composed HTML fragments and inner blocks.
+ *
+ * Start with WordPress post HTML. Add only the interactive elements used by
+ * the blocks; keep scripts, event handlers and iframe srcdoc disallowed.
+ * This is scoped to Basalio output, never a global KSES relaxation.
+ *
+ * @return array HTML tag and attribute allow-list.
+ */
+function basalio_allowed_html() {
+	$allowed = wp_kses_allowed_html( 'post' );
+	$global  = isset( $allowed['div'] ) ? $allowed['div'] : array();
+	$allowed['button'] = array_merge( $global, array( 'type' => true, 'disabled' => true, 'name' => true, 'value' => true ) );
+	$allowed['input'] = array_merge( $global, array( 'type' => true, 'min' => true, 'max' => true, 'step' => true, 'value' => true, 'name' => true, 'disabled' => true, 'checked' => true ) );
+	$allowed['iframe'] = array_merge( $global, array( 'src' => true, 'title' => true, 'width' => true, 'height' => true, 'loading' => true, 'allowfullscreen' => true, 'allow' => true, 'frameborder' => true ) );
+	return $allowed;
+}

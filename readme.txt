@@ -4,7 +4,7 @@ Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.5
+Stable tag: 0.6.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,11 @@ Basalio targets standard block themes and classic themes that support the block 
 7. Case Study Transition sets transition speed and the post-navigation focus target.
 
 == Changelog ==
+
+= 0.6.6 =
+* Validate filtered CSS token names, values, and the final stylesheet before inline output.
+* Apply the same CSS validation to motion parameters and token fallbacks.
+* Escape composed block HTML at output while preserving supported interactive controls.
 
 = 0.6.5 =
 * Image blocks that render outside a named link or button now fall back to the attachment's media-library alt text when the author leaves the alt field empty.

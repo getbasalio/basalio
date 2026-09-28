@@ -88,5 +88,5 @@ $basalio_wrapper = get_block_wrapper_attributes(
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-custom-cursor>
 	<span class="basalio-custom-cursor__accent" aria-hidden="true"></span>
-	<div class="basalio-custom-cursor__content"><?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inner blocks rendered by core. ?></div>
+	<div class="basalio-custom-cursor__content"><?php echo wp_kses( $content, basalio_allowed_html() ); ?></div>
 </div>

@@ -151,7 +151,7 @@ if ( $basalio_lightbox && $basalio_full_url ) {
 ?>
 <figure <?php echo $basalio_wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-grid-reveal>
 	<div class="basalio-grid-reveal__frame">
-		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_* / wp_get_attachment_image above. ?>
+		<?php echo wp_kses( $basalio_img_html, basalio_allowed_html() ); ?>
 		<span class="basalio-grid-reveal__scrim" aria-hidden="true"></span>
 
 		<?php if ( $basalio_has_caption ) : ?>
@@ -165,6 +165,6 @@ if ( $basalio_lightbox && $basalio_full_url ) {
 			</figcaption>
 		<?php endif; ?>
 
-		<?php echo $basalio_toggle; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from esc_url / esc_attr / esc_html above. ?>
+		<?php echo wp_kses( $basalio_toggle, basalio_allowed_html() ); ?>
 	</div>
 </figure>

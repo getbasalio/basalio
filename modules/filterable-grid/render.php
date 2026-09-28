@@ -124,6 +124,6 @@ $basalio_wrapper = get_block_wrapper_attributes(
 	</p>
 
 	<div class="basalio-filterable-grid__grid" style="--basalio-fg-cols:<?php echo (int) $basalio_cols; ?>">
-		<?php echo $basalio_grid; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each item is escaped in grid-item/render.php. ?>
+		<?php echo wp_kses( $basalio_grid, basalio_allowed_html() ); ?>
 	</div>
 </div>

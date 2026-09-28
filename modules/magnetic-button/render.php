@@ -54,13 +54,6 @@ if ( ! isset( $basalio_resolve_params['strength'] ) ) {
 
 // Link when a URL is set, otherwise a non-navigating element.
 $basalio_tag        = ( '' !== $basalio_url ) ? 'a' : 'span';
-$basalio_link_attrs = '';
-if ( '' !== $basalio_url ) {
-	$basalio_link_attrs = ' href="' . esc_url( $basalio_url ) . '"';
-	if ( $basalio_new_tab ) {
-		$basalio_link_attrs .= ' target="_blank" rel="noopener noreferrer"';
-	}
-}
 
 $basalio_new_tab_text = $basalio_new_tab
 	? ' <span class="basalio-screen-reader-text">' . esc_html__( '(opens in a new tab)', 'basalio' ) . '</span>'
@@ -92,7 +85,7 @@ $basalio_wrapper = get_block_wrapper_attributes(
 );
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
-	<<?php echo esc_html( $basalio_tag ); ?> class="basalio-magnetic-button" data-basalio-magnetic="<?php echo esc_attr( $basalio_strength ); ?>"<?php echo $basalio_link_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_url above. ?>>
-		<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span><?php echo $basalio_new_tab_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_html__() above. ?>
+	<<?php echo esc_html( $basalio_tag ); ?> class="basalio-magnetic-button" data-basalio-magnetic="<?php echo esc_attr( $basalio_strength ); ?>"<?php if ( 'a' === $basalio_tag ) : ?> href="<?php echo esc_url( $basalio_url ); ?>"<?php if ( $basalio_new_tab ) : ?> target="_blank" rel="noopener noreferrer"<?php endif; ?><?php endif; ?>>
+		<span class="basalio-magnetic-button__label"><?php echo esc_html( $basalio_text ); ?></span><?php echo wp_kses( $basalio_new_tab_text, basalio_allowed_html() ); ?>
 	</<?php echo esc_html( $basalio_tag ); ?>>
 </div>

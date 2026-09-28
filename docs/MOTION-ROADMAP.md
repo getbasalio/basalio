@@ -77,25 +77,11 @@ To reintroduce it:
 2. Add per-character CSS so each character animates independently.
 3. Update the schema and verify the editor panel shows the option.
 
-## Logged follow-up: CSS-value-context hardening
+## Resolved in 0.6.6: CSS-value-context hardening
 
-These locations in the motion-schema pipeline emit CSS values that can be
-filtered or admin-supplied, but they are not currently sanitized in a
-CSS-value-specific way. They were not reported by the WordPress.org review and
-the pipeline was verified end-to-end immediately before this note, so they are
-intentionally out of scope for the current round.
-
-- `includes/class-tokens.php:69` — `Basalio_Tokens::to_css()` injects token
-  values into inline CSS. Token values may come from the `basalio_tokens`
-  filter. Should be escaped/sanitized as CSS values, not HTML attributes.
-- `includes/class-basalio.php:724, 728` — token fallback values in
-  `resolve_motion_params_to_css()` are emitted into CSS `var(..., <fallback>)`.
-- `includes/class-basalio.php:730, 748` — generic parameter values are emitted
-  into CSS custom properties using `esc_attr()`. CSS values need
-  CSS-context sanitization.
-- `includes/class-basalio.php:737` — `param['unit']` is concatenated raw into a
-  CSS length value; should be whitelisted.
-
-Recommended fix later: introduce a small CSS-value sanitizer/escaper (e.g.,
-`wp_strip_all_tags()` plus unit whitelist) and apply it consistently in
-`resolve_motion_params_to_css()` and `Basalio_Tokens::to_css()`.
+Token declarations and motion parameter values now pass through a shared,
+restricted CSS-value validator. Token fallback values are validated before
+interpolation, and the final `basalio_token_css` filter is validated afterward.
+Only a single `:root` custom-property block is accepted. This addresses the
+WordPress.org review of 0.6.4 as well as the related motion pipeline paths.
+Regression coverage lives in `tests/verify-output-safety.php`.

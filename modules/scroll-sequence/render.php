@@ -93,7 +93,7 @@ $basalio_wrapper = get_block_wrapper_attributes(
 ?>
 <div <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-scroll-sequence>
 	<div class="basalio-scroll-sequence__stage">
-		<?php echo $basalio_frames_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_* / wp_get_attachment_image above. ?>
+		<?php echo wp_kses( $basalio_frames_html, basalio_allowed_html() ); ?>
 		<div class="basalio-scroll-sequence__controls">
 			<button type="button" class="basalio-scroll-sequence__btn" data-basalio-seq-prev aria-label="<?php esc_attr_e( 'Previous frame', 'basalio' ); ?>">&larr;</button>
 			<p class="basalio-scroll-sequence__status" data-basalio-seq-total="<?php echo esc_attr( $basalio_total ); ?>" data-basalio-seq-format="<?php echo esc_attr( $basalio_format ); ?>"><?php echo esc_html( str_replace( array( '{current}', '{total}' ), array( '1', (string) $basalio_total ), $basalio_format ) ); ?></p>

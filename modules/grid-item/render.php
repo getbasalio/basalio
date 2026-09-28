@@ -84,8 +84,7 @@ $basalio_wrapper = get_block_wrapper_attributes( array( 'class' => 'basalio-grid
 ?>
 <figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-item-category="<?php echo esc_attr( $basalio_slug ); ?>">
 	<?php
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_url / wp_get_attachment_image above.
-	echo $basalio_frame_open . $basalio_img_html . $basalio_frame_close;
+	echo wp_kses( $basalio_frame_open . $basalio_img_html . $basalio_frame_close, basalio_allowed_html() );
 	?>
 	<?php if ( '' !== $basalio_title || '' !== $basalio_category ) : ?>
 		<figcaption class="basalio-grid-item__caption">

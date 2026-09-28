@@ -129,11 +129,6 @@ $basalio_motion_css = class_exists( 'Basalio', false )
 	? Basalio::resolve_motion_params_to_css( 'basalio/case-study-transition', $basalio_motion_params )
 	: array( 'style' => '', 'classes' => array() );
 
-$basalio_motion_data = sprintf(
-	'data-basalio-cst-focus-target="%s" data-basalio-cst-announce="%s"',
-	esc_attr( $basalio_focus_target ),
-	esc_attr( $basalio_announce )
-);
 
 $basalio_extra = array();
 if ( $basalio_radius ) {
@@ -168,8 +163,8 @@ if ( 'hero' === $basalio_role ) {
 	);
 	$basalio_wrapper = get_block_wrapper_attributes( $basalio_hero_attrs );
 	?>
-	<figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-cst-hero <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?>>
-		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
+	<figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> data-basalio-cst-hero data-basalio-cst-focus-target="<?php echo esc_attr( $basalio_focus_target ); ?>" data-basalio-cst-announce="<?php echo esc_attr( $basalio_announce ); ?>">
+		<?php echo wp_kses( $basalio_img_html, basalio_allowed_html() ); ?>
 	</figure>
 	<?php
 	return;
@@ -193,7 +188,7 @@ $basalio_wrapper = get_block_wrapper_attributes( $basalio_source_attrs );
 if ( $basalio_lightbox && $basalio_full_url ) {
 	?>
 	<figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
-		<?php echo basalio_media_wrap( $basalio_img_html, '', true, $basalio_full_url, $basalio_image_alt ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from escaped parts in basalio_media_wrap(). ?>
+		<?php echo wp_kses( basalio_media_wrap( $basalio_img_html, '', true, $basalio_full_url, $basalio_image_alt ), basalio_allowed_html() ); ?>
 	</figure>
 	<?php
 	return;
@@ -216,8 +211,8 @@ if ( '' !== $basalio_link_url ) {
 
 if ( '' !== $basalio_link_url ) {
 	?>
-	<a <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> href="<?php echo esc_url( $basalio_link_url ); ?>" data-basalio-cst-source <?php echo $basalio_motion_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via esc_attr above. ?> aria-label="<?php echo esc_attr( $basalio_link_label ); ?>">
-		<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
+	<a <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?> href="<?php echo esc_url( $basalio_link_url ); ?>" data-basalio-cst-source data-basalio-cst-focus-target="<?php echo esc_attr( $basalio_focus_target ); ?>" data-basalio-cst-announce="<?php echo esc_attr( $basalio_announce ); ?>" aria-label="<?php echo esc_attr( $basalio_link_label ); ?>">
+		<?php echo wp_kses( $basalio_img_html, basalio_allowed_html() ); ?>
 	</a>
 	<?php
 	return;
@@ -226,5 +221,5 @@ if ( '' !== $basalio_link_url ) {
 // Source with no link yet: render the image alone (no transition, no error).
 ?>
 <figure <?php echo $basalio_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
-	<?php echo $basalio_img_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built via wp_get_attachment_image / esc_* above. ?>
+	<?php echo wp_kses( $basalio_img_html, basalio_allowed_html() ); ?>
 </figure>

@@ -684,6 +684,7 @@ final class Basalio {
 		$schema   = self::get_block_schema( $block_name );
 		$params   = isset( $schema['parameters'] ) && is_array( $schema['parameters'] ) ? $schema['parameters'] : array();
 		$tokens   = Basalio_Tokens::get();
+		$tokens   = is_array( $tokens ) ? $tokens : array();
 		$styles   = array();
 		$classes  = array();
 		$block_base = explode( '/', $block_name );
@@ -697,6 +698,9 @@ final class Basalio {
 			$type  = isset( $param['type'] ) ? $param['type'] : '';
 			$value = isset( $motion_params[ $param_name ] ) ? $motion_params[ $param_name ] : ( isset( $param['default'] ) ? $param['default'] : null );
 			$token = isset( $param['token'] ) ? $param['token'] : '';
+			if ( ! is_scalar( $value ) || ! is_string( $token ) ) {
+				continue;
+			}
 
 			// Reduced-motion fallback is exposed as a state class, not a property.
 			if ( 'reducedMotionFallback' === $param_name ) {
@@ -721,20 +725,20 @@ final class Basalio {
 				$token_key = $token . '-' . (string) $value;
 				if ( isset( $tokens[ $token_key ] ) ) {
 					$fallback = $tokens[ $token_key ];
-					$styles[] = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+					$styles[] = Basalio_Tokens::declaration( 'basalio-tr-' . self::param_name_to_kebab( $param_name ), 'var(--basalio-' . $token_key . ', ' . Basalio_Tokens::sanitize_value( $fallback ) . ')' );
 				} elseif ( 'duration' === $token || 'easing' === $token ) {
 					// Known token family but unmapped value: fall back to the param default.
 					$fallback = isset( $param['default'] ) ? $param['default'] : $value;
-					$styles[] = sprintf( '--basalio-tr-%s:var(--basalio-%s, %s);', self::param_name_to_kebab( $param_name ), $token_key, $fallback );
+					$styles[] = Basalio_Tokens::declaration( 'basalio-tr-' . self::param_name_to_kebab( $param_name ), 'var(--basalio-' . $token_key . ', ' . Basalio_Tokens::sanitize_value( $fallback ) . ')' );
 				} else {
-					$styles[] = sprintf( '--basalio-tr-%s:%s;', self::param_name_to_kebab( $param_name ), esc_attr( (string) $value ) );
+					$styles[] = Basalio_Tokens::declaration( 'basalio-tr-' . self::param_name_to_kebab( $param_name ), $value );
 				}
 				continue;
 			}
 
 			// Range parameters may carry a unit.
 			if ( 'range' === $type && isset( $param['unit'] ) && '' !== $param['unit'] ) {
-				$styles[] = sprintf( '--basalio-tr-%s:%s%s;', self::param_name_to_kebab( $param_name ), (float) $value, $param['unit'] );
+				$styles[] = Basalio_Tokens::declaration( 'basalio-tr-' . self::param_name_to_kebab( $param_name ), (float) $value . $param['unit'] );
 				continue;
 			}
 
@@ -745,7 +749,7 @@ final class Basalio {
 			}
 
 			// Everything else (select, text, plain range) is emitted as-is.
-			$styles[] = sprintf( '--basalio-tr-%s:%s;', self::param_name_to_kebab( $param_name ), esc_attr( (string) $value ) );
+			$styles[] = Basalio_Tokens::declaration( 'basalio-tr-' . self::param_name_to_kebab( $param_name ), $value );
 		}
 
 		return array(
