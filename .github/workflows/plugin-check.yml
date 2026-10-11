@@ -43,6 +43,16 @@ jobs:
       - name: Verify PHP extensions
         run: php -m
 
+      # setup-php's wp-cli tool install fails intermittently (exit 127 on `wp`).
+      # Install the official phar ourselves when it is missing.
+      - name: Ensure WP-CLI
+        run: |
+          if ! command -v wp >/dev/null 2>&1; then
+            curl -fsSL --retry 3 -o /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            sudo install -m 0755 /tmp/wp-cli.phar /usr/local/bin/wp
+          fi
+          wp --info
+
       - name: Download and install WordPress
         run: |
           mkdir -p /tmp/wordpress
