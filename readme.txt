@@ -34,6 +34,10 @@ Every block is a native Gutenberg block. There is no separate canvas, no shortco
 * Pointer effects are disabled on touch, where they would only get in the way.
 * The shared front-end script loads only on pages that actually contain a Basalio block, never site-wide.
 
+**Open development**
+
+Basalio is developed in the open on [GitHub](https://github.com/getbasalio/basalio), including the full WCAG 2.2 audit report and the automated accessibility checks that run on every change. Bug reports and pull requests are welcome there. For usage questions, use the support forum here on WordPress.org.
+
 == Installation ==
 
 1. Upload the `basalio` folder to `/wp-content/plugins/`, or install the plugin zip through Plugins, Add New, Upload Plugin.
