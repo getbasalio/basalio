@@ -10,3 +10,9 @@
 .DS_Store
 .impeccable/
 .superpowers/
+
+# Internal working notes (kept locally, not published)
+CLAUDE.md
+HANDOFF.md
+basalio-open-items-issue.md
+WCAG-QA-draft-*.md
