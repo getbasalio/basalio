@@ -5,3 +5,8 @@
 # Temporary scratch / build output
 .tmp/
 *.zip
+
+# macOS and local AI-tool state
+.DS_Store
+.impeccable/
+.superpowers/
