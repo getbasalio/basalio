@@ -16,6 +16,12 @@ Basalio is a focused set of interaction blocks for people who build portfolio an
 
 Every block is a native Gutenberg block. There is no separate canvas, no shortcode, and no page-builder lock-in. Add a Basalio block the same way you add a paragraph, set its options in the block sidebar, and the effect renders on the front end.
 
+**Examples and showcase**
+
+[Browse the live WordPress examples](https://basalio.com/examples/) to explore seven fictional sites across architecture, ceramics, photography, floristry, hospitality, music and UX/UI design. The collection includes 30 pages running on WordPress with native Basalio blocks.
+
+These examples combine Basalio Free with a preview build of the separate Basalio Pro add-on. Some features shown are not included in this free plugin. The sites are demonstrations, not client endorsements. Enquiry forms validate through WordPress without sending email or retaining submissions.
+
 **What is in the box**
 
 * **Grid Reveal**, a portfolio tile that reveals its caption on hover, focus, or tap.
