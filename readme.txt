@@ -84,6 +84,7 @@ Basalio targets standard block themes and classic themes that support the block 
 
 = 0.6.7 =
 * Add a live WordPress examples link to the Basalio dashboard, with clear Free and Pro preview labels.
+* Use plain punctuation in the image comparison slider's accessible label.
 
 = 0.6.6 =
 * Validate filtered CSS token names, values, and the final stylesheet before inline output.
