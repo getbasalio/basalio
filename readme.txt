@@ -4,7 +4,7 @@ Tags: portfolio, interaction, animation, gutenberg, blocks
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.6
+Stable tag: 0.6.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,9 @@ Basalio targets standard block themes and classic themes that support the block 
 7. Case Study Transition sets transition speed and the post-navigation focus target.
 
 == Changelog ==
+
+= 0.6.7 =
+* Add a live WordPress examples link to the Basalio dashboard, with clear Free and Pro preview labels.
 
 = 0.6.6 =
 * Validate filtered CSS token names, values, and the final stylesheet before inline output.

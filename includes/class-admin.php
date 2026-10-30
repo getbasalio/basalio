@@ -102,6 +102,12 @@ class Basalio_Admin {
 		$modules = class_exists( 'Basalio' ) ? Basalio::instance()->get_module_names() : array();
 
 		echo '<div class="basalio-free-dashboard" style="margin-top:20px;">';
+		echo '<section aria-labelledby="basalio-examples-heading" style="margin-bottom:24px;padding:16px;border:1px solid #c3c4c7;background:#fff;">';
+		echo '<h2 id="basalio-examples-heading">' . esc_html__( 'Examples and showcase', 'basalio' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Explore seven fictional sites running on WordPress with Basalio Free and a preview build of Pro. Some features shown require the separate Pro add-on.', 'basalio' ) . '</p>';
+		echo '<a class="button" href="https://basalio.com/examples/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Browse live examples', 'basalio' ) . '<span class="screen-reader-text">' . esc_html__( ' (opens in a new tab)', 'basalio' ) . '</span></a>';
+		echo '</section>';
+
 		echo '<p>' . esc_html__( 'Basalio blocks active on this site:', 'basalio' ) . '</p>';
 
 		if ( empty( $modules ) ) {
