@@ -22,6 +22,8 @@ Every block is a native Gutenberg block. There is no separate canvas, no shortco
 
 These examples combine Basalio Free with a preview build of the separate Basalio Pro add-on. Some features shown are not included in this free plugin. The sites are demonstrations, not client endorsements. Enquiry forms validate through WordPress without sending email or retaining submissions.
 
+The screenshots below were captured in WordPress with Basalio Free 0.6.7 and no Pro add-on. Each finished example is followed by the same page in Gutenberg. The demo theme supplies the page layout, typography and colors; Basalio supplies the interactive blocks. The fictional brands, layouts and images are demonstration content, not bundled templates or client endorsements. Photography includes AI-generated imagery.
+
 **What is in the box**
 
 * **Grid Reveal**, a portfolio tile that reveals its caption on hover, focus, or tap.
@@ -72,13 +74,13 @@ Basalio targets standard block themes and classic themes that support the block 
 
 == Screenshots ==
 
-1. The Basalio block collection in the WordPress editor.
-2. Basalio blocks ship with high-contrast keyboard focus indicators.
-3. Text Reveal lets you choose word or line reveals, plus duration, easing, and trigger threshold.
-4. A draggable before/after image comparison slider, operable by mouse, touch, or keyboard arrows.
-5. Filterable Grid sorts portfolio items by category with keyboard-operable filter buttons.
-6. Portfolio tiles reveal captions on hover, keyboard focus, or tap. They never autoplay.
-7. Case Study Transition sets transition speed and the post-navigation focus target.
+1. ALMA photography portfolio: Free Grid Reveal displays the selected image's title and category over the photograph.
+2. The same ALMA page in Gutenberg: edit the Grid Reveal image, caption, category and tile shape using the native block controls.
+3. FOIL design portfolio: Free Filterable Grid shows three of six projects after the visitor selects Identity.
+4. The same FOIL page in Gutenberg: each Grid Item has an image, title and category. Those categories become the portfolio's filter buttons.
+5. MIRA / PARK UX/UI case study: Free Before / After compares a wireframe with its finished interface design using a draggable, keyboard-operable divider.
+6. The same MIRA / PARK page in Gutenberg: choose the two images, enter comparison labels and provide alt text for each image.
+7. The nine insertable Basalio Free blocks in Gutenberg, shown alongside the populated comparison page. Filterable Grid also includes a Grid Item child block.
 
 == Changelog ==
 
