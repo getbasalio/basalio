@@ -73,11 +73,14 @@
 		display: flex;
 	}
 
-	/* Reduced-motion fallback: show the last frame instantly.
-	   The base selector guarantees this works for any visitor with reduced motion
-	   enabled, fallback class or not. */
-	.basalio-scroll-sequence__frame:last-of-type,
-	.basalio-scroll-sequence.basalio-scroll-sequence--fallback-last-frame .basalio-scroll-sequence__frame:last-of-type {
+	/* Before enhancement, expose only the last static frame. Once ready,
+	   JavaScript owns the active frame so Previous/Next remain usable. */
+	.basalio-scroll-sequence:not([data-basalio-ready]) .basalio-scroll-sequence__frame {
+		opacity: 0;
+		visibility: hidden;
+	}
+	.basalio-scroll-sequence:not([data-basalio-ready]) .basalio-scroll-sequence__frame:last-of-type,
+	.basalio-scroll-sequence.basalio-scroll-sequence--fallback-last-frame:not([data-basalio-ready]) .basalio-scroll-sequence__frame:last-of-type {
 		opacity: 1;
 		visibility: visible;
 	}
@@ -103,7 +106,8 @@
 }
 
 .basalio-scroll-sequence__btn:focus-visible {
-	outline: 2px solid var( --basalio-focus, #202020 );
+	/* These controls sit on a dark overlay, so use its light foreground. */
+	outline: 2px solid var( --basalio-paper, #fff );
 	outline-offset: 2px;
 }
 

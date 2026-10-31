@@ -698,6 +698,22 @@ foreach ( $bv_focus_files as $bv_focus_file ) {
 				continue;
 			}
 
+			// Sequence controls sit on their dark translucent overlay, not white.
+			if ( false !== strpos( $bv_selector, 'basalio-scroll-sequence__btn' ) ) {
+				if ( preg_match( '/\.basalio-scroll-sequence__controls\s*\{[^}]*background:\s*rgba\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\s*\)/s', $bv_css, $bv_overlay ) ) {
+					foreach ( array( 0, 255 ) as $bv_image ) {
+						$bv_channels = array();
+						for ( $bv_channel = 1; $bv_channel <= 3; $bv_channel++ ) {
+							$bv_channels[] = (int) round( (float) $bv_overlay[$bv_channel] * (float) $bv_overlay[4] + $bv_image * ( 1 - (float) $bv_overlay[4] ) );
+						}
+						$bv_overlay_rgb = Basalio_Contrast::hex_to_rgb( vsprintf( '#%02x%02x%02x', $bv_channels ) );
+						$bv_ratio = Basalio_Contrast::contrast_ratio( $bv_rgb, $bv_overlay_rgb );
+						if ( $bv_ratio < 3.0 ) { $bv_focus_bad[] = "{$bv_rel} sequence outline on overlay over {$bv_image}: " . round( $bv_ratio, 2 ) . ':1'; }
+					}
+				} else { $bv_focus_bad[] = 'Cannot resolve the sequence control overlay for contrast testing.'; }
+				continue;
+			}
+
 			// Everywhere else the ring sits on the (default white) surface.
 			$bv_ratio = Basalio_Contrast::contrast_ratio( $bv_rgb, $bv_surface_white );
 			if ( $bv_ratio < 3.0 ) {

@@ -658,6 +658,8 @@
 			// next scroll tick would immediately reset the frame back to the one
 			// matching the unchanged scroll position.
 			var scrollToFrame = function ( i ) {
+				// Reduced motion uses manual frame selection without moving the page.
+				if ( reduce && reduce.matches ) { return; }
 				i = Math.max( 0, Math.min( total - 1, i ) );
 				if ( i === current ) {
 					return;
@@ -713,6 +715,8 @@
 			var scrollListenerActive = false;
 			var updateScrollDriver = function () {
 				if ( reduce && reduce.matches ) {
+					// Keep the static fallback, counter and accessible image in agreement.
+					show( total - 1, false );
 					if ( scrollListenerActive ) {
 						window.removeEventListener( 'scroll', onScroll, { passive: true } );
 						scrollListenerActive = false;

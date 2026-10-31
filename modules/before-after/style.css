@@ -98,7 +98,9 @@
 .basalio-before-after__handle:focus-visible,
 .basalio-before-after__handle:focus {
 	outline: 3px solid var( --basalio-focus, #202020 );
-	outline-offset: 3px;
+	outline-offset: 0;
+	/* A light halo keeps the focus ring visible over dark comparison images. */
+	box-shadow: 0 0 0 6px var( --basalio-paper, #fff ) !important;
 }
 
 /* Two chevrons ( < > ) drawn with borders. */
