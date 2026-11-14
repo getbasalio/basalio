@@ -17,3 +17,6 @@ WCAG-QA.md              export-ignore
 README.md               export-ignore
 
 # readme.txt and LICENSE are NOT excluded: both are required in the shipped zip.
+
+# GitHub presentation assets are not part of the installable plugin.
+.github/assets/         export-ignore

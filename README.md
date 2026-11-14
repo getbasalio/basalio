@@ -1,3 +1,5 @@
+[![Basalio. Make your work move. Interaction blocks for WordPress.](.github/assets/readme-banner.png)](https://basalio.com/)
+
 # Basalio
 
 The bedrock your work stands on. Basalio is a small, opinionated set of native
