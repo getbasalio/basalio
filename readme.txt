@@ -1,40 +1,40 @@
-=== Basalio — Animation and Interaction Blocks for Portfolios ===
+=== Basalio: Animation and Interaction Blocks for Portfolios ===
 Contributors: basalio
 Tags: animation, gutenberg, portfolio, scroll, interaction, case-study, hover, reveal, blocks, accessibility
 Requires at least: 6.3
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
 Stable tag: 0.6.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Animation and interaction blocks for portfolio sites — Gutenberg-native scroll, hover and reveal effects, accessible by default, free forever.
+Animation and interaction blocks for portfolio sites: Gutenberg-native scroll, hover and reveal effects, accessible by default, free forever.
 
 == Description ==
 
-Basalio adds Framer-quality animation and interaction to WordPress portfolios — natively, in Gutenberg, with no page builder and no animation engine to learn.
+Basalio adds Framer-quality animation and interaction to WordPress portfolios, natively, in Gutenberg, with no page builder and no animation engine to learn.
 
 If you build portfolio and case-study sites in the WordPress block editor, Basalio gives you the motion that makes creative work feel considered: a caption that surfaces on hover, a headline that arrives word by word, an image sequence that advances as you scroll, a project tile that carries its image into the case study.
 
-It is not a page builder. It is not a general animation engine. It is nine focused interaction blocks for the details that make a portfolio worth exploring — and nothing else.
+It is not a page builder. It is not a general animation engine. It is nine focused interaction blocks for the details that make a portfolio worth exploring, and nothing else.
 
 **Who it's for**
 
 Photographers, designers, architects, studios, agencies, and anyone whose work needs to be seen, not just listed. If your site is a portfolio or a set of case studies, Basalio was built for you.
 
-**What you get — free, forever**
+**What you get, free, forever**
 
 Nine free blocks, all native Gutenberg blocks. Add one the same way you add a paragraph, set its options in the block sidebar, and the effect renders on the front end. No shortcodes, no separate canvas, no page-builder lock-in.
 
-* **Grid Reveal** — a portfolio tile that reveals its caption on hover, focus, or tap.
-* **Filterable Grid** — a portfolio grid visitors can filter by discipline, with a Grid Item child block.
-* **Case Study Transition** — a shared-element transition that carries an image from a grid tile into its case-study page.
-* **Text Reveal** — a choreographed entrance for a headline, subhead, and optional button, word by word.
-* **Before / After** — a draggable, keyboard-operable image comparison slider.
-* **Custom Cursor** — a soft cursor accent for a bounded region of the page.
-* **Pinned Scroll** — an image that stays pinned while its story scrolls beside it.
-* **Scroll Sequence** — a frame-by-frame image sequence driven by scroll position, like a flipbook, with Previous / Next buttons so it works without scrolling too.
-* **Magnetic Button** — a call-to-action that gently pulls toward the visitor's cursor.
+* **Grid Reveal**: a portfolio tile that reveals its caption on hover, focus, or tap.
+* **Filterable Grid**: a portfolio grid visitors can filter by discipline, with a Grid Item child block.
+* **Case Study Transition**: a shared-element transition that carries an image from a grid tile into its case-study page.
+* **Text Reveal**: a choreographed entrance for a headline, subhead, and optional button, word by word.
+* **Before / After**: a draggable, keyboard-operable image comparison slider.
+* **Custom Cursor**: a soft cursor accent for a bounded region of the page.
+* **Pinned Scroll**: an image that stays pinned while its story scrolls beside it.
+* **Scroll Sequence**: a frame-by-frame image sequence driven by scroll position, like a flipbook, with Previous / Next buttons so it works without scrolling too.
+* **Magnetic Button**: a call-to-action that gently pulls toward the visitor's cursor.
 
 **See it in action**
 
@@ -49,7 +49,7 @@ The screenshots below were captured in WordPress with Basalio Free 0.6.8 and no 
 * Motion respects the visitor's "reduce motion" system setting.
 * Pointer effects are disabled on touch, where they would only get in the way.
 * The shared front-end script loads only on pages that actually contain a Basalio block, never site-wide.
-* Every interactive element is keyboard operable and screen-reader labeled. Pointer effects like Custom Cursor are decorative by design — they never carry information or function.
+* Every interactive element is keyboard operable and screen-reader labeled. Pointer effects like Custom Cursor are decorative by design, they never carry information or function.
 * Your content stays intact. Blocks degrade to static, semantic markup. Grids stay grids, text stays text. Nothing is stored in a proprietary format.
 
 **Free is not a trial**
@@ -58,11 +58,11 @@ The blocks ship on WordPress.org under GPL-2.0-or-later: no locked blocks, no wa
 
 **Open development**
 
-Basalio is developed in the open on [GitHub](https://github.com/getbasalio/basalio), including the full WCAG 2.2 audit report and the automated accessibility checks that run on every change. Bug reports and pull requests are welcome there. For usage questions, use the support forum here on WordPress.org.
+Basalio is developed in the open on GitHub, including the full WCAG 2.2 audit report and the automated accessibility checks that run on every change. Bug reports and pull requests are welcome there. For usage questions, use the support forum here on WordPress.org.
 
 **What about Pro?**
 
-Pro is a separate, optional add-on, coming in Q1 2027: a control center in the editor sidebar for live-tuning all nine blocks, plus every future block. Founder licenses are $149 one time for unlimited sites, then $249 — the regular Pro price. Founder licenses stay valid, keep every future block, and are never re-billed. Founder licenses are refundable at any time until the Pro control center ships; once it ships, the standard 30-day refund applies.
+Pro is a separate, optional add-on, coming in Q1 2027: a control center in the editor sidebar for live-tuning all nine blocks, plus every future block. Founder licenses are $149 one time for unlimited sites, then $249. Founder licenses stay valid, keep every future block, and are never re-billed. Pro is refundable at any time until the control center ships. Once it ships, the standard 30-day refund applies.
 
 You do not need Pro to use Basalio. The free plugin is complete on its own.
 
@@ -77,57 +77,47 @@ There is nothing to configure globally. Each block carries its own settings.
 == Frequently Asked Questions ==
 
 = Is this a page builder? =
-
 No. Basalio is a focused set of interaction blocks. It works inside the standard WordPress block editor and leaves the rest of your layout to your theme.
 
 = Is this an animation plugin? =
-
-Yes — animation and interaction, built specifically for portfolios. Unlike general animation engines that add effects to any block, Basalio's blocks are designed around portfolio moments: revealing a caption, filtering a body of work, moving from a tile into a case study, and scrolling through a story.
+Yes, animation and interaction, built specifically for portfolios. Unlike general animation engines that add effects to any block, Basalio's blocks are designed around portfolio moments: revealing a caption, filtering a body of work, moving from a tile into a case study, and scrolling through a story.
 
 = Does it work with Elementor, Divi, or other page builders? =
-
 No. Basalio is Gutenberg-native. It works with any block theme or classic theme running the block editor. No page builder or premium theme is required.
 
 = Will the effects slow down my site? =
-
 The shared script is small and loads only on pages that contain a Basalio block. Pages without one load nothing extra. There is no runtime framework, no jQuery, and no global stylesheet overriding your theme.
 
 = Are the blocks accessible? =
-
-Yes. Every interactive element is keyboard operable and screen-reader labeled. Motion respects the visitor's reduce-motion setting, and Scroll Sequence and Before / After work fully from the keyboard. Pointer effects like Custom Cursor have no keyboard equivalent by design — they are decorative and never carry information or function.
+Yes. Every interactive element is keyboard operable and screen-reader labeled. Motion respects the visitor's reduce-motion setting, and Scroll Sequence and Before / After work fully from the keyboard. Pointer effects like Custom Cursor have no keyboard equivalent by design, they are decorative and never carry information or function.
 
 = Does it work with my theme? =
-
 Basalio targets standard block themes and classic themes that support the block editor. The blocks inherit your theme's spacing and alignment controls where it makes sense.
 
 = Can I use it on client sites? =
-
 Yes. Basalio is GPL-2.0-or-later, with no instance limits and no watermarks. Use it on as many sites as you like, including client work.
 
 = Is the free version really free? =
-
 Yes. Free is not a trial. No locked blocks, no watermarks, no instance limits, and nothing in the free version expires or gets pulled into Pro later.
 
 = What do I get with Pro? =
-
-Pro, coming Q1 2027, adds a control center in the editor sidebar for live-tuning all nine blocks, plus every future block. It is a separate add-on — you do not need it to use the free plugin.
+Pro, coming Q1 2027, adds a control center in the editor sidebar for live-tuning all nine blocks, plus every future block. It is a separate add-on, you do not need it to use the free plugin.
 
 = What happens if I stop using Basalio? =
-
 Your content stays intact. Blocks degrade to static, semantic markup. Grids stay grids, text stays text. Nothing is stored in a proprietary format, and if Basalio disappears tomorrow, what you have keeps working.
 
 == Screenshots ==
 
-1. Scroll Sequence — one scroll, a new perspective. A frame-by-frame image sequence driven by scroll position.
-2. Case Study Transition — carry an image from the project tile into its case-study page.
-3. Text Reveal — a headline that arrives word by word.
-4. Grid Reveal — move into an image and let its caption appear.
-5. Filterable Grid — let visitors follow their interests with categories that filter your projects in place.
-6. Pinned Scroll — hold a visual in place while the text moves past it.
-7. Before / After — two images, one divider. Let people explore the change for themselves.
-8. Magnetic Button — a call-to-action that gently pulls toward the pointer.
-9. Custom Cursor — a small signature for a pointer-driven experience.
-10. The same page in Gutenberg — what you see in the editor is what you get.
+1. Scroll Sequence: one scroll, a new perspective. A frame-by-frame image sequence driven by scroll position.
+2. Case Study Transition: carry an image from the project tile into its case-study page.
+3. Text Reveal: a headline that arrives word by word.
+4. Grid Reveal: move into an image and let its caption appear.
+5. Filterable Grid: let visitors follow their interests with categories that filter your projects in place.
+6. Pinned Scroll: hold a visual in place while the text moves past it.
+7. Before / After: two images, one divider. Let people explore the change for themselves.
+8. Magnetic Button: a call-to-action that gently pulls toward the pointer.
+9. Custom Cursor: a small signature for a pointer-driven experience.
+10. The same page in Gutenberg: what you see in the editor is what you get.
 
 == Changelog ==
 
